@@ -1,5 +1,0 @@
-DIGEST 0e9dee6949442dd97cf3a71bfca46bd5
-Fextra_int
-R104:109 Coq.Numbers.Cyclic.Int63.Uint63 <> <> lib
-R111:116 Coq.NArith.BinNat <> <> lib
-R148:160 mathcomp.ssreflect.all_ssreflect <> <> lib
