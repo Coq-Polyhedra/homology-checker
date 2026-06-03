@@ -24,7 +24,7 @@ Definition fold_pair {T1 T2 A : Type} (f : T1 -> T2 -> A -> A) (a1 : array T1) (
  * apply f_in to elements of universe \ s and f_notin otherwise *)
 Definition iter_in_notin {T1 T2 : Type} (f_in f_notin : int -> T1 -> T1) (lt_T2 : rel T2) (universe s : array T2) (x : T1) :=
   let res := ifold (fun i acc => 
-    if ((acc.2 <? length s)%uint63 && (lt_T2 universe.[i] s.[acc.2])%uint63) then 
+    if ((acc.2 <? length s)%uint63 ==> (lt_T2 universe.[i] s.[acc.2])%uint63) then 
       (f_notin i acc.1, acc.2) 
       else (f_in i acc.1, (acc.2+1)%uint63)
     ) (length universe) (x, 0%uint63) in
@@ -46,13 +46,6 @@ Definition array_dot {T : Type} (addf mulf: T -> T -> T) (x0 : T)
 Definition bigZ_dot (x y : array bigZ) : bigZ :=
   array_dot BigZ.add BigZ.mul 0%bigZ x y.
 
-Definition BigZ_ltb (x y : bigZ) :=
-  match BigZ.compare x y with
-  | Lt => true
-  | _  => false
-  end.
-
- 
 Definition check_ineqs (ineqs : array (array bigZ * bigZ)) (x : array bigZ * bigZ) (saturated : array int) :=
   iter_in_not_in_int 
     (fun i acc => (acc && (bigZ_dot ineqs.[i].1 x.1 =? BigZ.mul ineqs.[i].2 x.2)%bigZ)) 
@@ -60,24 +53,19 @@ Definition check_ineqs (ineqs : array (array bigZ * bigZ)) (x : array bigZ * big
     saturated (length ineqs) true.
 
 Record Certificate := {
-  ineqs
-     : array (array bigZ * bigZ);
-  vert
-     : array (array bigZ * bigZ * (array int * array (array int * int)));
-  graph
-     : array (array int);
-  lbl
-     : array (array int * (int * int));
-  root
-     : int * (array int * (array (array bigQ) * array int))
+  ineqs : array (array bigZ * bigZ);
+  vert : array (array bigZ * bigZ * (array int * array (array int * int)));
+  graph : array (array int);
+  lbl : array (array int * (int * int));
+  root : int * (array int * (array (array bigQ) * array int))
 }.
 
 Definition build_cert cert := 
-  let ineqs := fst cert in 
-  let vert := fst (snd cert) in
-  let graph := fst (fst (snd (snd cert))) in 
-  let lbl := snd (fst (snd (snd cert))) in
-  let root := snd (snd (snd cert)) in
+  let ineqs := cert.1 in 
+  let vert := cert.2.1 in
+  let graph := cert.2.2.1.1 in
+  let lbl := cert.2.2.1.2 in
+  let root := cert.2.2.2 in
   {| ineqs := ineqs; vert := vert; graph := graph; lbl := lbl; root := root |}.
 
 Definition feasibility_check (cert : Certificate) := 
@@ -95,23 +83,3 @@ Time Eval vm_compute in
   feasibility_check cert.
 
 End Benchmark.
-
-(*
-Definition index : array int := make 1 0%uint63.
-Definition a0 : array (array bigQ) := (make 2 (make 2 1%bigQ)).
-Definition a := a0.[1 <- a0.[1].[1 <- 2%bigQ]].
-Definition b0 : array bigQ := make 2 2%bigQ.
-Definition b := b0.[1 <- 2%bigQ].
-Definition x : array bigQ := make 2 1%bigQ.
-
-Definition a1 : array (array bigQ) := (make 5 (make 5 0%bigQ)).
-Definition b1 : array bigQ := make 5 0%bigQ.
-Definition index1 : array int := (make 5 0%uint63).[1 <- 1%uint63].[2 <- 2%uint63].[3 <- 3%uint63].[4 <- 4%uint63].
-
-Eval compute in Check_ineq index a x b.
-Eval compute in Check_ineq index1 a1 x b1.
-*)
-
-
-
-
