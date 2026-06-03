@@ -93,28 +93,9 @@ Section Benchmark.
 Let cert := build_cert cert.
 Time Eval vm_compute in 
   feasibility_check cert.
-  (*(check_ineqs cert.(ineqs) (cert.(vert).[0].1) (cert.(vert).[0].2.1)) 
-  && (check_ineqs cert.(ineqs) (cert.(vert).[1].1) (cert.(vert).[1].2.1))
-  && (check_ineqs cert.(ineqs) (cert.(vert).[2].1) (cert.(vert).[2].2.1))
-  && (check_ineqs cert.(ineqs) (cert.(vert).[3].1) (cert.(vert).[3].2.1))
-  && (check_ineqs cert.(ineqs) (cert.(vert).[4].1) (cert.(vert).[4].2.1))
-  && (check_ineqs cert.(ineqs) (cert.(vert).[5].1) (cert.(vert).[5].2.1))
-  && (check_ineqs cert.(ineqs) (cert.(vert).[6].1) (cert.(vert).[6].2.1))
-  && (check_ineqs cert.(ineqs) (cert.(vert).[7].1) (cert.(vert).[7].2.1))
-  && (check_ineqs cert.(ineqs) (cert.(vert).[8].1) (cert.(vert).[8].2.1))
-  && (check_ineqs cert.(ineqs) (cert.(vert).[9].1) (cert.(vert).[9].2.1))
-  && (check_ineqs cert.(ineqs) (cert.(vert).[10].1) (cert.(vert).[10].2.1))
-  && (check_ineqs cert.(ineqs) (cert.(vert).[11].1) (cert.(vert).[11].2.1))
-  && (check_ineqs cert.(ineqs) (cert.(vert).[12].1) (cert.(vert).[12].2.1))
-  && (check_ineqs cert.(ineqs) (cert.(vert).[13].1) (cert.(vert).[13].2.1))
-  && (check_ineqs cert.(ineqs) (cert.(vert).[14].1) (cert.(vert).[14].2.1))
-  && (check_ineqs cert.(ineqs) (cert.(vert).[15].1) (cert.(vert).[15].2.1))
-  && (check_ineqs cert.(ineqs) (cert.(vert).[16].1) (cert.(vert).[16].2.1))
-  && (check_ineqs cert.(ineqs) (cert.(vert).[17].1) (cert.(vert).[17].2.1))
-  && (check_ineqs cert.(ineqs) (cert.(vert).[18].1) (cert.(vert).[18].2.1)) 
-  && (check_ineqs cert.(ineqs) (cert.(vert).[19].1) (cert.(vert).[19].2.1)).*)
 
 End Benchmark.
+
 (*
 Definition index : array int := make 1 0%uint63.
 Definition a0 : array (array bigQ) := (make 2 (make 2 1%bigQ)).
