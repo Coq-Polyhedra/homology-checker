@@ -43,35 +43,27 @@ Definition array_dot {T : Type} (addf mulf: T -> T -> T) (x0 : T)
   (a b : array T):=
   fold_pair (fun x y res=> addf res (mulf x y)) a b x0.
 
-Definition bigQ_dot (x y : array bigQ) : bigQ :=
-  array_dot BigQ.add BigQ.mul 0%bigQ x y.
+Definition bigZ_dot (x y : array bigZ) : bigZ :=
+  array_dot BigZ.add BigZ.mul 0%bigZ x y.
 
-Definition BigQ_ltb (x y : bigQ) :=
-  match BigQ.compare x y with
+Definition BigZ_ltb (x y : bigZ) :=
+  match BigZ.compare x y with
   | Lt => true
   | _  => false
   end.
 
-Notation "x <?bq y" := (BigQ_ltb x y)
-  (at level 70).
-
-Notation "x <=?bq y" := (~~ (BigQ_ltb y x))
-  (at level 70).
-
-Notation "x =?bq y" := (BigQ.eq_bool x y)
-  (at level 70).
  
-Definition check_ineqs (ineqs : array (array bigQ * bigQ)) (x : array bigQ) (saturated : array int) :=
+Definition check_ineqs (ineqs : array (array bigZ * bigZ)) (x : array bigZ * bigZ) (saturated : array int) :=
   iter_in_not_in_int 
-    (fun i acc => (acc && (bigQ_dot ineqs.[i].1 x =?bq ineqs.[i].2))) 
-    (fun i acc => (acc && (bigQ_dot ineqs.[i].1 x <?bq ineqs.[i].2))) 
+    (fun i acc => (acc && (bigZ_dot ineqs.[i].1 x.1 =? BigZ.mul ineqs.[i].2 x.2)%bigZ)) 
+    (fun i acc => (acc && (bigZ_dot ineqs.[i].1 x.1 <? BigZ.mul ineqs.[i].2 x.2)%bigZ)) 
     saturated (length ineqs) true.
 
 Record Certificate := {
   ineqs
-     : array (array bigQ * bigQ);
+     : array (array bigZ * bigZ);
   vert
-     : array (array bigQ * (array int * array (array int * int)));
+     : array (array bigZ * bigZ * (array int * array (array int * int)));
   graph
      : array (array int);
   lbl
@@ -94,13 +86,14 @@ Definition feasibility_check (cert : Certificate) :=
   ifold (fun i acc => acc && check_ineqs ineqs vertices.[i].1 vertices.[i].2.1) 
     (length vertices) true.
 
-LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
+Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
 
 Section Benchmark.
 
 Let cert := build_cert cert.
 Time Eval vm_compute in 
-  (check_ineqs cert.(ineqs) (cert.(vert).[0].1) (cert.(vert).[0].2.1)) 
+  feasibility_check cert.
+  (*(check_ineqs cert.(ineqs) (cert.(vert).[0].1) (cert.(vert).[0].2.1)) 
   && (check_ineqs cert.(ineqs) (cert.(vert).[1].1) (cert.(vert).[1].2.1))
   && (check_ineqs cert.(ineqs) (cert.(vert).[2].1) (cert.(vert).[2].2.1))
   && (check_ineqs cert.(ineqs) (cert.(vert).[3].1) (cert.(vert).[3].2.1))
@@ -119,7 +112,7 @@ Time Eval vm_compute in
   && (check_ineqs cert.(ineqs) (cert.(vert).[16].1) (cert.(vert).[16].2.1))
   && (check_ineqs cert.(ineqs) (cert.(vert).[17].1) (cert.(vert).[17].2.1))
   && (check_ineqs cert.(ineqs) (cert.(vert).[18].1) (cert.(vert).[18].2.1)) 
-  && (check_ineqs cert.(ineqs) (cert.(vert).[19].1) (cert.(vert).[19].2.1)).
+  && (check_ineqs cert.(ineqs) (cert.(vert).[19].1) (cert.(vert).[19].2.1)).*)
 
 End Benchmark.
 (*
