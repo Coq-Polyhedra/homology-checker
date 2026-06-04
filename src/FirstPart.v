@@ -43,6 +43,9 @@ Definition fold_alt {T A : Type} (f_in f_notin : T -> A -> A) (s : array T) (not
 Definition for_alli {T : Type} (f : int -> T -> bool) (a : array T) :=
   foldi (fun i x acc => acc && f i x) a true.
 
+Definition for_all2 {T1 T2 : Type} (f : T1 -> T2 -> bool) (a : array T1) (b : array T2) :=
+  fold2 (fun x y acc => acc && f x y) a b true.
+
 Definition for_all {T : Type} (f : T -> bool) (a : array T) :=
   fold (fun x acc => acc && f x) a true.
 
@@ -94,7 +97,7 @@ Definition feasibility_check (cert : Certificate) :=
   ifold (fun i acc => acc && check_ineqs ineqs vertices.[i].1 vertices.[i].2.1) 
     (length vertices) true.
 
-Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert.
+Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
 
 Section Benchmark.
 
