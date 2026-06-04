@@ -46,15 +46,15 @@ Definition array_dot {T : Type} (addf mulf: T -> T -> T) (x0 : T)
 Definition bigZ_dot (x y : array bigZ) : bigZ :=
   array_dot BigZ.add BigZ.mul 0%bigZ x y.
 
-Definition check_ineqs (ineqs : array (array bigZ * bigZ)) (x : array bigZ * bigZ) (saturated : array int) :=
+Definition check_ineqs (ineqs : array (array bigZ * bigZ)) (x : array bigZ * bigN) (saturated : array int) :=
   iter_in_not_in_int 
-    (fun i acc => (acc && (bigZ_dot ineqs.[i].1 x.1 =? BigZ.mul ineqs.[i].2 x.2)%bigZ)) 
-    (fun i acc => (acc && (bigZ_dot ineqs.[i].1 x.1 <? BigZ.mul ineqs.[i].2 x.2)%bigZ)) 
+    (fun i acc => (acc && (bigZ_dot ineqs.[i].1 x.1 =? BigZ.mul ineqs.[i].2 (BigZ.Pos x.2))%bigZ)) 
+    (fun i acc => (acc && (bigZ_dot ineqs.[i].1 x.1 <? BigZ.mul ineqs.[i].2 (BigZ.Pos x.2))%bigZ)) 
     saturated (length ineqs) true.
 
 Record Certificate := {
   ineqs : array (array bigZ * bigZ);
-  vert : array (array bigZ * bigZ * (array int * array (array int * int)));
+  vert : array (array bigZ * bigN * (array int * array (array int * int)));
   graph : array (array int);
   lbl : array (array int * (int * int));
   root : int * (array int * (array (array bigQ) * array int))
