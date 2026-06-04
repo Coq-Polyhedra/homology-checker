@@ -5,6 +5,8 @@ From BinReader Require Import BinReader.
 Require Import PArray.
 Import Order.Theory.
 
+Section Uint63.
+
 Fixpoint ifold_ {T : Type} (n : nat) (f : int -> T -> T) (i M : int) (x : T) :=
   if (i =? M)%uint63 then (i, x) else
     if n is n.+1 then
@@ -17,40 +19,58 @@ Fixpoint ifold_ {T : Type} (n : nat) (f : int -> T -> T) (i M : int) (x : T) :=
 Definition ifold {T : Type} (f : int -> T -> T) (i : int) (x : T) :=
   (ifold_ Uint63.size f 0 i x).2.
 
-Definition fold_pair {T1 T2 A : Type} (f : T1 -> T2 -> A -> A) (a1 : array T1) (a2 : array T2) (x0 : A) :=
-  ifold (fun i s=> f a1.[i] a2.[i] s) (if (length a1 <? length a2)%uint63 then length a1 else length a2) x0.
+End Uint63.
 
-(* iterate of the elements of universe
- * apply f_in to elements of universe \ s and f_notin otherwise *)
-Definition iter_in_notin {T1 T2 : Type} (f_in f_notin : int -> T1 -> T1) (lt_T2 : rel T2) (universe s : array T2) (x : T1) :=
-  let res := ifold (fun i acc => 
-    if ((acc.2 <? length s)%uint63 ==> (lt_T2 universe.[i] s.[acc.2])%uint63) then 
-      (f_notin i acc.1, acc.2) 
-      else (f_in i acc.1, (acc.2+1)%uint63)
-    ) (length universe) (x, 0%uint63) in
+Section Array.
+
+Definition fold {T A : Type} (f : T -> A -> A) (a : array T) (x0 : A) :=
+  ifold (fun i acc => f a.[i] acc) (length a) x0.
+
+Definition foldi {T A : Type} (f : int -> T -> A -> A) (a : array T) (x0 : A) :=
+  ifold (fun i acc => f i a.[i] acc) (length a) x0.
+
+Definition fold2 {T1 T2 A : Type} (f : T1 -> T2 -> A -> A) (a1 : array T1) (a2 : array T2) (x0 : A) :=
+  ifold (fun i acc => f a1.[i] a2.[i] acc) (if (length a1 <? length a2)%uint63 then length a1 else length a2) x0.
+
+Definition fold_alt {T A : Type} (f_in f_notin : T -> A -> A) (s : array T) (notin : array int) (x : A) :=
+  let res := foldi (fun i x acc =>
+    if (acc.2 <? length notin)%uint63 ==> (i <? notin.[acc.2])%uint63 then 
+      (f_notin x acc.1, acc.2) 
+      else (f_in x acc.1, (acc.2+1)%uint63)
+    ) s (x, 0%uint63) in
     res.1.
 
-(* TODO : change this as soon as we can create a universe equal to [|0; 1; ...; m-1|] *)
-Definition iter_in_not_in_int {T : Type} (f_in f_notin : int -> T -> T) (s : array int) (m : int) (x : T) :=
-  let res := ifold (fun i acc => 
-    if ((acc.2 <? length s)%uint63 ==> (i <? s.[acc.2])%uint63) then 
-      (f_notin i acc.1, acc.2) 
-      else (f_in i acc.1, (acc.2+1)%uint63)
-    ) m (x, 0%uint63) in
-    res.1.
+Definition for_alli {T : Type} (f : int -> T -> bool) (a : array T) :=
+  foldi (fun i x acc => acc && f i x) a true.
 
-Definition array_dot {T : Type} (addf mulf: T -> T -> T) (x0 : T)
-  (a b : array T):=
-  fold_pair (fun x y res=> addf res (mulf x y)) a b x0.
+Definition for_all {T : Type} (f : T -> bool) (a : array T) :=
+  fold (fun x acc => acc && f x) a true.
 
-Definition bigZ_dot (x y : array bigZ) : bigZ :=
-  array_dot BigZ.add BigZ.mul 0%bigZ x y.
+Definition for_all_alt {T : Type} (f_in f_notin : T -> bool) (s : array T) (notin : array int) :=
+  fold_alt (fun x acc => f_in x && acc) (fun x acc => f_notin x && acc) s notin true.
+
+Definition existi {T : Type} (f : int -> T -> bool) (a : array T) :=
+  foldi (fun i x acc => acc || f i x) a false.
+
+Definition exist {T : Type} (f : T -> bool) (a : array T) :=
+  fold (fun x acc => acc || f x) a false.
+
+Definition mem {T : Type} (eqT : T -> T -> bool) (x : T) (a : array T) : bool :=
+  exist (fun y => eqT x y) a.
+
+Definition mem_sorted {T : Type} (ltT eqT : T -> T -> bool) (x : T) (a : array T) : bool :=
+  fold (fun y acc => if (ltT y x) then acc else if (eqT y x) then true else false) a false.
+
+End Array.
+
+Definition array_bigZ_dot (x y : array bigZ) : bigZ :=
+  fold2 (fun x y res=> BigZ.add res (BigZ.mul x y)) x y 0%bigZ.
 
 Definition check_ineqs (ineqs : array (array bigZ * bigZ)) (x : array bigZ * bigN) (saturated : array int) :=
-  iter_in_not_in_int 
-    (fun i acc => (acc && (bigZ_dot ineqs.[i].1 x.1 =? BigZ.mul ineqs.[i].2 (BigZ.Pos x.2))%bigZ)) 
-    (fun i acc => (acc && (bigZ_dot ineqs.[i].1 x.1 <? BigZ.mul ineqs.[i].2 (BigZ.Pos x.2))%bigZ)) 
-    saturated (length ineqs) true.
+  for_all_alt 
+    (fun ineq => (array_bigZ_dot ineq.1 x.1 =? BigZ.mul ineq.2 (BigZ.Pos x.2))%bigZ)
+    (fun ineq => (array_bigZ_dot ineq.1 x.1 <? BigZ.mul ineq.2 (BigZ.Pos x.2))%bigZ)
+    ineqs saturated.
 
 Record Certificate := {
   ineqs : array (array bigZ * bigZ);
@@ -74,7 +94,7 @@ Definition feasibility_check (cert : Certificate) :=
   ifold (fun i acc => acc && check_ineqs ineqs vertices.[i].1 vertices.[i].2.1) 
     (length vertices) true.
 
-Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
+Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert.
 
 Section Benchmark.
 
