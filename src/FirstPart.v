@@ -86,6 +86,17 @@ Definition check_ineqs (ineqs : array (array bigZ * bigZ)) (saturated : array in
     (fun ineq => (array_bigZ_dot ineq.1 x.1 <? BigZ.mul ineq.2 (BigZ.Pos x.2))%bigZ)
     ineqs saturated.
 
+(* The following variant of check_ineqs is easier to prove, but 25% slower on non-Hirsch polytopes *)
+(*
+Definition check_ineqs (ineqs : array (array bigZ * bigZ)) (saturated : array int) (x : array bigZ * bigN) :=
+  for_alli (fun i ineq =>
+    if mem_sorted Uint63.ltb i saturated then 
+      (array_bigZ_dot ineq.1 x.1 =? BigZ.mul ineq.2 (BigZ.Pos x.2))%bigZ
+    else 
+      (array_bigZ_dot ineq.1 x.1 <? BigZ.mul ineq.2 (BigZ.Pos x.2))%bigZ
+  ) ineqs.
+*)
+
 Record Certificate := {
   ineqs : array (array bigZ * bigZ);
   vert : array (array int * (array bigZ * bigN * array (array int * int)));
@@ -108,7 +119,7 @@ Definition feasibility_check (cert : Certificate) :=
   ifold (fun i acc => acc && check_ineqs ineqs vertices.[i].1 vertices.[i].2.1) 
     (length vertices) true.
 
-Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
+Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert.
 
 Section Benchmark.
 
