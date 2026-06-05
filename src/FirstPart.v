@@ -61,15 +61,26 @@ Definition exist {T : Type} (f : T -> bool) (a : array T) :=
 Definition mem {T : Type} (eqT : T -> T -> bool) (x : T) (a : array T) : bool :=
   exist (fun y => eqT x y) a.
 
-Definition mem_sorted {T : Type} (ltT eqT : T -> T -> bool) (x : T) (a : array T) : bool :=
-  fold (fun y acc => if (ltT y x) then acc else if (eqT y x) then true else false) a false.
+Definition mem_sorted {T : Type} (ltT : T -> T -> bool) (x : T) (a : array T) : bool :=
+  let res := 
+  fold (fun y acc => 
+    if acc is Some _ then acc 
+    else 
+      if ltT y x then None
+      else if ltT x y then Some false
+      else Some true) a None
+  in
+  match res with
+  | None => false
+  | Some b => b
+  end. 
 
 End Array.
 
 Definition array_bigZ_dot (x y : array bigZ) : bigZ :=
   fold2 (fun x y res=> BigZ.add res (BigZ.mul x y)) x y 0%bigZ.
 
-Definition check_ineqs (ineqs : array (array bigZ * bigZ)) (x : array bigZ * bigN) (saturated : array int) :=
+Definition check_ineqs (ineqs : array (array bigZ * bigZ)) (saturated : array int) (x : array bigZ * bigN) :=
   for_all_alt 
     (fun ineq => (array_bigZ_dot ineq.1 x.1 =? BigZ.mul ineq.2 (BigZ.Pos x.2))%bigZ)
     (fun ineq => (array_bigZ_dot ineq.1 x.1 <? BigZ.mul ineq.2 (BigZ.Pos x.2))%bigZ)
@@ -77,7 +88,7 @@ Definition check_ineqs (ineqs : array (array bigZ * bigZ)) (x : array bigZ * big
 
 Record Certificate := {
   ineqs : array (array bigZ * bigZ);
-  vert : array (array bigZ * bigN * (array int * array (array int * int)));
+  vert : array (array int * (array bigZ * bigN * array (array int * int)));
   graph : array (array int);
   lbl : array (array int * (int * int));
   root : int * (array int * (array (array bigQ) * array int))
