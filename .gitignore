@@ -1,0 +1,5 @@
+src/*.aux
+src/*.glob
+src/*.vo
+src/*.vok
+src/*.vos
