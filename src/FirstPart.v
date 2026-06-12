@@ -24,11 +24,6 @@ End Uint63.
 
 Section Array.
 
-Definition defaultIntArray : array int := make 0%uint63 0%uint63.
-
-Definition map {T1 T2 : Type} (f : T1 -> T2) (a : array T1):=
-  ifold (fun i acc=> acc.[i <- f a.[i]]) (length a) (make (length a) (f (default a))).
-
 Definition fold {T A : Type} (f : T -> A -> A) (a : array T) (x0 : A) :=
   ifold (fun i acc => f a.[i] acc) (length a) x0.
 
@@ -155,10 +150,6 @@ Definition areComposablePairArray {T : Type} (a : array (int*int)) (b : array (a
 Definition areComposableMatrix {T : Type} (a : array (array int)) (b : array T) : bool :=
   for_all_matrix (isValidIndex b) a.
 
-(* The function is not defined for all a and b and must be used together with areComposableSimpleArray. *)
-Definition composeSimpleArray {T : Type} (a : array int) (b : array T) : array T :=
-  map (fun x => b.[x]) a.
-
 Definition isInverseSimpleArrayAtIndex (a : array int) (b : array int) (i : int) : bool :=
   (b.[a.[i]] =? i)%uint63.
 
@@ -220,6 +211,58 @@ Definition array_bigZ_dot (x y : array bigZ) : bigZ :=
 
 End BigZ.
 
+Section Types.
+
+Definition Bound := bigZ.
+Definition Normal := array bigZ.
+Definition Inequality := (Normal * Bound)%type.
+Definition Inequalities := array Inequality.
+
+Definition FacetIndex := int.
+Definition LocalDescription := array int. 
+Definition LocalFacet := (LocalDescription * FacetIndex)%type.
+Definition LocalFacets := array LocalFacet.
+Definition CommonDenominator := bigN. 
+Definition Numerators := array bigZ. 
+Definition Point := (Numerators * CommonDenominator)%type.
+Definition ActiveSet := array int.
+Definition Vertex := (ActiveSet * (Point * LocalFacets))%type.
+Definition Vertices := array Vertex.
+
+Definition FacetLabel := (int * int)%type.
+Definition GlobalDescription := array int.
+Definition GlobalFacet := (GlobalDescription * FacetLabel)%type.
+Definition GlobalFacets := array GlobalFacet.
+
+Record Certificate := {
+  inequalities : Inequalities;
+  vertices : Vertices;
+  graph : Graph;
+  facets : GlobalFacets;
+  root : int * (array int * (array (array bigQ) * array int))
+}.
+
+End Types.
+
+Section Projectors.
+
+Definition normal : Inequality -> Normal := fst.
+Definition bound : Inequality -> Bound := snd.
+Definition localDescription : LocalFacet -> LocalDescription := fst.
+Definition facetIndex : LocalFacet -> FacetIndex := snd.
+Definition numerators : Point -> Numerators := fst.
+Definition commonDenominator : Point -> CommonDenominator := snd.
+Definition activeSet : Vertex -> ActiveSet := fst.
+Definition point : Vertex -> Point := compose fst snd.
+Definition localFacets : Vertex -> LocalFacets := compose snd snd.
+Definition globalDescription : GlobalFacet -> GlobalDescription := fst.
+Definition facetLabel : GlobalFacet -> FacetLabel := snd.
+
+End Projectors.
+
+
+(*
+
 Definition Normal := array bigZ. 
 Definition Bound := bigZ.
 
@@ -249,10 +292,14 @@ Record Point := {
 Definition ActiveSet := array int.
 Definition LocalFacets := array LocalFacet.
 
-Record Vertex := {
-  activeSet : array int;
+Record Rest := {
   point : Point;
   localFacets : LocalFacets
+}.
+
+Record Vertex := {
+  activeSet : ActiveSet;
+  rest : Rest
 }.
 
 Definition Vertices := array Vertex.
@@ -274,6 +321,8 @@ Record Certificate := {
   facets : GlobalFacets;
   root : int * (array int * (array (array bigQ) * array int))
 }.
+
+*)
 
 Definition build_cert cert := 
   let inequalities := cert.1 in 
@@ -453,7 +502,7 @@ Definition isFacetIndexingBijective (cert : Certificate) :=
   let vertices := vertices cert in
   let facets := facets cert in
   forAlliFacetLabels (fun i label => eqbArray (fun x y => (x =? (activeSet vertices.[label.1]).[y])%uint63) 
-  (globalDescription facets.[i]) (localDescription (localFacets (vertices.[label.1])).[label.2])) cert.
+  (globalDescription facets.[i]) (localDescription (localFacets  vertices.[label.1]).[label.2])) cert.
 
 Definition check_ineqs (ineqs : Inequalities) (active_set : ActiveSet) (x : Point) :=
   for_all_alt 
@@ -484,6 +533,7 @@ Definition adjacency_check (cert : Certificate) :=
   for_alli_matrix (fun i j v => for_all (fun x => (x =? (globalDescription (facets.[i])).[j])%uint63
   || (mem Uint63.eqb (globalDescription facets.[v]) x)) (globalDescription (facets.[i]))) graph.
 
+
 Definition check_certificate (cert : Certificate) :=
   (areActiveSetsWellConstructed cert)
   && (areLocalFacetSetsWellConstructed cert)
@@ -502,13 +552,29 @@ Definition check_certificate (cert : Certificate) :=
 
 Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
 
+Definition commodity_checks (cert : Certificate) :=
+  (areActiveSetsWellConstructed cert)
+  && (areLocalFacetSetsWellConstructed cert)
+  && (isLocalFacetIndexingWellConstructed cert)
+  && (isFacetLabelingWellConstructed cert)
+  && (isGraphWellConstructed cert)
+  && (areActiveSetsUnique cert)
+  && (areFacetsUnique cert)
+  && (isUndirectedSimpleGraph cert)
+  && (allFacetsHaveCardinality cert)
+  && (isGraphDRegular cert)
+  && (isFacetLabelingBijective cert)
+  && (isFacetIndexingBijective cert).
+
 Section Benchmark.
 
 Let cert := build_cert cert.
 Time Eval vm_compute in 
+  commodity_checks cert.
+Time Eval vm_compute in
   feasibility_check cert.
 Time Eval vm_compute in
-  
+  adjacency_check cert.
 
 
 End Benchmark.
