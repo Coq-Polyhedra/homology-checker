@@ -8,17 +8,23 @@ Import Order.Theory.
 
 Section Uint63.
 
-Fixpoint ifold_ {T : Type} (n : nat) (f : int -> T -> T) (i M : int) (x : T) :=
-  if (i =? M)%uint63 then (i, x) else
+Fixpoint ifold_ {T : Type} (n : nat) (f : int -> T -> T) (i M : int) (stopCondition : int -> T -> bool) (x : T) :=
+  if (i =? M)%uint63 || (stopCondition i x) then (i, x) else
     if n is n.+1 then
       let: (i, x) := ((i + 1)%uint63, f i x) in
-      let: (i, x) := ifold_ n f i M x in
-      let: (i, x) := ifold_ n f i M x in
+      let: (i, x) := ifold_ n f i M stopCondition x in
+      let: (i, x) := ifold_ n f i M stopCondition x in
       (i, x)
     else (i, x).
 
 Definition ifold {T : Type} (f : int -> T -> T) (i : int) (x : T) :=
-  (ifold_ Uint63.size f 0 i x).2.
+  (ifold_ Uint63.size f 0 i (fun _ _ => false) x).2.
+
+Definition ifold_from {T : Type} (f : int -> T -> T) (k : int) (i : int) (x : T) :=
+  (ifold_ Uint63.size f k i (fun _ _ => false) x).2.
+
+Definition ifold_from_until {T : Type} (f : int -> T -> T) (k : int) (i : int) (stopCondition: int -> T -> bool) (x : T) :=
+  (ifold_ Uint63.size f k i stopCondition x).2.
 
 End Uint63.
 
@@ -30,6 +36,18 @@ Definition fold {T A : Type} (f : T -> A -> A) (a : array T) (x0 : A) :=
 Definition foldi {T A : Type} (f : int -> T -> A -> A) (a : array T) (x0 : A) :=
   ifold (fun i acc => f i a.[i] acc) (length a) x0.
 
+Definition fold_from {T A : Type} (f : T -> A -> A) (a : array T) (k : int) (x0 : A) :=
+  ifold_from (fun i acc => f a.[i] acc) k (length a) x0.
+
+Definition foldi_from {T A : Type} (f : int -> T -> A -> A) (a : array T) (k : int) (x0 : A) :=
+  ifold_from (fun i acc => f i a.[i] acc) k (length a) x0.
+
+Definition fold_from_until {T A : Type} (f : T -> A -> A) (a : array T) (k : int) (stopCondition : int -> A -> bool) (x0 : A) :=
+  ifold_from_until (fun i acc => f a.[i] acc) k (length a) stopCondition x0.
+
+Definition foldi_from_until {T A : Type} (f : int -> T -> A -> A) (a : array T) (k : int) (stopCondition : int -> A -> bool) (x0 : A) :=
+  ifold_from_until (fun i acc => f i a.[i] acc) k (length a) stopCondition x0.
+ 
 Definition fold_compose {A B C : Type} (f : B -> C -> C) (g : A -> B) (a : array A) (x0 : C) :=
   fold (compose f g) a x0.
 
@@ -93,6 +111,13 @@ Definition mem_sorted {T : Type} (ltT : T -> T -> bool) (a : array T) (x : T) : 
   | None => false
   | Some b => b
   end. 
+
+Definition find_from {T : Type} (eqT : T -> T -> bool) (a : array T) (x : T) (k : int) : option int :=
+  foldi_from (fun i _ acc => if acc is Some _ then acc
+                         else (if (eqT x a.[i]) then Some(i) else None)) a k None.
+
+Definition find_from_until {T : Type} (eqT : T -> T -> bool) (a : array T) (x : T) (k : int) : option int :=
+  foldi_from_until (fun i _ acc => if (eqT x a.[i]) then Some(i) else None) a k (fun i x => (if x is Some _ then true else false)) None.      
 
 Definition eqbArray {T : Type} (eqT : T -> T -> bool) (a b : array T) : bool :=
   for_all2 eqT a b.
@@ -527,12 +552,37 @@ Definition feasibility_check (cert : Certificate) :=
   ifold (fun i acc => acc && check_ineqs inequalities (activeSet vertices.[i]) (point vertices.[i])) 
     (length vertices) true.
 
+Definition isRidgeInFacet (facet1 facet2 : GlobalDescription) (v : int) : bool :=
+  let res := foldi (fun i x acc => if (x =? v)%uint63 then acc
+                                   else match acc.2 with  
+                                   |None => (false,None)
+                                   |Some i => if (find_from Uint63.eqb facet2 x i) is (Some j) 
+                                              then (acc.1 && true, Some j)
+                                              else (false, None) end) facet1 (true,Some (0%uint63))
+  in res.1.
+
+Definition isRidgeInFacetFaster (facet1 facet2 : GlobalDescription) (v : int) : bool :=
+  let res := foldi (fun i x acc => if (x =? v)%uint63 then acc
+                                   else match acc.2 with  
+                                   |None => (false,None)
+                                   |Some i => if (find_from_until Uint63.eqb facet2 x i) is (Some j) 
+                                              then (acc.1 && true, Some j)
+                                              else (false, None) end) facet1 (true,Some (0%uint63))
+  in res.1.
+  
+Definition adjacency_check (cert : Certificate) :=
+  let graph := graph cert in
+  let facets := facets cert in
+  for_alli_matrix (fun i j v => isRidgeInFacetFaster (globalDescription (facets.[i])) (globalDescription (facets.[v]))
+  (globalDescription (facets.[i])).[j]) graph.
+
+(*
 Definition adjacency_check (cert : Certificate) :=
   let graph := graph cert in
   let facets := facets cert in
   for_alli_matrix (fun i j v => for_all (fun x => (x =? (globalDescription (facets.[i])).[j])%uint63
-  || (mem Uint63.eqb (globalDescription facets.[v]) x)) (globalDescription (facets.[i]))) graph.
-
+  || (mem_sorted Uint63.eqb (globalDescription facets.[v]) x)) (globalDescription (facets.[i]))) graph.
+*)
 
 Definition check_certificate (cert : Certificate) :=
   (areActiveSetsWellConstructed cert)
