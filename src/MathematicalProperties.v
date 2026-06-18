@@ -22,40 +22,23 @@ Record asc := {
     isAsc : isClosedBySubsets simplices
 }.
 
-(* To encode dimensions as nat rather than int, we adopt the convention that the empty 
-simplex has dimension 0, vertices have dimension 1, and edges have dimension 2. *)
-
 Definition simplex := {set 'I_m}.
 
 Definition dimSimpl (F : simplex) := #|F| - 1.
 
-Record vertex := {
-    vertexValue : simplex;
-    isVertex : (dimSimpl vertexValue) = 1
-}.
-Record edge := {
-    edgeValue : simplex;
-    isEdge : (dimSimpl edgeValue) = 2 
-}.
-
 Definition isMaximal (K: asc) (F : simplex) : Prop :=
     (F \in simplices K) /\
-    (forall G : simplex, (G \in simplices K) -> ((dimSimpl G) <= (dimSimpl F))).
+    (forall G : simplex, (G \in simplices K) -> (F \subset G) -> (F = G)).
 
 Definition isPure (K : asc) : Prop := 
     forall F G : simplex, (isMaximal K F) -> (isMaximal K G) -> (dimSimpl F = dimSimpl G).
 
-(* Because of the previous convention, d-purity corresponds to having dimension d + 2. *)
+(* Since natural numbers do not include -1, all dimensions are shifted by an offset of 1. *)
+(* Faut-il l'existence d'un simplexe de dimension d+2 ? *)
 Definition isDPure (K : asc) (d : nat) : Prop :=
     forall F : simplex, (isMaximal K F) -> dimSimpl F = d+2.
 
 Context (d : nat).
-
-(*We define (d-1)-Pure Abstract Simplicial Complexes. *)
-Record pasc := {
-    complex : asc;
-    isComplexDPure : isDPure complex (d-1)
-}.
 
 (* Because of the previous convention, a facet is a d+1 simplex. *)
 Record facet := {
@@ -90,5 +73,7 @@ Definition areFacetsPointed (K : asc) :=
     forall sig : facet, (facetValue sig \in simplices K) -> (isFacetPointed sig).
 
 End RelaxationTheorem.
+
+
 
 
