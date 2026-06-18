@@ -1,0 +1,332 @@
+DIGEST 88c2da6bfb6e61fe398bf4488ba455b2
+FPolyhedra.xfinmap
+R546:558 mathcomp.ssreflect.all_ssreflect <> <> lib
+R560:565 mathcomp.finmap.finmap <> <> lib
+R651:662 mathcomp.ssreflect.order Order.Theory <> mod
+prf 879:890 <> fset_display
+R894:897 Coq.Init.Datatypes <> unit ind
+R914:915 Coq.Init.Datatypes <> tt constr
+R914:915 Coq.Init.Datatypes <> tt constr
+sec 1007:1023 <> BDistrLatticeType
+R1039:1048 mathcomp.ssreflect.choice Choice.Exports choiceType abbrev
+binder 1035:1035 <> T:1
+def 1072:1089 <> fset_meetJoinMixin
+R1097:1114 mathcomp.ssreflect.relorder RelOrder.DistrMeetJoinMixin.Exports DistrMeetJoinMixin abbrev
+R1116:1130 mathcomp.ssreflect.choice Choice.Exports ::form_scope:'['_'choiceType'_'of'_x_']' not
+R1139:1139 mathcomp.ssreflect.choice Choice.Exports ::form_scope:'['_'choiceType'_'of'_x_']' not
+R1131:1136 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1138:1138 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1137:1137 Polyhedra.xfinmap <> BDistrLatticeType.T var
+R1145:1151 mathcomp.finmap.finmap <> fsubset def
+R1153:1159 mathcomp.finmap.finmap <> fproper def
+R1161:1165 mathcomp.finmap.finmap <> fsetI def
+R1167:1171 mathcomp.finmap.finmap <> fsetU def
+R1185:1189 Coq.ssr.ssrfun <> erefl abbrev
+R1203:1208 mathcomp.finmap.finmap <> fsetIC thm
+R1210:1210 Polyhedra.xfinmap <> BDistrLatticeType.T var
+R1215:1220 mathcomp.finmap.finmap <> fsetUC thm
+R1222:1222 Polyhedra.xfinmap <> BDistrLatticeType.T var
+R1227:1232 mathcomp.finmap.finmap <> fsetIA thm
+R1234:1234 Polyhedra.xfinmap <> BDistrLatticeType.T var
+R1239:1244 mathcomp.finmap.finmap <> fsetUA thm
+R1246:1246 Polyhedra.xfinmap <> BDistrLatticeType.T var
+binder 1259:1259 <> x:2
+binder 1261:1261 <> y:3
+R1266:1271 mathcomp.finmap.finmap <> fsetKU thm
+R1275:1275 Polyhedra.xfinmap <> x:2 var
+R1273:1273 Polyhedra.xfinmap <> y:3 var
+binder 1283:1283 <> x:4
+binder 1285:1285 <> y:5
+R1290:1295 mathcomp.finmap.finmap <> fsetKI thm
+R1299:1299 Polyhedra.xfinmap <> x:4 var
+R1297:1297 Polyhedra.xfinmap <> y:5 var
+R1304:1310 mathcomp.finmap.finmap <> fsetIUl thm
+R1312:1312 Polyhedra.xfinmap <> BDistrLatticeType.T var
+R1317:1323 mathcomp.finmap.finmap <> fsetIid thm
+R1325:1325 Polyhedra.xfinmap <> BDistrLatticeType.T var
+R1365:1375 mathcomp.finmap.finmap <> fproperEneq thm
+R1377:1382 mathcomp.ssreflect.eqtype <> eq_sym thm
+R1365:1375 mathcomp.finmap.finmap <> fproperEneq thm
+R1365:1375 mathcomp.finmap.finmap <> fproperEneq thm
+R1377:1382 mathcomp.ssreflect.eqtype <> eq_sym thm
+R1377:1382 mathcomp.ssreflect.eqtype <> eq_sym thm
+def 1401:1415 <> fset_porderType
+R1420:1429 mathcomp.ssreflect.order Order.POrder.Exports POrderType abbrev
+R1444:1449 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1451:1451 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1450:1450 Polyhedra.xfinmap <> BDistrLatticeType.T var
+R1431:1442 Polyhedra.xfinmap <> fset_display thm
+R1453:1470 Polyhedra.xfinmap <> fset_meetJoinMixin def
+def 1483:1498 <> fset_bPOrderType
+R1503:1513 mathcomp.ssreflect.order Order.BPOrder.Exports BPOrderType abbrev
+R1515:1520 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1522:1522 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1521:1521 Polyhedra.xfinmap <> BDistrLatticeType.T var
+R1525:1535 mathcomp.ssreflect.order Order.RelOrderMixin.Exports BottomMixin def
+R1539:1546 mathcomp.finmap.finmap <> fsub0set thm
+R1548:1548 Polyhedra.xfinmap <> BDistrLatticeType.T var
+def 1563:1586 <> fset_meetSemilatticeType
+R1591:1609 mathcomp.ssreflect.order Order.MeetSemilattice.Exports MeetSemilatticeType abbrev
+R1611:1616 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1618:1618 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1617:1617 Polyhedra.xfinmap <> BDistrLatticeType.T var
+R1620:1637 Polyhedra.xfinmap <> fset_meetJoinMixin def
+def 1650:1674 <> fset_bMeetSemilatticeType
+R1679:1703 mathcomp.ssreflect.order Order.BMeetSemilattice.Exports ::form_scope:'['_'bMeetSemilatticeType'_'of'_x_']' not
+R1712:1712 mathcomp.ssreflect.order Order.BMeetSemilattice.Exports ::form_scope:'['_'bMeetSemilatticeType'_'of'_x_']' not
+R1704:1709 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1711:1711 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1710:1710 Polyhedra.xfinmap <> BDistrLatticeType.T var
+def 1725:1748 <> fset_joinSemilatticeType
+R1753:1771 mathcomp.ssreflect.order Order.JoinSemilattice.Exports JoinSemilatticeType abbrev
+R1773:1778 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1780:1780 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1779:1779 Polyhedra.xfinmap <> BDistrLatticeType.T var
+R1782:1799 Polyhedra.xfinmap <> fset_meetJoinMixin def
+def 1812:1836 <> fset_bJoinSemilatticeType
+R1841:1865 mathcomp.ssreflect.order Order.BJoinSemilattice.Exports ::form_scope:'['_'bJoinSemilatticeType'_'of'_x_']' not
+R1874:1874 mathcomp.ssreflect.order Order.BJoinSemilattice.Exports ::form_scope:'['_'bJoinSemilatticeType'_'of'_x_']' not
+R1866:1871 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1873:1873 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1872:1872 Polyhedra.xfinmap <> BDistrLatticeType.T var
+def 1887:1902 <> fset_latticeType
+R1907:1922 mathcomp.ssreflect.order Order.Lattice.Exports ::form_scope:'['_'latticeType'_'of'_x_']' not
+R1931:1931 mathcomp.ssreflect.order Order.Lattice.Exports ::form_scope:'['_'latticeType'_'of'_x_']' not
+R1923:1928 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1930:1930 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1929:1929 Polyhedra.xfinmap <> BDistrLatticeType.T var
+def 1944:1960 <> fset_bLatticeType
+R1965:1981 mathcomp.ssreflect.order Order.BLattice.Exports ::form_scope:'['_'bLatticeType'_'of'_x_']' not
+R1990:1990 mathcomp.ssreflect.order Order.BLattice.Exports ::form_scope:'['_'bLatticeType'_'of'_x_']' not
+R1982:1987 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1989:1989 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1988:1988 Polyhedra.xfinmap <> BDistrLatticeType.T var
+def 2003:2023 <> fset_distrLatticeType
+R2028:2043 mathcomp.ssreflect.order Order.DistrLattice.Exports DistrLatticeType abbrev
+R2045:2050 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2052:2052 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2051:2051 Polyhedra.xfinmap <> BDistrLatticeType.T var
+R2054:2071 Polyhedra.xfinmap <> fset_meetJoinMixin def
+def 2084:2105 <> fset_bDistrLatticeType
+R2110:2131 mathcomp.ssreflect.order Order.BDistrLattice.Exports ::form_scope:'['_'bDistrLatticeType'_'of'_x_']' not
+R2140:2140 mathcomp.ssreflect.order Order.BDistrLattice.Exports ::form_scope:'['_'bDistrLatticeType'_'of'_x_']' not
+R2132:2137 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2139:2139 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2138:2138 Polyhedra.xfinmap <> BDistrLatticeType.T var
+def 2162:2184 <> fset_cbDistrLatticeType
+R2189:2206 mathcomp.ssreflect.order Order.CBDistrLattice.Exports CBDistrLatticeType abbrev
+R2208:2213 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2215:2215 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2214:2214 Polyhedra.xfinmap <> BDistrLatticeType.T var
+R2221:2239 mathcomp.ssreflect.order Order.CBDistrLatticeMixin.Exports CBDistrLatticeMixin abbrev
+R2245:2249 mathcomp.finmap.finmap <> fsetD def
+binder 2258:2258 <> x:6
+binder 2260:2260 <> y:7
+R2265:2270 mathcomp.finmap.finmap <> fsetID thm
+R2274:2274 Polyhedra.xfinmap <> x:6 var
+R2272:2272 Polyhedra.xfinmap <> y:7 var
+R2313:2315 Coq.ssr.ssrbool <> rwP thm
+R2317:2319 mathcomp.ssreflect.eqtype <> eqP thm
+R2323:2326 mathcomp.ssreflect.order Order.BPOrderTheory lex0 thm
+R2335:2342 mathcomp.finmap.finmap <> fsubsetP thm
+R2313:2315 Coq.ssr.ssrbool <> rwP thm
+R2317:2319 mathcomp.ssreflect.eqtype <> eqP thm
+R2313:2315 Coq.ssr.ssrbool <> rwP thm
+R2317:2319 mathcomp.ssreflect.eqtype <> eqP thm
+R2323:2326 mathcomp.ssreflect.order Order.BPOrderTheory lex0 thm
+R2323:2326 mathcomp.ssreflect.order Order.BPOrderTheory lex0 thm
+R2335:2342 mathcomp.finmap.finmap <> fsubsetP thm
+R2367:2369 mathcomp.finmap.finmap <> inE def
+R2367:2369 mathcomp.finmap.finmap <> inE def
+R2367:2369 mathcomp.finmap.finmap <> inE def
+R2367:2369 mathcomp.finmap.finmap <> inE def
+R2367:2369 mathcomp.finmap.finmap <> inE def
+R2367:2369 mathcomp.finmap.finmap <> inE def
+R2375:2379 Coq.ssr.ssrbool <> and3P thm
+R2395:2411 Polyhedra.xfinmap BDistrLatticeType <> sec
+sec 2498:2507 <> FinLattice
+R2523:2529 mathcomp.ssreflect.fintype Finite.Exports finType abbrev
+binder 2519:2519 <> T:8
+def 2545:2549 <> fsetT
+R2554:2559 mathcomp.finmap.finmap <> ::fset_scope:'['_'fset'_x_'in'_x_']' not
+R2561:2564 mathcomp.finmap.finmap <> ::fset_scope:'['_'fset'_x_'in'_x_']' not
+R2566:2566 mathcomp.finmap.finmap <> ::fset_scope:'['_'fset'_x_'in'_x_']' not
+binder 2560:2560 <> x:9
+binder 2560:2560 <> x:10
+binder 2560:2560 <> x:11
+R2565:2565 Polyhedra.xfinmap <> FinLattice.T var
+def 2581:2585 <> fsetC
+R2592:2597 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2599:2599 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2598:2598 Polyhedra.xfinmap <> FinLattice.T var
+binder 2588:2588 <> A:12
+R2610:2614 mathcomp.finmap.finmap <> ::fset_scope:x_'`\`'_x not
+R2605:2609 Polyhedra.xfinmap <> fsetT def
+R2615:2615 Polyhedra.xfinmap <> A:12 var
+prf 2625:2630 <> fsetTE
+binder 2632:2632 <> x:13
+R2637:2641 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R2636:2636 Polyhedra.xfinmap <> x:13 var
+R2642:2646 Polyhedra.xfinmap <> fsetT def
+R2668:2670 mathcomp.finmap.finmap <> inE def
+R2668:2670 mathcomp.finmap.finmap <> inE def
+R2668:2670 mathcomp.finmap.finmap <> inE def
+R2668:2670 mathcomp.finmap.finmap <> inE def
+R2668:2670 mathcomp.finmap.finmap <> inE def
+prf 2685:2690 <> fsetCE
+R2697:2702 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2704:2704 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2703:2703 Polyhedra.xfinmap <> FinLattice.T var
+binder 2693:2693 <> A:14
+binder 2707:2707 <> x:15
+R2711:2711 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R2725:2729 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R2740:2740 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R2713:2717 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R2712:2712 Polyhedra.xfinmap <> x:15 var
+R2718:2722 Polyhedra.xfinmap <> fsetC def
+R2724:2724 Polyhedra.xfinmap <> A:14 var
+R2731:2738 Coq.ssr.ssrbool <> ::bool_scope:x_'\notin'_x not
+R2730:2730 Polyhedra.xfinmap <> x:15 var
+R2739:2739 Polyhedra.xfinmap <> A:14 var
+R2762:2762 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2766:2767 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2774:2774 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2763:2765 mathcomp.finmap.finmap <> inE def
+R2768:2773 Polyhedra.xfinmap <> fsetTE thm
+R2776:2780 Coq.ssr.ssrbool <> andbT thm
+R2762:2762 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2766:2767 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2774:2774 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2763:2765 mathcomp.finmap.finmap <> inE def
+R2768:2773 Polyhedra.xfinmap <> fsetTE thm
+R2762:2762 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2766:2767 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2774:2774 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2763:2765 mathcomp.finmap.finmap <> inE def
+R2768:2773 Polyhedra.xfinmap <> fsetTE thm
+R2762:2762 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2766:2767 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2774:2774 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2763:2765 mathcomp.finmap.finmap <> inE def
+R2768:2773 Polyhedra.xfinmap <> fsetTE thm
+R2762:2762 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2766:2767 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2774:2774 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2763:2765 mathcomp.finmap.finmap <> inE def
+R2768:2773 Polyhedra.xfinmap <> fsetTE thm
+R2776:2780 Coq.ssr.ssrbool <> andbT thm
+R2776:2780 Coq.ssr.ssrbool <> andbT thm
+def 2800:2802 <> inE
+R2807:2807 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2811:2812 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2819:2820 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2827:2827 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R2808:2810 mathcomp.finmap.finmap <> inE def
+R2813:2818 Polyhedra.xfinmap <> fsetTE thm
+R2821:2826 Polyhedra.xfinmap <> fsetCE thm
+def 2849:2864 <> fset_tPOrderType
+R2871:2881 mathcomp.ssreflect.order Order.TPOrder.Exports TPOrderType abbrev
+R2883:2888 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2890:2890 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2889:2889 Polyhedra.xfinmap <> FinLattice.T var
+R2894:2901 mathcomp.ssreflect.order Order.RelOrderMixin.Exports TopMixin def
+R2907:2911 Polyhedra.xfinmap <> fsetT def
+R2951:2958 mathcomp.finmap.finmap <> fsubsetP thm
+R2975:2977 Polyhedra.xfinmap <> inE def
+R2951:2958 mathcomp.finmap.finmap <> fsubsetP thm
+R2975:2977 Polyhedra.xfinmap <> inE def
+R2975:2977 Polyhedra.xfinmap <> inE def
+def 2996:3012 <> fset_tbPOrderType
+R3017:3033 mathcomp.ssreflect.order Order.TBPOrder.Exports ::form_scope:'['_'tbPOrderType'_'of'_x_']' not
+R3042:3042 mathcomp.ssreflect.order Order.TBPOrder.Exports ::form_scope:'['_'tbPOrderType'_'of'_x_']' not
+R3034:3039 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3041:3041 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3040:3040 Polyhedra.xfinmap <> FinLattice.T var
+def 3056:3068 <> finPOrderType
+R3073:3090 mathcomp.ssreflect.order Order.FinPOrder.Exports ::form_scope:'['_'finPOrderType'_'of'_x_']' not
+R3099:3099 mathcomp.ssreflect.order Order.FinPOrder.Exports ::form_scope:'['_'finPOrderType'_'of'_x_']' not
+R3091:3096 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3098:3098 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3097:3097 Polyhedra.xfinmap <> FinLattice.T var
+def 3112:3125 <> finBPOrderType
+R3130:3148 mathcomp.ssreflect.order Order.FinBPOrder.Exports ::form_scope:'['_'finBPOrderType'_'of'_x_']' not
+R3157:3157 mathcomp.ssreflect.order Order.FinBPOrder.Exports ::form_scope:'['_'finBPOrderType'_'of'_x_']' not
+R3149:3154 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3156:3156 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3155:3155 Polyhedra.xfinmap <> FinLattice.T var
+def 3170:3183 <> finTPOrderType
+R3188:3206 mathcomp.ssreflect.order Order.FinTPOrder.Exports ::form_scope:'['_'finTPOrderType'_'of'_x_']' not
+R3215:3215 mathcomp.ssreflect.order Order.FinTPOrder.Exports ::form_scope:'['_'finTPOrderType'_'of'_x_']' not
+R3207:3212 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3214:3214 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3213:3213 Polyhedra.xfinmap <> FinLattice.T var
+def 3228:3242 <> finTBPOrderType
+R3247:3266 mathcomp.ssreflect.order Order.FinTBPOrder.Exports ::form_scope:'['_'finTBPOrderType'_'of'_x_']' not
+R3275:3275 mathcomp.ssreflect.order Order.FinTBPOrder.Exports ::form_scope:'['_'finTBPOrderType'_'of'_x_']' not
+R3267:3272 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3274:3274 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3273:3273 Polyhedra.xfinmap <> FinLattice.T var
+def 3289:3300 <> tLatticeType
+R3305:3321 mathcomp.ssreflect.order Order.TLattice.Exports ::form_scope:'['_'tLatticeType'_'of'_x_']' not
+R3330:3330 mathcomp.ssreflect.order Order.TLattice.Exports ::form_scope:'['_'tLatticeType'_'of'_x_']' not
+R3322:3327 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3329:3329 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3328:3328 Polyhedra.xfinmap <> FinLattice.T var
+def 3343:3355 <> tbLatticeType
+R3360:3377 mathcomp.ssreflect.order Order.TBLattice.Exports ::form_scope:'['_'tbLatticeType'_'of'_x_']' not
+R3386:3386 mathcomp.ssreflect.order Order.TBLattice.Exports ::form_scope:'['_'tbLatticeType'_'of'_x_']' not
+R3378:3383 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3385:3385 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3384:3384 Polyhedra.xfinmap <> FinLattice.T var
+def 3399:3412 <> finLatticeType
+R3417:3435 mathcomp.ssreflect.order Order.FinLattice.Exports ::form_scope:'['_'finLatticeType'_'of'_x_']' not
+R3444:3444 mathcomp.ssreflect.order Order.FinLattice.Exports ::form_scope:'['_'finLatticeType'_'of'_x_']' not
+R3436:3441 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3443:3443 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3442:3442 Polyhedra.xfinmap <> FinLattice.T var
+def 3457:3472 <> finTBLatticeType
+R3477:3497 mathcomp.ssreflect.order Order.FinTBLattice.Exports ::form_scope:'['_'finTBLatticeType'_'of'_x_']' not
+R3506:3506 mathcomp.ssreflect.order Order.FinTBLattice.Exports ::form_scope:'['_'finTBLatticeType'_'of'_x_']' not
+R3498:3503 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3505:3505 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3504:3504 Polyhedra.xfinmap <> FinLattice.T var
+def 3520:3536 <> tDistrLatticeType
+R3541:3562 mathcomp.ssreflect.order Order.TDistrLattice.Exports ::form_scope:'['_'tDistrLatticeType'_'of'_x_']' not
+R3571:3571 mathcomp.ssreflect.order Order.TDistrLattice.Exports ::form_scope:'['_'tDistrLatticeType'_'of'_x_']' not
+R3563:3568 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3570:3570 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3569:3569 Polyhedra.xfinmap <> FinLattice.T var
+def 3584:3601 <> tbDistrLatticeType
+R3606:3628 mathcomp.ssreflect.order Order.TBDistrLattice.Exports ::form_scope:'['_'tbDistrLatticeType'_'of'_x_']' not
+R3637:3637 mathcomp.ssreflect.order Order.TBDistrLattice.Exports ::form_scope:'['_'tbDistrLatticeType'_'of'_x_']' not
+R3629:3634 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3636:3636 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3635:3635 Polyhedra.xfinmap <> FinLattice.T var
+def 3650:3668 <> finDistrLatticeType
+R3673:3696 mathcomp.ssreflect.order Order.FinDistrLattice.Exports ::form_scope:'['_'finDistrLatticeType'_'of'_x_']' not
+R3705:3705 mathcomp.ssreflect.order Order.FinDistrLattice.Exports ::form_scope:'['_'finDistrLatticeType'_'of'_x_']' not
+R3697:3702 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3704:3704 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3703:3703 Polyhedra.xfinmap <> FinLattice.T var
+def 3718:3738 <> finTBDistrLatticeType
+R3743:3768 mathcomp.ssreflect.order Order.FinTBDistrLattice.Exports ::form_scope:'['_'finTBDistrLatticeType'_'of'_x_']' not
+R3777:3777 mathcomp.ssreflect.order Order.FinTBDistrLattice.Exports ::form_scope:'['_'finTBDistrLatticeType'_'of'_x_']' not
+R3769:3774 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3776:3776 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3775:3775 Polyhedra.xfinmap <> FinLattice.T var
+def 3799:3817 <> ctbDistrLatticeType
+R3822:3840 mathcomp.ssreflect.order Order.CTBDistrLattice.Exports CTBDistrLatticeType abbrev
+R3842:3847 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3849:3849 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3848:3848 Polyhedra.xfinmap <> FinLattice.T var
+R3855:3874 mathcomp.ssreflect.order Order.CTBDistrLatticeMixin.Exports CTBDistrLatticeMixin abbrev
+R3880:3884 mathcomp.finmap.finmap <> fsetD def
+R3886:3890 Polyhedra.xfinmap <> fsetC def
+def 3907:3928 <> finCTBDistrLatticeType
+R3933:3959 mathcomp.ssreflect.order Order.FinCTBDistrLattice.Exports ::form_scope:'['_'finCTBDistrLatticeType'_'of'_x_']' not
+R3968:3968 mathcomp.ssreflect.order Order.FinCTBDistrLattice.Exports ::form_scope:'['_'finCTBDistrLatticeType'_'of'_x_']' not
+R3960:3965 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3967:3967 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3966:3966 Polyhedra.xfinmap <> FinLattice.T var
+R3975:3984 Polyhedra.xfinmap FinLattice <> sec

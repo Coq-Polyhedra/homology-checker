@@ -10,7 +10,7 @@
 Require Import Recdef.
 From mathcomp Require Import all_ssreflect.
 From mathcomp Require Import ssralg ssrnum zmodp fingroup perm matrix mxalgebra vector.
-Require Import extra_misc inner_product vector_order extra_matrix row_submx.
+From Polyhedra Require Import extra_misc inner_product vector_order extra_matrix row_submx.
 
 Import Order.Theory.
 

@@ -10,9 +10,9 @@
 Require Import Recdef.
 From mathcomp Require Import all_ssreflect ssralg ssrnum zmodp.
 From mathcomp Require Import matrix mxalgebra vector finmap.
-Require Import extra_misc inner_product extra_matrix.
-Require Import xorder vector_order row_submx.
-Require Import hpolyhedron affine barycenter lrel polyhedron.
+From Polyhedra Require Import extra_misc inner_product extra_matrix.
+From Polyhedra Require Import xorder vector_order row_submx.
+From Polyhedra Require Import hpolyhedron affine barycenter lrel polyhedron.
 From mathcomp.bigenough Require Import bigenough.
 Import BigEnough.
 Import Order.Theory.

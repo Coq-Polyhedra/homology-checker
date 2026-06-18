@@ -1,4 +1,22 @@
+-Q theories Polyhedra
 -Q src Cert
-src/FirstPart.v
+
+theories/extra_misc.v
+theories/affine.v
+theories/barycenter.v
+theories/extra_matrix.v
+theories/fsetmin.v
+theories/hpolyhedron.v
+theories/inner_product.v
+theories/lrel.v
+theories/poly_base.v
+theories/polyhedron.v
+theories/row_submx.v
+theories/simplex.v
+theories/vector_order.v
+theories/xfinmap.v
+theories/xorder.v
+
 src/MathematicalProperties.v
+src/FirstPart.v
 

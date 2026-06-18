@@ -15,7 +15,7 @@
 
 From mathcomp Require Import all_ssreflect.
 From mathcomp Require Import bigop ssralg ssrnum zmodp matrix vector fingroup perm order.
-Require Import extra_matrix.
+From Polyhedra Require Import extra_matrix.
 Import Order.Theory.
 
 Set Implicit Arguments.

@@ -1,0 +1,1128 @@
+DIGEST 3f53effd2643288a39d9c77d22c7dbfc
+FPolyhedra.lrel
+R546:558 mathcomp.ssreflect.all_ssreflect <> <> lib
+R560:570 mathcomp.algebra.all_algebra <> <> lib
+R572:577 mathcomp.finmap.finmap <> <> lib
+R610:619 Polyhedra.extra_misc <> <> lib
+R621:633 Polyhedra.inner_product <> <> lib
+R635:643 Polyhedra.row_submx <> <> lib
+R645:654 Polyhedra.barycenter <> <> lib
+R656:667 Polyhedra.vector_order <> <> lib
+R678:689 mathcomp.ssreflect.order Order.Theory <> mod
+R812:823 mathcomp.algebra.ssralg GRing.Theory <> mod
+R825:834 mathcomp.algebra.ssrnum Num.Theory <> mod
+sec 1322:1325 <> Base
+binder 1337:1337 <> R:1
+R1352:1354 Coq.Init.Datatypes <> nat ind
+binder 1348:1348 <> n:2
+ind 1367:1379 <> base_elt_type
+constr 1398:1404 <> BaseElt
+R1383:1393 Coq.ssr.ssrbool <> predArgType def
+R1418:1420 Coq.Init.Datatypes <> ::type_scope:x_'*'_x not
+R1410:1413 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R1415:1416 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R1414:1414 Polyhedra.lrel <> Base.R var
+R1417:1417 Polyhedra.lrel <> Base.n var
+R1421:1421 Polyhedra.lrel <> Base.R var
+def 1435:1446 <> base_elt_val
+binder 1448:1448 <> b:5
+R1471:1471 Polyhedra.lrel <> b:5 var
+R1458:1464 Polyhedra.lrel <> BaseElt constr
+R1476:1476 Polyhedra.lrel <> b:5 var
+def 1490:1505 <> base_elt_subType
+R1522:1534 mathcomp.ssreflect.eqtype <> ::form_scope:'['_'newType'_'for'_x_']' not
+R1547:1547 mathcomp.ssreflect.eqtype <> ::form_scope:'['_'newType'_'for'_x_']' not
+R1535:1546 Polyhedra.lrel <> base_elt_val coe
+R1554:1557 Polyhedra.lrel Base <> sec
+R1593:1605 Polyhedra.lrel <> base_elt_type variant
+not 1570:1570 <> :::'lrel'_'['_x_']_'_x
+R1635:1639 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R1641:1643 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R1645:1645 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+not 1622:1622 <> :::'lrel'
+R1682:1687 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1697:1697 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1688:1692 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R1694:1695 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+not 1658:1658 <> :::'base_t'_'['_x_','_x_']'
+R1724:1730 Polyhedra.lrel <> :::'base_t'_'['_x_','_x_']' not
+R1732:1732 Polyhedra.lrel <> :::'base_t'_'['_x_','_x_']' not
+R1734:1734 Polyhedra.lrel <> :::'base_t'_'['_x_','_x_']' not
+not 1709:1709 <> :::'base_t'
+R1765:1771 Polyhedra.lrel <> BaseElt constr
+R1773:1773 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R1775:1776 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R1778:1778 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+not 1747:1747 <> :::'[<'_x_','_x_'>]'
+def 1869:1878 <> be_eqMixin
+R1885:1890 mathcomp.ssreflect.eqtype Equality.Exports eqType abbrev
+binder 1881:1881 <> R:7
+binder 1893:1893 <> n:8
+R1912:1923 mathcomp.ssreflect.eqtype <> ::form_scope:'['_'eqMixin'_'of'_x_'by'_'<:'_']' not
+R1933:1939 mathcomp.ssreflect.eqtype <> ::form_scope:'['_'eqMixin'_'of'_x_'by'_'<:'_']' not
+R1924:1928 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R1930:1931 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R1929:1929 Polyhedra.lrel <> R:7 var
+R1932:1932 Polyhedra.lrel <> n:8 var
+def 1952:1960 <> be_eqType
+R1967:1972 mathcomp.ssreflect.eqtype Equality.Exports eqType abbrev
+binder 1963:1963 <> R:9
+binder 1975:1975 <> n:10
+R1993:1998 mathcomp.ssreflect.eqtype Equality.Exports EqType abbrev
+R2000:2004 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2006:2007 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2005:2005 Polyhedra.lrel <> R:9 var
+R2008:2008 Polyhedra.lrel <> n:10 var
+R2012:2021 Polyhedra.lrel <> be_eqMixin def
+R2025:2025 Polyhedra.lrel <> n:10 var
+R2023:2023 Polyhedra.lrel <> R:9 var
+def 2040:2053 <> be_choiceMixin
+R2060:2069 mathcomp.ssreflect.choice Choice.Exports choiceType abbrev
+binder 2056:2056 <> R:11
+binder 2072:2072 <> n:12
+R2079:2094 mathcomp.ssreflect.choice <> ::form_scope:'['_'choiceMixin'_'of'_x_'by'_'<:'_']' not
+R2104:2110 mathcomp.ssreflect.choice <> ::form_scope:'['_'choiceMixin'_'of'_x_'by'_'<:'_']' not
+R2095:2099 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2101:2102 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2100:2100 Polyhedra.lrel <> R:11 var
+R2103:2103 Polyhedra.lrel <> n:12 var
+def 2123:2135 <> be_choiceType
+R2142:2151 mathcomp.ssreflect.choice Choice.Exports choiceType abbrev
+binder 2138:2138 <> R:13
+binder 2154:2154 <> n:14
+R2173:2182 mathcomp.ssreflect.choice Choice.Exports ChoiceType abbrev
+R2184:2188 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2190:2191 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2189:2189 Polyhedra.lrel <> R:13 var
+R2192:2192 Polyhedra.lrel <> n:14 var
+R2195:2208 Polyhedra.lrel <> be_choiceMixin def
+R2212:2212 Polyhedra.lrel <> n:14 var
+R2210:2210 Polyhedra.lrel <> R:13 var
+def 2227:2239 <> be_countMixin
+R2246:2254 mathcomp.ssreflect.choice Countable.Exports countType abbrev
+binder 2242:2242 <> R:15
+binder 2257:2257 <> n:16
+R2264:2278 mathcomp.ssreflect.choice <> ::form_scope:'['_'countMixin'_'of'_x_'by'_'<:'_']' not
+R2288:2294 mathcomp.ssreflect.choice <> ::form_scope:'['_'countMixin'_'of'_x_'by'_'<:'_']' not
+R2279:2283 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2285:2286 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2284:2284 Polyhedra.lrel <> R:15 var
+R2287:2287 Polyhedra.lrel <> n:16 var
+def 2307:2318 <> be_countType
+R2325:2333 mathcomp.ssreflect.choice Countable.Exports countType abbrev
+binder 2321:2321 <> R:17
+binder 2336:2336 <> n:18
+R2355:2363 mathcomp.ssreflect.choice Countable.Exports CountType abbrev
+R2365:2369 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2371:2372 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2370:2370 Polyhedra.lrel <> R:17 var
+R2373:2373 Polyhedra.lrel <> n:18 var
+R2376:2388 Polyhedra.lrel <> be_countMixin def
+R2392:2392 Polyhedra.lrel <> n:18 var
+R2390:2390 Polyhedra.lrel <> R:17 var
+def 2406:2420 <> be_subCountType
+R2427:2435 mathcomp.ssreflect.choice Countable.Exports countType abbrev
+binder 2423:2423 <> R:19
+binder 2438:2438 <> n:20
+R2457:2473 mathcomp.ssreflect.choice <> ::form_scope:'['_'subCountType'_'of'_x_']' not
+R2483:2483 mathcomp.ssreflect.choice <> ::form_scope:'['_'subCountType'_'of'_x_']' not
+R2474:2478 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2480:2481 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2479:2479 Polyhedra.lrel <> R:19 var
+R2482:2482 Polyhedra.lrel <> n:20 var
+def 2497:2507 <> be_finMixin
+R2514:2520 mathcomp.ssreflect.fintype Finite.Exports finType abbrev
+binder 2510:2510 <> R:21
+binder 2523:2523 <> n:22
+R2530:2542 mathcomp.ssreflect.fintype <> ::form_scope:'['_'finMixin'_'of'_x_'by'_'<:'_']' not
+R2552:2558 mathcomp.ssreflect.fintype <> ::form_scope:'['_'finMixin'_'of'_x_'by'_'<:'_']' not
+R2543:2547 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2549:2550 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2548:2548 Polyhedra.lrel <> R:21 var
+R2551:2551 Polyhedra.lrel <> n:22 var
+def 2571:2580 <> be_finType
+R2587:2593 mathcomp.ssreflect.fintype Finite.Exports finType abbrev
+binder 2583:2583 <> R:23
+binder 2596:2596 <> n:24
+R2615:2621 mathcomp.ssreflect.fintype Finite.Exports FinType abbrev
+R2623:2627 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2629:2630 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2628:2628 Polyhedra.lrel <> R:23 var
+R2631:2631 Polyhedra.lrel <> n:24 var
+R2634:2644 Polyhedra.lrel <> be_finMixin def
+R2648:2648 Polyhedra.lrel <> n:24 var
+R2646:2646 Polyhedra.lrel <> R:23 var
+def 2662:2674 <> be_subFinType
+R2681:2687 mathcomp.ssreflect.fintype Finite.Exports finType abbrev
+binder 2677:2677 <> R:25
+binder 2690:2690 <> n:26
+R2709:2723 mathcomp.ssreflect.fintype <> ::form_scope:'['_'subFinType'_'of'_x_']' not
+R2733:2733 mathcomp.ssreflect.fintype <> ::form_scope:'['_'subFinType'_'of'_x_']' not
+R2724:2728 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2730:2731 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2729:2729 Polyhedra.lrel <> R:25 var
+R2732:2732 Polyhedra.lrel <> n:26 var
+sec 2820:2829 <> BaseTheory
+binder 2841:2841 <> R:27
+R2856:2858 Coq.Init.Datatypes <> nat ind
+binder 2852:2852 <> n:28
+prf 2869:2871 <> beW
+R2887:2890 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2878:2882 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2884:2885 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2883:2883 Polyhedra.lrel <> BaseTheory.R var
+R2886:2886 Polyhedra.lrel <> BaseTheory.n var
+binder 2874:2874 <> P:29
+R2901:2901 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2924:2929 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2943:2943 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+binder 2909:2909 <> A:30
+binder 2911:2911 <> b:31
+R2914:2914 Polyhedra.lrel <> P:29 var
+R2916:2917 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R2919:2920 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R2922:2923 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R2918:2918 Polyhedra.lrel <> A:30 var
+R2921:2921 Polyhedra.lrel <> b:31 var
+binder 2937:2937 <> b:32
+R2940:2940 Polyhedra.lrel <> P:29 var
+R2942:2942 Polyhedra.lrel <> b:32 var
+prf 2984:2986 <> beE
+R2993:2997 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2999:3000 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R2998:2998 Polyhedra.lrel <> BaseTheory.R var
+R3001:3001 Polyhedra.lrel <> BaseTheory.n var
+binder 2989:2989 <> b:33
+R3018:3020 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3006:3007 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R3011:3012 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R3016:3017 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R3009:3010 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R3008:3008 Polyhedra.lrel <> b:33 var
+R3014:3015 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R3013:3013 Polyhedra.lrel <> b:33 var
+R3021:3021 Polyhedra.lrel <> b:33 var
+R3039:3041 Polyhedra.lrel <> beW thm
+R3056:3065 Polyhedra.lrel BaseTheory <> sec
+prf 3075:3080 <> be_eqE
+R3087:3092 mathcomp.ssreflect.eqtype Equality.Exports eqType abbrev
+binder 3083:3083 <> R:34
+binder 3095:3095 <> n:35
+R3106:3110 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R3112:3113 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R3111:3111 Polyhedra.lrel <> R:34 var
+R3114:3114 Polyhedra.lrel <> n:35 var
+binder 3098:3099 <> b1:36
+binder 3101:3102 <> b2:37
+R3121:3121 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3130:3133 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3124:3127 mathcomp.ssreflect.eqtype <> ::bool_scope:x_'=='_x not
+R3122:3123 Polyhedra.lrel <> b1:36 var
+R3128:3129 Polyhedra.lrel <> b2:37 var
+R3134:3137 Coq.ssr.ssrbool <> ::bool_scope:'['_'&&'_x_'&'_x_']' not
+R3150:3152 Coq.ssr.ssrbool <> ::bool_scope:'['_'&&'_x_'&'_x_']' not
+R3165:3165 Coq.ssr.ssrbool <> ::bool_scope:'['_'&&'_x_'&'_x_']' not
+R3142:3145 mathcomp.ssreflect.eqtype <> ::bool_scope:x_'=='_x not
+R3140:3141 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R3138:3139 Polyhedra.lrel <> b1:36 var
+R3148:3149 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R3146:3147 Polyhedra.lrel <> b2:37 var
+R3157:3160 mathcomp.ssreflect.eqtype <> ::bool_scope:x_'=='_x not
+R3155:3156 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R3153:3154 Polyhedra.lrel <> b1:36 var
+R3163:3164 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R3161:3162 Polyhedra.lrel <> b2:37 var
+prf 3194:3199 <> be_eqP
+R3206:3211 mathcomp.ssreflect.eqtype Equality.Exports eqType abbrev
+binder 3202:3202 <> R:38
+binder 3214:3214 <> n:39
+R3225:3229 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R3231:3232 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R3230:3230 Polyhedra.lrel <> R:38 var
+R3233:3233 Polyhedra.lrel <> n:39 var
+binder 3217:3218 <> b1:40
+binder 3220:3221 <> b2:41
+R3240:3246 Coq.ssr.ssrbool <> reflect abbrev
+R3260:3263 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R3253:3255 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3251:3252 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R3249:3250 Polyhedra.lrel <> b1:40 var
+R3258:3259 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R3256:3257 Polyhedra.lrel <> b2:41 var
+R3268:3270 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3266:3267 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R3264:3265 Polyhedra.lrel <> b1:40 var
+R3273:3274 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R3271:3272 Polyhedra.lrel <> b2:41 var
+R3280:3283 mathcomp.ssreflect.eqtype <> ::bool_scope:x_'=='_x not
+R3278:3279 Polyhedra.lrel <> b1:40 var
+R3284:3285 Polyhedra.lrel <> b2:41 var
+R3304:3309 Polyhedra.lrel <> be_eqE thm
+R3320:3323 Coq.ssr.ssrbool <> iffP thm
+R3325:3328 Coq.ssr.ssrbool <> andP thm
+R3304:3309 Polyhedra.lrel <> be_eqE thm
+R3304:3309 Polyhedra.lrel <> be_eqE thm
+R3320:3323 Coq.ssr.ssrbool <> iffP thm
+R3325:3328 Coq.ssr.ssrbool <> andP thm
+R3346:3348 mathcomp.ssreflect.eqtype <> eqP thm
+R3353:3355 mathcomp.ssreflect.eqtype <> eqP thm
+sec 3469:3480 <> BaseEncoding
+R3496:3501 mathcomp.ssreflect.eqtype Equality.Exports eqType abbrev
+binder 3492:3492 <> R:42
+R3509:3511 Coq.Init.Datatypes <> nat ind
+binder 3505:3505 <> n:43
+def 3527:3541 <> base_elt_to_col
+R3548:3552 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R3554:3555 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R3553:3553 Polyhedra.lrel <> BaseEncoding.R var
+R3556:3556 Polyhedra.lrel <> BaseEncoding.n var
+binder 3544:3544 <> v:44
+R3561:3564 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R3566:3568 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R3572:3572 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R3565:3565 Polyhedra.lrel <> BaseEncoding.R var
+R3570:3570 mathcomp.ssreflect.ssrnat <> ::nat_scope:x_'+'_x not
+R3569:3569 Polyhedra.lrel <> BaseEncoding.n var
+R3579:3584 mathcomp.algebra.matrix <> col_mx def
+R3591:3598 mathcomp.algebra.matrix <> const_mx def
+R3601:3602 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R3600:3600 Polyhedra.lrel <> v:44 var
+R3587:3588 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R3586:3586 Polyhedra.lrel <> v:44 var
+def 3618:3632 <> col_to_base_elt
+R3639:3642 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R3644:3646 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R3650:3650 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R3643:3643 Polyhedra.lrel <> BaseEncoding.R var
+R3648:3648 mathcomp.ssreflect.ssrnat <> ::nat_scope:x_'+'_x not
+R3647:3647 Polyhedra.lrel <> BaseEncoding.n var
+binder 3635:3635 <> v:45
+R3655:3659 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R3661:3662 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R3660:3660 Polyhedra.lrel <> BaseEncoding.R var
+R3663:3663 Polyhedra.lrel <> BaseEncoding.n var
+R3670:3672 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R3681:3682 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R3695:3697 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R3673:3678 mathcomp.algebra.matrix <> usubmx def
+R3680:3680 Polyhedra.lrel <> v:45 var
+R3683:3688 mathcomp.algebra.matrix <> dsubmx def
+R3690:3690 Polyhedra.lrel <> v:45 var
+prf 3707:3722 <> base_elt_to_colK
+R3726:3731 Coq.ssr.ssrfun <> cancel def
+R3749:3763 Polyhedra.lrel <> base_elt_to_col def
+R3733:3747 Polyhedra.lrel <> col_to_base_elt def
+R3789:3792 mathcomp.algebra.matrix <> colP thm
+R3807:3809 mathcomp.algebra.matrix <> mxE thm
+R3789:3792 mathcomp.algebra.matrix <> colP thm
+R3807:3809 mathcomp.algebra.matrix <> mxE thm
+R3807:3809 mathcomp.algebra.matrix <> mxE thm
+R3821:3827 Polyhedra.row_submx <> splitP' thm
+R3850:3852 mathcomp.algebra.matrix <> mxE thm
+R3855:3858 mathcomp.algebra.zmodp <> ord1 thm
+R3821:3827 Polyhedra.row_submx <> splitP' thm
+R3821:3827 Polyhedra.row_submx <> splitP' thm
+R3850:3852 mathcomp.algebra.matrix <> mxE thm
+R3850:3852 mathcomp.algebra.matrix <> mxE thm
+R3850:3852 mathcomp.algebra.matrix <> mxE thm
+R3855:3858 mathcomp.algebra.zmodp <> ord1 thm
+R3855:3858 mathcomp.algebra.zmodp <> ord1 thm
+R3850:3852 mathcomp.algebra.matrix <> mxE thm
+R3850:3852 mathcomp.algebra.matrix <> mxE thm
+R3850:3852 mathcomp.algebra.matrix <> mxE thm
+R3850:3852 mathcomp.algebra.matrix <> mxE thm
+R3855:3858 mathcomp.algebra.zmodp <> ord1 thm
+R3855:3858 mathcomp.algebra.zmodp <> ord1 thm
+R3855:3858 mathcomp.algebra.zmodp <> ord1 thm
+prf 3873:3888 <> col_to_base_eltK
+R3892:3897 Coq.ssr.ssrfun <> cancel def
+R3915:3929 Polyhedra.lrel <> col_to_base_elt def
+R3899:3913 Polyhedra.lrel <> base_elt_to_col def
+R3961:3963 mathcomp.ssreflect.eqtype <> eqP thm
+R3965:3970 Polyhedra.lrel <> be_eqP thm
+R3944:3946 Polyhedra.lrel <> beW thm
+R3961:3963 mathcomp.ssreflect.eqtype <> eqP thm
+R3965:3970 Polyhedra.lrel <> be_eqP thm
+R3996:3999 mathcomp.algebra.matrix <> colP thm
+R4014:4016 mathcomp.algebra.matrix <> mxE thm
+R4018:4025 mathcomp.algebra.matrix <> col_mxEu thm
+R3996:3999 mathcomp.algebra.matrix <> colP thm
+R4014:4016 mathcomp.algebra.matrix <> mxE thm
+R4014:4016 mathcomp.algebra.matrix <> mxE thm
+R4018:4025 mathcomp.algebra.matrix <> col_mxEu thm
+R4018:4025 mathcomp.algebra.matrix <> col_mxEu thm
+R4041:4043 mathcomp.algebra.matrix <> mxE thm
+R4045:4052 mathcomp.algebra.matrix <> col_mxEd thm
+R4054:4056 mathcomp.algebra.matrix <> mxE thm
+R4041:4043 mathcomp.algebra.matrix <> mxE thm
+R4041:4043 mathcomp.algebra.matrix <> mxE thm
+R4045:4052 mathcomp.algebra.matrix <> col_mxEd thm
+R4045:4052 mathcomp.algebra.matrix <> col_mxEd thm
+R4054:4056 mathcomp.algebra.matrix <> mxE thm
+R4054:4056 mathcomp.algebra.matrix <> mxE thm
+R4068:4079 Polyhedra.lrel BaseEncoding <> sec
+sec 4166:4183 <> BaseEncodingTheory
+R4199:4211 mathcomp.algebra.ssrnum Num.RealField.Exports realFieldType abbrev
+binder 4195:4195 <> R:46
+R4221:4223 Coq.Init.Datatypes <> nat ind
+binder 4215:4215 <> n:47
+binder 4217:4217 <> m:48
+prf 4234:4249 <> base_elt_to_colM
+R4256:4258 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R4260:4262 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R4264:4265 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R4267:4267 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R4259:4259 Polyhedra.lrel <> BaseEncodingTheory.R var
+R4263:4263 Polyhedra.lrel <> BaseEncodingTheory.n var
+R4266:4266 Polyhedra.lrel <> BaseEncodingTheory.m var
+binder 4252:4252 <> A:49
+R4275:4278 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R4280:4281 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R4279:4279 Polyhedra.lrel <> BaseEncodingTheory.R var
+R4282:4282 Polyhedra.lrel <> BaseEncodingTheory.n var
+binder 4271:4271 <> b:50
+R4290:4293 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R4295:4296 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R4294:4294 Polyhedra.lrel <> BaseEncodingTheory.R var
+R4297:4297 Polyhedra.lrel <> BaseEncodingTheory.n var
+binder 4286:4286 <> x:51
+R4343:4345 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4304:4318 Polyhedra.lrel <> base_elt_to_col def
+R4320:4322 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R4331:4332 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R4340:4342 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R4326:4329 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R4324:4325 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R4323:4323 Polyhedra.lrel <> A:49 var
+R4330:4330 Polyhedra.lrel <> x:51 var
+R4333:4334 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R4336:4337 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R4339:4339 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R4335:4335 Polyhedra.lrel <> b:50 var
+R4338:4338 Polyhedra.lrel <> x:51 var
+R4360:4363 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R4346:4346 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R4357:4359 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R4347:4352 mathcomp.algebra.matrix <> row_mx def
+R4356:4356 Polyhedra.lrel <> b:50 var
+R4354:4354 Polyhedra.lrel <> A:49 var
+R4364:4364 Polyhedra.lrel <> x:51 var
+R4380:4383 mathcomp.algebra.matrix <> colP thm
+R4409:4411 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4414:4416 mathcomp.algebra.matrix <> mxE thm
+R4428:4434 Polyhedra.row_submx <> splitP' thm
+R4380:4383 mathcomp.algebra.matrix <> colP thm
+R4414:4416 mathcomp.algebra.matrix <> mxE thm
+R4409:4411 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4408:4408 Polyhedra.lrel <> X:52 var
+R4414:4416 mathcomp.algebra.matrix <> mxE thm
+R4409:4411 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4408:4408 Polyhedra.lrel <> X:53 var
+R4414:4416 mathcomp.algebra.matrix <> mxE thm
+R4428:4434 Polyhedra.row_submx <> splitP' thm
+R4428:4434 Polyhedra.row_submx <> splitP' thm
+R4463:4471 mathcomp.algebra.matrix <> tr_row_mx thm
+R4473:4482 mathcomp.algebra.matrix <> mul_col_mx thm
+R4484:4491 mathcomp.algebra.matrix <> col_mxEu thm
+R4463:4471 mathcomp.algebra.matrix <> tr_row_mx thm
+R4463:4471 mathcomp.algebra.matrix <> tr_row_mx thm
+R4473:4482 mathcomp.algebra.matrix <> mul_col_mx thm
+R4473:4482 mathcomp.algebra.matrix <> mul_col_mx thm
+R4484:4491 mathcomp.algebra.matrix <> col_mxEu thm
+R4484:4491 mathcomp.algebra.matrix <> col_mxEu thm
+R4517:4520 mathcomp.algebra.zmodp <> ord1 thm
+R4522:4530 mathcomp.algebra.matrix <> tr_row_mx thm
+R4532:4541 mathcomp.algebra.matrix <> mul_col_mx thm
+R4543:4550 mathcomp.algebra.matrix <> col_mxEd thm
+R4517:4520 mathcomp.algebra.zmodp <> ord1 thm
+R4517:4520 mathcomp.algebra.zmodp <> ord1 thm
+R4522:4530 mathcomp.algebra.matrix <> tr_row_mx thm
+R4522:4530 mathcomp.algebra.matrix <> tr_row_mx thm
+R4532:4541 mathcomp.algebra.matrix <> mul_col_mx thm
+R4532:4541 mathcomp.algebra.matrix <> mul_col_mx thm
+R4543:4550 mathcomp.algebra.matrix <> col_mxEd thm
+R4543:4550 mathcomp.algebra.matrix <> col_mxEd thm
+R4566:4568 mathcomp.algebra.matrix <> mxE thm
+R4571:4578 Polyhedra.inner_product <> vdot_def thm
+R4580:4582 mathcomp.algebra.matrix <> mxE thm
+R4584:4587 mathcomp.ssreflect.eqtype <> eqxx abbrev
+R4589:4594 mathcomp.algebra.ssralg GRing.Theory mulr1n def
+R4596:4600 Polyhedra.inner_product <> vdotC thm
+R4566:4568 mathcomp.algebra.matrix <> mxE thm
+R4566:4568 mathcomp.algebra.matrix <> mxE thm
+R4571:4578 Polyhedra.inner_product <> vdot_def thm
+R4571:4578 Polyhedra.inner_product <> vdot_def thm
+R4580:4582 mathcomp.algebra.matrix <> mxE thm
+R4580:4582 mathcomp.algebra.matrix <> mxE thm
+R4584:4587 mathcomp.ssreflect.eqtype <> eqxx abbrev
+R4584:4587 mathcomp.ssreflect.eqtype <> eqxx abbrev
+R4589:4594 mathcomp.algebra.ssralg GRing.Theory mulr1n def
+R4589:4594 mathcomp.algebra.ssralg GRing.Theory mulr1n def
+R4596:4600 Polyhedra.inner_product <> vdotC thm
+R4596:4600 Polyhedra.inner_product <> vdotC thm
+R4612:4629 Polyhedra.lrel BaseEncodingTheory <> sec
+sec 4716:4723 <> BaseZmod
+R4739:4746 mathcomp.algebra.ssralg GRing.Zmodule.Exports zmodType abbrev
+binder 4735:4735 <> R:54
+R4754:4756 Coq.Init.Datatypes <> nat ind
+binder 4750:4750 <> n:55
+R4781:4785 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R4787:4788 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R4786:4786 Polyhedra.lrel <> BaseZmod.R var
+R4789:4789 Polyhedra.lrel <> BaseZmod.n var
+def 4805:4807 <> be0
+R4820:4823 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R4836:4839 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R4845:4848 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R4825:4827 Coq.ssr.ssreflect <> ::core_scope:x_':'_x not
+R4828:4831 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R4833:4834 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R4832:4832 Polyhedra.lrel <> BaseZmod.R var
+R4835:4835 Polyhedra.lrel <> BaseZmod.n var
+R4841:4843 Coq.ssr.ssreflect <> ::core_scope:x_':'_x not
+R4844:4844 Polyhedra.lrel <> BaseZmod.R var
+def 4862:4866 <> beadd
+binder 4868:4869 <> b1:56
+binder 4871:4872 <> b2:57
+R4877:4879 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R4891:4892 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R4904:4906 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R4884:4886 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R4882:4883 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R4880:4881 Polyhedra.lrel <> b1:56 var
+R4889:4890 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R4887:4888 Polyhedra.lrel <> b2:57 var
+R4897:4899 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R4895:4896 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R4893:4894 Polyhedra.lrel <> b1:56 var
+R4902:4903 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R4900:4901 Polyhedra.lrel <> b2:57 var
+def 4920:4924 <> beopp
+binder 4926:4926 <> b:58
+R4935:4937 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R4942:4943 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R4948:4950 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R4938:4938 mathcomp.algebra.ssralg <> ::ring_scope:'-'_x not
+R4940:4941 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R4939:4939 Polyhedra.lrel <> b:58 var
+R4944:4944 mathcomp.algebra.ssralg <> ::ring_scope:'-'_x not
+R4946:4947 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R4945:4945 Polyhedra.lrel <> b:58 var
+prf 4960:4972 <> be_zmod_mixin
+R4978:4981 Coq.ssr.ssrbool <> ::type_scope:'['_'/\'_x_','_x_','_x_'&'_x_']' not
+R4999:5005 Coq.ssr.ssrbool <> ::type_scope:'['_'/\'_x_','_x_','_x_'&'_x_']' not
+R5023:5029 Coq.ssr.ssrbool <> ::type_scope:'['_'/\'_x_','_x_','_x_'&'_x_']' not
+R5047:5053 Coq.ssr.ssrbool <> ::type_scope:'['_'/\'_x_','_x_','_x_'&'_x_']' not
+R5082:5082 Coq.ssr.ssrbool <> ::type_scope:'['_'/\'_x_','_x_','_x_'&'_x_']' not
+R4982:4992 Coq.ssr.ssrfun <> associative def
+R4994:4998 Polyhedra.lrel <> beadd def
+R5006:5016 Coq.ssr.ssrfun <> commutative def
+R5018:5022 Polyhedra.lrel <> beadd def
+R5030:5036 Coq.ssr.ssrfun <> left_id def
+R5042:5046 Polyhedra.lrel <> beadd def
+R5038:5040 Polyhedra.lrel <> be0 def
+R5054:5065 Coq.ssr.ssrfun <> left_inverse def
+R5077:5081 Polyhedra.lrel <> beadd def
+R5071:5075 Polyhedra.lrel <> beopp def
+R5067:5069 Polyhedra.lrel <> be0 def
+R5130:5134 Polyhedra.lrel <> beadd def
+R5138:5142 mathcomp.algebra.ssralg GRing.Theory addrA def
+R5130:5134 Polyhedra.lrel <> beadd def
+R5130:5134 Polyhedra.lrel <> beadd def
+R5138:5142 mathcomp.algebra.ssralg GRing.Theory addrA def
+R5138:5142 mathcomp.algebra.ssralg GRing.Theory addrA def
+R5138:5142 mathcomp.algebra.ssralg GRing.Theory addrA def
+R5173:5177 Polyhedra.lrel <> beadd def
+R5184:5186 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R5182:5183 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R5189:5193 mathcomp.algebra.ssralg GRing.Theory addrC def
+R5200:5202 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R5198:5199 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R5205:5209 mathcomp.algebra.ssralg GRing.Theory addrC def
+R5173:5177 Polyhedra.lrel <> beadd def
+R5173:5177 Polyhedra.lrel <> beadd def
+R5189:5193 mathcomp.algebra.ssralg GRing.Theory addrC def
+R5184:5186 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R5182:5183 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R5184:5186 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R5182:5183 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R5189:5193 mathcomp.algebra.ssralg GRing.Theory addrC def
+R5205:5209 mathcomp.algebra.ssralg GRing.Theory addrC def
+R5200:5202 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R5198:5199 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R5200:5202 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R5198:5199 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R5205:5209 mathcomp.algebra.ssralg GRing.Theory addrC def
+R5236:5240 Polyhedra.lrel <> beadd def
+R5244:5248 mathcomp.algebra.ssralg GRing.Theory add0r def
+R5250:5252 Polyhedra.lrel <> beE thm
+R5236:5240 Polyhedra.lrel <> beadd def
+R5236:5240 Polyhedra.lrel <> beadd def
+R5244:5248 mathcomp.algebra.ssralg GRing.Theory add0r def
+R5244:5248 mathcomp.algebra.ssralg GRing.Theory add0r def
+R5244:5248 mathcomp.algebra.ssralg GRing.Theory add0r def
+R5250:5252 Polyhedra.lrel <> beE thm
+R5250:5252 Polyhedra.lrel <> beE thm
+R5279:5283 Polyhedra.lrel <> beadd def
+R5287:5291 mathcomp.algebra.ssralg GRing.Theory addNr def
+R5279:5283 Polyhedra.lrel <> beadd def
+R5279:5283 Polyhedra.lrel <> beadd def
+R5287:5291 mathcomp.algebra.ssralg GRing.Theory addNr def
+R5287:5291 mathcomp.algebra.ssralg GRing.Theory addNr def
+R5287:5291 mathcomp.algebra.ssralg GRing.Theory addNr def
+var 5304:5309 BaseZmod beaddA
+R5336:5348 Polyhedra.lrel <> be_zmod_mixin thm
+R5320:5323 Coq.ssr.ssrbool <> And4 constr
+var 5360:5365 BaseZmod beaddC
+R5392:5404 Polyhedra.lrel <> be_zmod_mixin thm
+R5376:5379 Coq.ssr.ssrbool <> And4 constr
+var 5416:5422 BaseZmod beadd0r
+R5448:5460 Polyhedra.lrel <> be_zmod_mixin thm
+R5432:5435 Coq.ssr.ssrbool <> And4 constr
+var 5472:5478 BaseZmod beaddNr
+R5504:5516 Polyhedra.lrel <> be_zmod_mixin thm
+R5488:5491 Coq.ssr.ssrbool <> And4 constr
+def 5536:5547 <> be_zmodMixin
+R5552:5560 mathcomp.algebra.ssralg GRing.Zmodule.Exports ZmodMixin abbrev
+R5584:5590 Polyhedra.lrel <> BaseZmod.beaddNr var
+R5576:5582 Polyhedra.lrel <> BaseZmod.beadd0r var
+R5569:5574 Polyhedra.lrel <> BaseZmod.beaddC var
+R5562:5567 Polyhedra.lrel <> BaseZmod.beaddA var
+def 5603:5613 <> be_zmodType
+R5630:5637 mathcomp.algebra.ssralg GRing.Zmodule.Exports ZmodType abbrev
+R5639:5642 Polyhedra.lrel <> :::'lrel' not
+R5644:5655 Polyhedra.lrel <> be_zmodMixin def
+prf 5665:5670 <> beaddE
+binder 5672:5673 <> b1:59
+binder 5675:5676 <> b2:60
+R5687:5689 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5682:5684 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R5680:5681 Polyhedra.lrel <> b1:59 var
+R5685:5686 Polyhedra.lrel <> b2:60 var
+R5690:5692 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R5704:5705 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R5717:5719 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R5697:5699 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R5695:5696 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R5693:5694 Polyhedra.lrel <> b1:59 var
+R5702:5703 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R5700:5701 Polyhedra.lrel <> b2:60 var
+R5710:5712 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R5708:5709 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R5706:5707 Polyhedra.lrel <> b1:59 var
+R5715:5716 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R5713:5714 Polyhedra.lrel <> b2:60 var
+prf 5748:5753 <> beoppE
+binder 5755:5755 <> b:61
+R5761:5763 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5759:5759 mathcomp.algebra.ssralg <> ::ring_scope:'-'_x not
+R5760:5760 Polyhedra.lrel <> b:61 var
+R5764:5766 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R5771:5772 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R5777:5779 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R5767:5767 mathcomp.algebra.ssralg <> ::ring_scope:'-'_x not
+R5769:5770 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R5768:5768 Polyhedra.lrel <> b:61 var
+R5773:5773 mathcomp.algebra.ssralg <> ::ring_scope:'-'_x not
+R5775:5776 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R5774:5774 Polyhedra.lrel <> b:61 var
+R5805:5812 Polyhedra.lrel BaseZmod <> sec
+sec 5899:5922 <> BaseEltEncodingZmodMorph
+R5938:5945 mathcomp.algebra.ssralg GRing.Zmodule.Exports zmodType abbrev
+binder 5934:5934 <> R:62
+R5953:5955 Coq.Init.Datatypes <> nat ind
+binder 5949:5949 <> n:63
+prf 5966:5992 <> base_elt_to_col_is_additive
+R5996:6003 mathcomp.algebra.ssralg GRing.Additive.Exports additive abbrev
+R6007:6021 Polyhedra.lrel <> base_elt_to_col def
+R6023:6023 Polyhedra.lrel <> BaseEltEncodingZmodMorph.R var
+R6025:6025 Polyhedra.lrel <> BaseEltEncodingZmodMorph.n var
+R6059:6062 mathcomp.algebra.matrix <> colP thm
+R6078:6080 mathcomp.algebra.matrix <> mxE thm
+R6059:6062 mathcomp.algebra.matrix <> colP thm
+R6078:6080 mathcomp.algebra.matrix <> mxE thm
+R6078:6080 mathcomp.algebra.matrix <> mxE thm
+R6078:6080 mathcomp.algebra.matrix <> mxE thm
+R6078:6080 mathcomp.algebra.matrix <> mxE thm
+R6078:6080 mathcomp.algebra.matrix <> mxE thm
+R6078:6080 mathcomp.algebra.matrix <> mxE thm
+R6078:6080 mathcomp.algebra.matrix <> mxE thm
+R6092:6098 Polyhedra.row_submx <> splitP' thm
+R6116:6118 mathcomp.algebra.matrix <> mxE thm
+R6092:6098 Polyhedra.row_submx <> splitP' thm
+R6092:6098 Polyhedra.row_submx <> splitP' thm
+R6116:6118 mathcomp.algebra.matrix <> mxE thm
+R6116:6118 mathcomp.algebra.matrix <> mxE thm
+R6116:6118 mathcomp.algebra.matrix <> mxE thm
+R6116:6118 mathcomp.algebra.matrix <> mxE thm
+R6116:6118 mathcomp.algebra.matrix <> mxE thm
+R6116:6118 mathcomp.algebra.matrix <> mxE thm
+R6116:6118 mathcomp.algebra.matrix <> mxE thm
+R6116:6118 mathcomp.algebra.matrix <> mxE thm
+R6116:6118 mathcomp.algebra.matrix <> mxE thm
+def 6137:6160 <> base_elt_to_col_additive
+R6165:6172 mathcomp.algebra.ssralg GRing.Additive.Exports Additive abbrev
+R6174:6200 Polyhedra.lrel <> base_elt_to_col_is_additive thm
+R6207:6230 Polyhedra.lrel BaseEltEncodingZmodMorph <> sec
+sec 6317:6324 <> BaseLmod
+R6340:6347 mathcomp.algebra.ssralg GRing.Ring.Exports ringType abbrev
+binder 6336:6336 <> R:64
+R6355:6357 Coq.Init.Datatypes <> nat ind
+binder 6351:6351 <> n:65
+R6382:6386 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R6388:6389 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R6387:6387 Polyhedra.lrel <> BaseLmod.R var
+R6390:6390 Polyhedra.lrel <> BaseLmod.n var
+def 6406:6412 <> bescale
+binder 6414:6414 <> c:66
+binder 6416:6416 <> b:67
+R6421:6423 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R6432:6433 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R6441:6443 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R6425:6428 mathcomp.algebra.ssralg <> ::ring_scope:x_'*:'_x not
+R6424:6424 Polyhedra.lrel <> c:66 var
+R6430:6431 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R6429:6429 Polyhedra.lrel <> b:67 var
+R6435:6437 mathcomp.algebra.ssralg <> ::ring_scope:x_'*'_x not
+R6434:6434 Polyhedra.lrel <> c:66 var
+R6439:6440 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R6438:6438 Polyhedra.lrel <> b:67 var
+prf 6453:6465 <> be_lmod_mixin
+R6471:6474 Coq.ssr.ssrbool <> ::type_scope:'['_'/\'_x_','_x_','_x_'&'_x_']' not
+R6538:6544 Coq.ssr.ssrbool <> ::type_scope:'['_'/\'_x_','_x_','_x_'&'_x_']' not
+R6562:6568 Coq.ssr.ssrbool <> ::type_scope:'['_'/\'_x_','_x_','_x_'&'_x_']' not
+R6599:6605 Coq.ssr.ssrbool <> ::type_scope:'['_'/\'_x_','_x_','_x_'&'_x_']' not
+R6649:6649 Coq.ssr.ssrbool <> ::type_scope:'['_'/\'_x_','_x_','_x_'&'_x_']' not
+binder 6482:6483 <> c1:68
+binder 6485:6486 <> c2:69
+binder 6488:6488 <> b:70
+R6516:6518 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6491:6497 Polyhedra.lrel <> bescale def
+R6503:6509 Polyhedra.lrel <> bescale def
+R6514:6514 Polyhedra.lrel <> b:70 var
+R6511:6512 Polyhedra.lrel <> c2:69 var
+R6499:6500 Polyhedra.lrel <> c1:68 var
+R6519:6525 Polyhedra.lrel <> bescale def
+R6537:6537 Polyhedra.lrel <> b:70 var
+R6530:6532 mathcomp.algebra.ssralg <> ::ring_scope:x_'*'_x not
+R6528:6529 Polyhedra.lrel <> c1:68 var
+R6533:6534 Polyhedra.lrel <> c2:69 var
+R6545:6551 Coq.ssr.ssrfun <> left_id def
+R6555:6561 Polyhedra.lrel <> bescale def
+R6569:6586 Coq.ssr.ssrfun <> right_distributive def
+R6596:6598 mathcomp.algebra.ssralg <> ::fun_scope:'+%R' not
+R6588:6594 Polyhedra.lrel <> bescale def
+binder 6613:6613 <> b:71
+R6616:6622 Coq.ssr.ssrfun <> ::type_scope:'{'_'morph'_x_':'_x_x_'/'_x_'}' not
+R6634:6636 Coq.ssr.ssrfun <> ::type_scope:'{'_'morph'_x_':'_x_x_'/'_x_'}' not
+R6638:6638 Coq.ssr.ssrfun <> ::type_scope:'{'_'morph'_x_':'_x_x_'/'_x_'}' not
+R6640:6642 Coq.ssr.ssrfun <> ::type_scope:'{'_'morph'_x_':'_x_x_'/'_x_'}' not
+R6648:6648 Coq.ssr.ssrfun <> ::type_scope:'{'_'morph'_x_':'_x_x_'/'_x_'}' not
+R6630:6632 Coq.ssr.ssrfun <> ::fun_scope:x_'^~'_x not
+R6633:6633 Polyhedra.lrel <> b:71 var
+R6623:6629 Polyhedra.lrel <> bescale def
+binder 6637:6637 <> x:72
+binder 6639:6639 <> y:73
+R6644:6646 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R6643:6643 Polyhedra.lrel <> x:72 var
+R6647:6647 Polyhedra.lrel <> y:73 var
+binder 6637:6637 <> x:74
+binder 6639:6639 <> y:75
+R6644:6646 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R6643:6643 Polyhedra.lrel <> x:74 var
+R6647:6647 Polyhedra.lrel <> y:75 var
+R6696:6702 Polyhedra.lrel <> bescale def
+R6704:6710 mathcomp.algebra.ssralg GRing.Theory scalerA def
+R6712:6716 mathcomp.algebra.ssralg GRing.Theory mulrA def
+R6696:6702 Polyhedra.lrel <> bescale def
+R6696:6702 Polyhedra.lrel <> bescale def
+R6704:6710 mathcomp.algebra.ssralg GRing.Theory scalerA def
+R6704:6710 mathcomp.algebra.ssralg GRing.Theory scalerA def
+R6712:6716 mathcomp.algebra.ssralg GRing.Theory mulrA def
+R6712:6716 mathcomp.algebra.ssralg GRing.Theory mulrA def
+R6743:6749 Polyhedra.lrel <> bescale def
+R6751:6757 mathcomp.algebra.ssralg GRing.Theory scale1r def
+R6759:6763 mathcomp.algebra.ssralg GRing.Theory mul1r def
+R6765:6767 Polyhedra.lrel <> beE thm
+R6743:6749 Polyhedra.lrel <> bescale def
+R6743:6749 Polyhedra.lrel <> bescale def
+R6751:6757 mathcomp.algebra.ssralg GRing.Theory scale1r def
+R6751:6757 mathcomp.algebra.ssralg GRing.Theory scale1r def
+R6759:6763 mathcomp.algebra.ssralg GRing.Theory mul1r def
+R6759:6763 mathcomp.algebra.ssralg GRing.Theory mul1r def
+R6765:6767 Polyhedra.lrel <> beE thm
+R6765:6767 Polyhedra.lrel <> beE thm
+R6800:6806 Polyhedra.lrel <> bescale def
+R6808:6815 mathcomp.algebra.ssralg GRing.Theory scalerDr def
+R6818:6823 Polyhedra.lrel <> beaddE thm
+R6825:6830 mathcomp.algebra.ssralg GRing.Theory mulrDr def
+R6800:6806 Polyhedra.lrel <> bescale def
+R6800:6806 Polyhedra.lrel <> bescale def
+R6808:6815 mathcomp.algebra.ssralg GRing.Theory scalerDr def
+R6808:6815 mathcomp.algebra.ssralg GRing.Theory scalerDr def
+R6818:6823 Polyhedra.lrel <> beaddE thm
+R6818:6823 Polyhedra.lrel <> beaddE thm
+R6818:6823 Polyhedra.lrel <> beaddE thm
+R6818:6823 Polyhedra.lrel <> beaddE thm
+R6825:6830 mathcomp.algebra.ssralg GRing.Theory mulrDr def
+R6825:6830 mathcomp.algebra.ssralg GRing.Theory mulrDr def
+R6863:6869 Polyhedra.lrel <> bescale def
+R6871:6876 Polyhedra.lrel <> beaddE thm
+R6878:6885 mathcomp.algebra.ssralg GRing.Theory scalerDl def
+R6887:6892 mathcomp.algebra.ssralg GRing.Theory mulrDl def
+R6863:6869 Polyhedra.lrel <> bescale def
+R6863:6869 Polyhedra.lrel <> bescale def
+R6871:6876 Polyhedra.lrel <> beaddE thm
+R6871:6876 Polyhedra.lrel <> beaddE thm
+R6878:6885 mathcomp.algebra.ssralg GRing.Theory scalerDl def
+R6878:6885 mathcomp.algebra.ssralg GRing.Theory scalerDl def
+R6887:6892 mathcomp.algebra.ssralg GRing.Theory mulrDl def
+R6887:6892 mathcomp.algebra.ssralg GRing.Theory mulrDl def
+var 6905:6912 BaseLmod bescaleA
+R6939:6951 Polyhedra.lrel <> be_lmod_mixin thm
+R6923:6926 Coq.ssr.ssrbool <> And4 constr
+var 6963:6970 BaseLmod bescale1
+R6997:7009 Polyhedra.lrel <> be_lmod_mixin thm
+R6981:6984 Coq.ssr.ssrbool <> And4 constr
+var 7021:7029 BaseLmod bescaleDr
+R7055:7067 Polyhedra.lrel <> be_lmod_mixin thm
+R7039:7042 Coq.ssr.ssrbool <> And4 constr
+var 7079:7087 BaseLmod bescaleDl
+R7113:7125 Polyhedra.lrel <> be_lmod_mixin thm
+R7097:7100 Coq.ssr.ssrbool <> And4 constr
+def 7145:7156 <> be_lmodMixin
+R7161:7169 mathcomp.algebra.ssralg GRing.Lmodule.Exports LmodMixin abbrev
+R7199:7207 Polyhedra.lrel <> BaseLmod.bescaleDl var
+R7189:7197 Polyhedra.lrel <> BaseLmod.bescaleDr var
+R7180:7187 Polyhedra.lrel <> BaseLmod.bescale1 var
+R7171:7178 Polyhedra.lrel <> BaseLmod.bescaleA var
+def 7220:7230 <> be_lmodType
+R7247:7254 mathcomp.algebra.ssralg GRing.Lmodule.Exports LmodType abbrev
+R7256:7256 Polyhedra.lrel <> BaseLmod.R var
+R7258:7261 Polyhedra.lrel <> :::'lrel' not
+R7263:7274 Polyhedra.lrel <> be_lmodMixin def
+prf 7284:7291 <> bescaleE
+binder 7293:7293 <> c:76
+binder 7295:7295 <> b:77
+R7305:7307 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7300:7303 mathcomp.algebra.ssralg <> ::ring_scope:x_'*:'_x not
+R7299:7299 Polyhedra.lrel <> c:76 var
+R7304:7304 Polyhedra.lrel <> b:77 var
+R7308:7310 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R7319:7320 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R7328:7330 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R7312:7315 mathcomp.algebra.ssralg <> ::ring_scope:x_'*:'_x not
+R7311:7311 Polyhedra.lrel <> c:76 var
+R7317:7318 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R7316:7316 Polyhedra.lrel <> b:77 var
+R7322:7324 mathcomp.algebra.ssralg <> ::ring_scope:x_'*'_x not
+R7321:7321 Polyhedra.lrel <> c:76 var
+R7326:7327 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R7325:7325 Polyhedra.lrel <> b:77 var
+R7356:7363 Polyhedra.lrel BaseLmod <> sec
+sec 7450:7473 <> BaseEltEncodingLmodMorph
+R7489:7496 mathcomp.algebra.ssralg GRing.Ring.Exports ringType abbrev
+binder 7485:7485 <> R:78
+R7504:7506 Coq.Init.Datatypes <> nat ind
+binder 7500:7500 <> n:79
+prf 7517:7543 <> base_elt_to_col_is_scalable
+R7547:7554 mathcomp.algebra.ssralg GRing.Linear.Exports scalable abbrev
+R7558:7572 Polyhedra.lrel <> base_elt_to_col def
+R7574:7574 Polyhedra.lrel <> BaseEltEncodingLmodMorph.R var
+R7576:7576 Polyhedra.lrel <> BaseEltEncodingLmodMorph.n var
+R7608:7611 mathcomp.algebra.matrix <> colP thm
+R7627:7629 mathcomp.algebra.matrix <> mxE thm
+R7608:7611 mathcomp.algebra.matrix <> colP thm
+R7627:7629 mathcomp.algebra.matrix <> mxE thm
+R7627:7629 mathcomp.algebra.matrix <> mxE thm
+R7627:7629 mathcomp.algebra.matrix <> mxE thm
+R7627:7629 mathcomp.algebra.matrix <> mxE thm
+R7627:7629 mathcomp.algebra.matrix <> mxE thm
+R7641:7647 Polyhedra.row_submx <> splitP' thm
+R7665:7667 mathcomp.algebra.matrix <> mxE thm
+R7641:7647 Polyhedra.row_submx <> splitP' thm
+R7641:7647 Polyhedra.row_submx <> splitP' thm
+R7665:7667 mathcomp.algebra.matrix <> mxE thm
+R7665:7667 mathcomp.algebra.matrix <> mxE thm
+R7665:7667 mathcomp.algebra.matrix <> mxE thm
+R7665:7667 mathcomp.algebra.matrix <> mxE thm
+R7665:7667 mathcomp.algebra.matrix <> mxE thm
+R7665:7667 mathcomp.algebra.matrix <> mxE thm
+R7665:7667 mathcomp.algebra.matrix <> mxE thm
+def 7686:7709 <> base_elt_to_col_scalable
+R7714:7722 mathcomp.algebra.ssralg GRing.Linear.Exports AddLinear abbrev
+R7724:7750 Polyhedra.lrel <> base_elt_to_col_is_scalable thm
+R7757:7780 Polyhedra.lrel BaseEltEncodingLmodMorph <> sec
+sec 7867:7875 <> BaseMorph
+R7891:7898 mathcomp.algebra.ssralg GRing.Zmodule.Exports zmodType abbrev
+binder 7887:7887 <> R:80
+R7906:7908 Coq.Init.Datatypes <> nat ind
+binder 7902:7902 <> n:81
+R7933:7937 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R7939:7940 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R7938:7938 Polyhedra.lrel <> BaseMorph.R var
+R7941:7941 Polyhedra.lrel <> BaseMorph.n var
+prf 7952:7960 <> beadd_p1E
+binder 7962:7963 <> b1:82
+binder 7965:7966 <> b2:83
+R7981:7983 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7970:7970 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R7978:7980 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R7973:7975 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R7971:7972 Polyhedra.lrel <> b1:82 var
+R7976:7977 Polyhedra.lrel <> b2:83 var
+R7988:7990 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R7986:7987 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R7984:7985 Polyhedra.lrel <> b1:82 var
+R7993:7994 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R7991:7992 Polyhedra.lrel <> b2:83 var
+prf 8023:8031 <> beadd_p2E
+binder 8033:8034 <> b1:84
+binder 8036:8037 <> b2:85
+R8052:8054 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R8041:8041 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R8049:8051 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R8044:8046 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R8042:8043 Polyhedra.lrel <> b1:84 var
+R8047:8048 Polyhedra.lrel <> b2:85 var
+R8059:8061 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R8057:8058 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R8055:8056 Polyhedra.lrel <> b1:84 var
+R8064:8065 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R8062:8063 Polyhedra.lrel <> b2:85 var
+R8091:8099 Polyhedra.lrel BaseMorph <> sec
+sec 8186:8193 <> BaseVect
+R8209:8217 mathcomp.algebra.ssralg GRing.Field.Exports fieldType abbrev
+binder 8205:8205 <> R:86
+R8225:8227 Coq.Init.Datatypes <> nat ind
+binder 8221:8221 <> n:87
+prf 8237:8247 <> be_vect_iso
+R8251:8262 mathcomp.algebra.vector Vector axiom abbrev
+R8266:8266 mathcomp.ssreflect.ssrnat <> ::nat_scope:x_'+'_x not
+R8265:8265 Polyhedra.lrel <> BaseVect.n var
+R8270:8274 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R8276:8277 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R8275:8275 Polyhedra.lrel <> BaseVect.R var
+R8278:8278 Polyhedra.lrel <> BaseVect.n var
+R8483:8487 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R8489:8490 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R8488:8488 Polyhedra.lrel <> BaseVect.R var
+R8491:8491 Polyhedra.lrel <> BaseVect.n var
+binder 8479:8479 <> e:88
+R8497:8497 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R8517:8519 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R8498:8503 mathcomp.algebra.matrix <> col_mx def
+R8513:8515 mathcomp.algebra.matrix <> ::ring_scope:x_'%:M' not
+R8511:8512 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R8510:8510 Polyhedra.lrel <> e:88 var
+R8506:8507 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R8505:8505 Polyhedra.lrel <> e:88 var
+R8561:8566 mathcomp.algebra.ssralg GRing.Theory raddfD def
+R8561:8566 mathcomp.algebra.ssralg GRing.Theory raddfD def
+R8561:8566 mathcomp.algebra.ssralg GRing.Theory raddfD def
+R8561:8566 mathcomp.algebra.ssralg GRing.Theory raddfD def
+R8561:8566 mathcomp.algebra.ssralg GRing.Theory raddfD def
+R8586:8595 mathcomp.algebra.matrix <> add_col_mx thm
+R8597:8603 mathcomp.algebra.ssralg GRing.Theory linearD def
+R8609:8623 mathcomp.algebra.matrix <> scale_scalar_mx thm
+R8626:8637 mathcomp.algebra.matrix <> scale_col_mx thm
+R8639:8645 mathcomp.algebra.ssralg GRing.Theory linearZ def
+R8586:8595 mathcomp.algebra.matrix <> add_col_mx thm
+R8586:8595 mathcomp.algebra.matrix <> add_col_mx thm
+R8597:8603 mathcomp.algebra.ssralg GRing.Theory linearD def
+R8597:8603 mathcomp.algebra.ssralg GRing.Theory linearD def
+R8609:8623 mathcomp.algebra.matrix <> scale_scalar_mx thm
+R8609:8623 mathcomp.algebra.matrix <> scale_scalar_mx thm
+R8626:8637 mathcomp.algebra.matrix <> scale_col_mx thm
+R8626:8637 mathcomp.algebra.matrix <> scale_col_mx thm
+R8639:8645 mathcomp.algebra.ssralg GRing.Theory linearZ def
+R8639:8645 mathcomp.algebra.ssralg GRing.Theory linearZ def
+R8662:8666 mathcomp.algebra.matrix <> ::type_scope:'''rV_'_x not
+R8670:8670 mathcomp.algebra.matrix <> ::type_scope:'''rV_'_x not
+R8668:8668 mathcomp.ssreflect.ssrnat <> ::nat_scope:x_'+'_x not
+R8667:8667 Polyhedra.lrel <> BaseVect.n var
+binder 8658:8658 <> x:89
+R8710:8713 Coq.ssr.ssreflect <> ::core_scope:x_':'_x not
+R8723:8723 Coq.ssr.ssreflect <> ::core_scope:x_':'_x not
+R8714:8718 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R8720:8721 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R8719:8719 Polyhedra.lrel <> BaseVect.R var
+R8722:8722 Polyhedra.lrel <> BaseVect.n var
+R8676:8678 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R8691:8692 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R8707:8709 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R8679:8679 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R8688:8690 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R8680:8685 mathcomp.algebra.matrix <> lsubmx def
+R8687:8687 Polyhedra.lrel <> x:89 var
+R8694:8699 mathcomp.algebra.matrix <> rsubmx def
+R8701:8701 Polyhedra.lrel <> x:89 var
+R8759:8761 mathcomp.ssreflect.eqtype <> eqP thm
+R8763:8768 Polyhedra.lrel <> be_eqP thm
+R8759:8761 mathcomp.ssreflect.eqtype <> eqP thm
+R8763:8768 Polyhedra.lrel <> be_eqP thm
+R8810:8818 mathcomp.algebra.matrix <> tr_col_mx thm
+R8820:8827 mathcomp.algebra.matrix <> row_mxKl thm
+R8829:8833 mathcomp.algebra.matrix <> trmxK thm
+R8810:8818 mathcomp.algebra.matrix <> tr_col_mx thm
+R8810:8818 mathcomp.algebra.matrix <> tr_col_mx thm
+R8820:8827 mathcomp.algebra.matrix <> row_mxKl thm
+R8820:8827 mathcomp.algebra.matrix <> row_mxKl thm
+R8829:8833 mathcomp.algebra.matrix <> trmxK thm
+R8829:8833 mathcomp.algebra.matrix <> trmxK thm
+R8853:8861 mathcomp.algebra.matrix <> tr_col_mx thm
+R8863:8870 mathcomp.algebra.matrix <> row_mxKr thm
+R8872:8883 mathcomp.algebra.matrix <> tr_scalar_mx thm
+R8888:8890 mathcomp.algebra.matrix <> mxE thm
+R8892:8897 mathcomp.algebra.ssralg GRing.Theory mulr1n def
+R8853:8861 mathcomp.algebra.matrix <> tr_col_mx thm
+R8853:8861 mathcomp.algebra.matrix <> tr_col_mx thm
+R8863:8870 mathcomp.algebra.matrix <> row_mxKr thm
+R8863:8870 mathcomp.algebra.matrix <> row_mxKr thm
+R8872:8883 mathcomp.algebra.matrix <> tr_scalar_mx thm
+R8872:8883 mathcomp.algebra.matrix <> tr_scalar_mx thm
+R8888:8890 mathcomp.algebra.matrix <> mxE thm
+R8888:8890 mathcomp.algebra.matrix <> mxE thm
+R8892:8897 mathcomp.algebra.ssralg GRing.Theory mulr1n def
+R8892:8897 mathcomp.algebra.ssralg GRing.Theory mulr1n def
+R8910:8913 mathcomp.algebra.matrix <> rowP thm
+R8928:8934 Polyhedra.row_submx <> splitP' thm
+R8910:8913 mathcomp.algebra.matrix <> rowP thm
+R8928:8934 Polyhedra.row_submx <> splitP' thm
+R8928:8934 Polyhedra.row_submx <> splitP' thm
+R8978:8980 mathcomp.algebra.matrix <> mxE thm
+R8982:8989 mathcomp.algebra.matrix <> col_mxEu thm
+R8992:8994 mathcomp.algebra.matrix <> mxE thm
+R8978:8980 mathcomp.algebra.matrix <> mxE thm
+R8978:8980 mathcomp.algebra.matrix <> mxE thm
+R8982:8989 mathcomp.algebra.matrix <> col_mxEu thm
+R8982:8989 mathcomp.algebra.matrix <> col_mxEu thm
+R8992:8994 mathcomp.algebra.matrix <> mxE thm
+R8992:8994 mathcomp.algebra.matrix <> mxE thm
+R8992:8994 mathcomp.algebra.matrix <> mxE thm
+R8992:8994 mathcomp.algebra.matrix <> mxE thm
+R9017:9019 mathcomp.algebra.matrix <> mxE thm
+R9021:9028 mathcomp.algebra.matrix <> col_mxEd thm
+R9030:9032 mathcomp.algebra.matrix <> mxE thm
+R9038:9045 Polyhedra.extra_misc <> ord1_eq0 thm
+R9047:9052 mathcomp.algebra.ssralg GRing.Theory mulr1n def
+R9057:9059 mathcomp.algebra.matrix <> mxE thm
+R9017:9019 mathcomp.algebra.matrix <> mxE thm
+R9017:9019 mathcomp.algebra.matrix <> mxE thm
+R9021:9028 mathcomp.algebra.matrix <> col_mxEd thm
+R9021:9028 mathcomp.algebra.matrix <> col_mxEd thm
+R9030:9032 mathcomp.algebra.matrix <> mxE thm
+R9030:9032 mathcomp.algebra.matrix <> mxE thm
+R9038:9045 Polyhedra.extra_misc <> ord1_eq0 thm
+R9038:9045 Polyhedra.extra_misc <> ord1_eq0 thm
+R9047:9052 mathcomp.algebra.ssralg GRing.Theory mulr1n def
+R9047:9052 mathcomp.algebra.ssralg GRing.Theory mulr1n def
+R9057:9059 mathcomp.algebra.matrix <> mxE thm
+R9057:9059 mathcomp.algebra.matrix <> mxE thm
+def 9078:9089 <> be_vectMixin
+R9094:9102 mathcomp.algebra.vector Vector.Exports VectMixin abbrev
+R9104:9114 Polyhedra.lrel <> be_vect_iso thm
+def 9127:9137 <> be_vectType
+R9142:9149 mathcomp.algebra.vector Vector.Exports VectType abbrev
+R9151:9151 Polyhedra.lrel <> BaseVect.R var
+R9153:9157 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R9159:9160 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R9158:9158 Polyhedra.lrel <> BaseVect.R var
+R9161:9161 Polyhedra.lrel <> BaseVect.n var
+R9163:9174 Polyhedra.lrel <> be_vectMixin def
+prf 9184:9199 <> base_vect_subset
+R9209:9215 Polyhedra.lrel <> :::'base_t'_'['_x_','_x_']' not
+R9217:9217 Polyhedra.lrel <> :::'base_t'_'['_x_','_x_']' not
+R9219:9219 Polyhedra.lrel <> :::'base_t'_'['_x_','_x_']' not
+R9216:9216 Polyhedra.lrel <> BaseVect.R var
+R9218:9218 Polyhedra.lrel <> BaseVect.n var
+binder 9202:9202 <> I:90
+binder 9204:9205 <> I':91
+R9242:9245 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9228:9233 mathcomp.finmap.finmap <> ::fset_scope:x_'`<=`'_x not
+R9227:9227 Polyhedra.lrel <> I:90 var
+R9234:9235 Polyhedra.lrel <> I':91 var
+R9254:9257 mathcomp.algebra.vector <> ::vspace_scope:x_'<='_x not
+R9247:9249 mathcomp.algebra.vector <> ::vspace_scope:'<<'_x_'>>' not
+R9251:9253 mathcomp.algebra.vector <> ::vspace_scope:'<<'_x_'>>' not
+R9250:9250 Polyhedra.lrel <> I:90 var
+R9258:9260 mathcomp.algebra.vector <> ::vspace_scope:'<<'_x_'>>' not
+R9263:9265 mathcomp.algebra.vector <> ::vspace_scope:'<<'_x_'>>' not
+R9261:9262 Polyhedra.lrel <> I':91 var
+R9299:9306 mathcomp.algebra.vector <> sub_span thm
+R9308:9315 mathcomp.finmap.finmap <> fsubsetP thm
+R9299:9306 mathcomp.algebra.vector <> sub_span thm
+R9308:9315 mathcomp.finmap.finmap <> fsubsetP thm
+prf 9330:9339 <> span_fsetU
+R9348:9354 Polyhedra.lrel <> :::'base_t'_'['_x_','_x_']' not
+R9356:9356 Polyhedra.lrel <> :::'base_t'_'['_x_','_x_']' not
+R9358:9358 Polyhedra.lrel <> :::'base_t'_'['_x_','_x_']' not
+R9355:9355 Polyhedra.lrel <> BaseVect.R var
+R9357:9357 Polyhedra.lrel <> BaseVect.n var
+binder 9342:9342 <> I:92
+binder 9344:9344 <> J:93
+R9386:9388 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R9366:9368 mathcomp.algebra.vector <> ::vspace_scope:'<<'_x_'>>' not
+R9383:9385 mathcomp.algebra.vector <> ::vspace_scope:'<<'_x_'>>' not
+R9371:9375 mathcomp.finmap.finmap <> ::fset_scope:x_'`|`'_x not
+R9370:9370 Polyhedra.lrel <> I:92 var
+R9376:9376 Polyhedra.lrel <> J:93 var
+R9396:9398 mathcomp.algebra.vector <> ::vspace_scope:x_'+'_x not
+R9389:9391 mathcomp.algebra.vector <> ::vspace_scope:'<<'_x_'>>' not
+R9393:9395 mathcomp.algebra.vector <> ::vspace_scope:'<<'_x_'>>' not
+R9392:9392 Polyhedra.lrel <> I:92 var
+R9399:9401 mathcomp.algebra.vector <> ::vspace_scope:'<<'_x_'>>' not
+R9403:9405 mathcomp.algebra.vector <> ::vspace_scope:'<<'_x_'>>' not
+R9402:9402 Polyhedra.lrel <> J:93 var
+R9428:9435 mathcomp.algebra.vector <> span_cat thm
+R9444:9450 mathcomp.algebra.vector <> eq_span thm
+R9428:9435 mathcomp.algebra.vector <> span_cat thm
+R9428:9435 mathcomp.algebra.vector <> span_cat thm
+R9444:9450 mathcomp.algebra.vector <> eq_span thm
+R9469:9471 mathcomp.finmap.finmap <> inE def
+R9473:9479 mathcomp.ssreflect.seq <> mem_cat thm
+R9469:9471 mathcomp.finmap.finmap <> inE def
+R9469:9471 mathcomp.finmap.finmap <> inE def
+R9473:9479 mathcomp.ssreflect.seq <> mem_cat thm
+R9473:9479 mathcomp.ssreflect.seq <> mem_cat thm
+prf 9494:9503 <> span_fset1
+R9510:9514 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R9516:9517 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R9515:9515 Polyhedra.lrel <> BaseVect.R var
+R9518:9518 Polyhedra.lrel <> BaseVect.n var
+binder 9506:9506 <> v:94
+R9545:9547 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R9526:9528 mathcomp.algebra.vector <> ::vspace_scope:'<<'_x_'>>' not
+R9542:9544 mathcomp.algebra.vector <> ::vspace_scope:'<<'_x_'>>' not
+R9529:9534 mathcomp.finmap.finmap <> ::fset_scope:'['_'fset'_x_']' not
+R9536:9536 mathcomp.finmap.finmap <> ::fset_scope:'['_'fset'_x_']' not
+R9535:9535 Polyhedra.lrel <> v:94 var
+R9548:9550 mathcomp.algebra.vector <> ::vspace_scope:'<['_x_']'_'>' not
+R9552:9554 mathcomp.algebra.vector <> ::vspace_scope:'<['_x_']'_'>' not
+R9551:9551 Polyhedra.lrel <> v:94 var
+R9580:9588 mathcomp.algebra.vector <> span_seq1 thm
+R9597:9603 mathcomp.algebra.vector <> eq_span thm
+R9620:9622 mathcomp.finmap.finmap <> inE def
+R9580:9588 mathcomp.algebra.vector <> span_seq1 thm
+R9580:9588 mathcomp.algebra.vector <> span_seq1 thm
+R9597:9603 mathcomp.algebra.vector <> eq_span thm
+R9620:9622 mathcomp.finmap.finmap <> inE def
+R9620:9622 mathcomp.finmap.finmap <> inE def
+R9620:9622 mathcomp.finmap.finmap <> inE def
+R9620:9622 mathcomp.finmap.finmap <> inE def
+prf 9637:9646 <> fst_lmorph
+R9650:9658 mathcomp.algebra.ssralg GRing.Linear.Exports lmorphism abbrev
+R9664:9666 Coq.ssr.ssreflect <> ::core_scope:x_':'_x not
+R9676:9679 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9667:9671 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R9673:9674 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R9672:9672 Polyhedra.lrel <> BaseVect.R var
+R9675:9675 Polyhedra.lrel <> BaseVect.n var
+R9680:9683 mathcomp.algebra.matrix <> ::type_scope:'''cV_'_x not
+R9684:9684 Polyhedra.lrel <> BaseVect.n var
+R9661:9663 Coq.Init.Datatypes <> fst def
+def 9712:9716 <> befst
+R9721:9726 mathcomp.algebra.vector <> linfun def
+R9729:9734 mathcomp.algebra.ssralg GRing.Linear.Exports Linear abbrev
+R9736:9745 Polyhedra.lrel <> fst_lmorph thm
+R9754:9761 Polyhedra.lrel BaseVect <> sec

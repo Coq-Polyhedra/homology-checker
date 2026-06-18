@@ -9,7 +9,7 @@
 (* -------------------------------------------------------------------- *)
 From mathcomp Require Import all_ssreflect.
 From mathcomp Require Import bigop ssralg ssrnum zmodp matrix fingroup perm.
-Require Import extra_misc inner_product.
+From Polyhedra Require Import extra_misc inner_product.
 
 Import Order.Theory.
 

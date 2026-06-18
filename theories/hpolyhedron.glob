@@ -1,0 +1,1888 @@
+DIGEST 2f9bf8d20e95b8d9594b25acf9906831
+FPolyhedra.hpolyhedron
+R546:558 mathcomp.ssreflect.all_ssreflect <> <> lib
+R560:570 mathcomp.algebra.all_algebra <> <> lib
+R572:577 mathcomp.finmap.finmap <> <> lib
+R610:619 Polyhedra.extra_misc <> <> lib
+R621:633 Polyhedra.inner_product <> <> lib
+R635:646 Polyhedra.vector_order <> <> lib
+R648:659 Polyhedra.extra_matrix <> <> lib
+R661:669 Polyhedra.row_submx <> <> lib
+R702:708 Polyhedra.simplex <> <> lib
+R710:719 Polyhedra.barycenter <> <> lib
+R721:724 Polyhedra.lrel <> <> lib
+R735:746 mathcomp.ssreflect.order Order.Theory <> mod
+R869:880 mathcomp.algebra.ssralg GRing.Theory <> mod
+R882:891 mathcomp.algebra.ssrnum Num.Theory <> mod
+sec 1368:1378 <> VectToFsFun
+R1394:1403 mathcomp.ssreflect.choice Choice.Exports choiceType abbrev
+binder 1390:1390 <> T:1
+R1411:1418 mathcomp.algebra.ssralg GRing.Ring.Exports ringType abbrev
+binder 1407:1407 <> R:2
+def 1434:1438 <> frank
+R1445:1450 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1452:1452 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1451:1451 Polyhedra.hpolyhedron <> VectToFsFun.T var
+binder 1441:1441 <> S:3
+R1460:1460 Polyhedra.hpolyhedron <> S:3 var
+binder 1456:1456 <> v:4
+R1465:1467 mathcomp.ssreflect.fintype <> :::'''I_'_x not
+R1468:1470 mathcomp.finmap.finmap <> ::nat_scope:'#|`'_x_'|' not
+R1472:1472 mathcomp.finmap.finmap <> ::nat_scope:'#|`'_x_'|' not
+R1471:1471 Polyhedra.hpolyhedron <> S:3 var
+R1479:1486 mathcomp.ssreflect.fintype <> cast_ord def
+R1507:1515 mathcomp.ssreflect.fintype <> enum_rank def
+R1517:1517 Polyhedra.hpolyhedron <> v:4 var
+R1489:1492 Coq.ssr.ssrfun <> esym def
+R1495:1500 mathcomp.finmap.finmap <> cardfE thm
+prf 1528:1533 <> frankK
+R1540:1545 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1547:1547 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1546:1546 Polyhedra.hpolyhedron <> VectToFsFun.T var
+binder 1536:1536 <> S:5
+R1554:1559 Coq.ssr.ssrfun <> cancel def
+R1601:1605 Polyhedra.hpolyhedron <> frank def
+R1607:1607 Polyhedra.hpolyhedron <> S:5 var
+R1570:1572 mathcomp.ssreflect.fintype <> :::'''I_'_x not
+R1573:1575 mathcomp.finmap.finmap <> ::nat_scope:'#|`'_x_'|' not
+R1577:1577 mathcomp.finmap.finmap <> ::nat_scope:'#|`'_x_'|' not
+R1576:1576 Polyhedra.hpolyhedron <> S:5 var
+binder 1566:1566 <> i:6
+R1582:1583 mathcomp.finmap.finmap <> ::fset_scope:'[`'_x_']' not
+R1591:1591 mathcomp.finmap.finmap <> ::fset_scope:'[`'_x_']' not
+R1584:1588 Polyhedra.extra_misc <> fnthP thm
+R1590:1590 Polyhedra.hpolyhedron <> i:6 var
+R1636:1647 mathcomp.ssreflect.fintype <> cast_ord_inj thm
+R1654:1659 mathcomp.finmap.finmap <> cardfE thm
+R1665:1667 mathcomp.ssreflect.eqtype <> eqP thm
+R1636:1647 mathcomp.ssreflect.fintype <> cast_ord_inj thm
+R1654:1659 mathcomp.finmap.finmap <> cardfE thm
+R1665:1667 mathcomp.ssreflect.eqtype <> eqP thm
+R1678:1687 mathcomp.ssreflect.fintype <> cast_ordKV thm
+R1691:1696 mathcomp.ssreflect.eqtype <> inj_eq thm
+R1699:1710 mathcomp.ssreflect.fintype <> enum_val_inj thm
+R1714:1723 mathcomp.ssreflect.fintype <> enum_rankK thm
+R1727:1729 Coq.ssr.ssrbool <> rwP thm
+R1731:1733 mathcomp.ssreflect.eqtype <> eqP thm
+R1678:1687 mathcomp.ssreflect.fintype <> cast_ordKV thm
+R1678:1687 mathcomp.ssreflect.fintype <> cast_ordKV thm
+R1691:1696 mathcomp.ssreflect.eqtype <> inj_eq thm
+R1699:1710 mathcomp.ssreflect.fintype <> enum_val_inj thm
+R1691:1696 mathcomp.ssreflect.eqtype <> inj_eq thm
+R1699:1710 mathcomp.ssreflect.fintype <> enum_val_inj thm
+R1714:1723 mathcomp.ssreflect.fintype <> enum_rankK thm
+R1714:1723 mathcomp.ssreflect.fintype <> enum_rankK thm
+R1727:1729 Coq.ssr.ssrbool <> rwP thm
+R1731:1733 mathcomp.ssreflect.eqtype <> eqP thm
+R1727:1729 Coq.ssr.ssrbool <> rwP thm
+R1731:1733 mathcomp.ssreflect.eqtype <> eqP thm
+R1743:1749 mathcomp.ssreflect.eqtype <> val_eqP thm
+R1767:1774 mathcomp.ssreflect.fintype <> cast_ord def
+R1743:1749 mathcomp.ssreflect.eqtype <> val_eqP thm
+R1767:1774 mathcomp.ssreflect.fintype <> cast_ord def
+R1767:1774 mathcomp.ssreflect.fintype <> cast_ord def
+R1790:1793 Polyhedra.extra_misc <> fnth def
+R1796:1803 mathcomp.ssreflect.tuple <> tnth_nth thm
+R1806:1808 mathcomp.ssreflect.eqtype <> val proj
+R1811:1822 mathcomp.ssreflect.fintype <> enum_default thm
+R1835:1844 mathcomp.finmap.finmap <> enum_fsetE thm
+R1790:1793 Polyhedra.extra_misc <> fnth def
+R1790:1793 Polyhedra.extra_misc <> fnth def
+R1796:1803 mathcomp.ssreflect.tuple <> tnth_nth thm
+R1806:1808 mathcomp.ssreflect.eqtype <> val proj
+R1811:1822 mathcomp.ssreflect.fintype <> enum_default thm
+R1796:1803 mathcomp.ssreflect.tuple <> tnth_nth thm
+R1806:1808 mathcomp.ssreflect.eqtype <> val proj
+R1811:1822 mathcomp.ssreflect.fintype <> enum_default thm
+R1835:1844 mathcomp.finmap.finmap <> enum_fsetE thm
+R1835:1844 mathcomp.finmap.finmap <> enum_fsetE thm
+R1859:1865 mathcomp.ssreflect.seq <> nth_map thm
+R1868:1879 mathcomp.ssreflect.fintype <> enum_default thm
+R1889:1893 mathcomp.ssreflect.fintype <> cardE thm
+R1896:1901 mathcomp.finmap.finmap <> cardfE thm
+R1859:1865 mathcomp.ssreflect.seq <> nth_map thm
+R1868:1879 mathcomp.ssreflect.fintype <> enum_default thm
+R1859:1865 mathcomp.ssreflect.seq <> nth_map thm
+R1868:1879 mathcomp.ssreflect.fintype <> enum_default thm
+R1889:1893 mathcomp.ssreflect.fintype <> cardE thm
+R1889:1893 mathcomp.ssreflect.fintype <> cardE thm
+R1896:1901 mathcomp.finmap.finmap <> cardfE thm
+R1896:1901 mathcomp.finmap.finmap <> cardfE thm
+prf 1916:1920 <> fnthK
+R1927:1932 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1934:1934 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R1933:1933 Polyhedra.hpolyhedron <> VectToFsFun.T var
+binder 1923:1923 <> S:7
+R1941:1946 Coq.ssr.ssrfun <> cancel def
+R1968:1970 mathcomp.ssreflect.fintype <> :::'''I_'_x not
+R1971:1973 mathcomp.finmap.finmap <> ::nat_scope:'#|`'_x_'|' not
+R1975:1975 mathcomp.finmap.finmap <> ::nat_scope:'#|`'_x_'|' not
+R1974:1974 Polyhedra.hpolyhedron <> S:7 var
+binder 1964:1964 <> i:8
+R1980:1981 mathcomp.finmap.finmap <> ::fset_scope:'[`'_x_']' not
+R1989:1989 mathcomp.finmap.finmap <> ::fset_scope:'[`'_x_']' not
+R1982:1986 Polyhedra.extra_misc <> fnthP thm
+R1988:1988 Polyhedra.hpolyhedron <> i:8 var
+R1950:1954 Polyhedra.hpolyhedron <> frank def
+R1956:1956 Polyhedra.hpolyhedron <> S:7 var
+R2021:2027 mathcomp.ssreflect.eqtype <> val_eqP thm
+R2029:2031 mathcomp.ssreflect.eqtype <> eqP thm
+R2049:2052 Polyhedra.extra_misc <> fnth def
+R2021:2027 mathcomp.ssreflect.eqtype <> val_eqP thm
+R2029:2031 mathcomp.ssreflect.eqtype <> eqP thm
+R2049:2052 Polyhedra.extra_misc <> fnth def
+R2049:2052 Polyhedra.extra_misc <> fnth def
+R2064:2071 mathcomp.ssreflect.tuple <> tnth_nth thm
+R2074:2076 mathcomp.ssreflect.eqtype <> val proj
+R2085:2094 mathcomp.finmap.finmap <> enum_fsetE thm
+R2064:2071 mathcomp.ssreflect.tuple <> tnth_nth thm
+R2074:2076 mathcomp.ssreflect.eqtype <> val proj
+R2064:2071 mathcomp.ssreflect.tuple <> tnth_nth thm
+R2074:2076 mathcomp.ssreflect.eqtype <> val proj
+R2085:2094 mathcomp.finmap.finmap <> enum_fsetE thm
+R2085:2094 mathcomp.finmap.finmap <> enum_fsetE thm
+R2112:2118 mathcomp.ssreflect.seq <> nth_map thm
+R2124:2136 mathcomp.ssreflect.fintype <> nth_enum_rank thm
+R2142:2146 mathcomp.ssreflect.fintype <> cardE thm
+R2112:2118 mathcomp.ssreflect.seq <> nth_map thm
+R2112:2118 mathcomp.ssreflect.seq <> nth_map thm
+R2124:2136 mathcomp.ssreflect.fintype <> nth_enum_rank thm
+R2124:2136 mathcomp.ssreflect.fintype <> nth_enum_rank thm
+R2124:2136 mathcomp.ssreflect.fintype <> nth_enum_rank thm
+R2124:2136 mathcomp.ssreflect.fintype <> nth_enum_rank thm
+R2124:2136 mathcomp.ssreflect.fintype <> nth_enum_rank thm
+R2142:2146 mathcomp.ssreflect.fintype <> cardE thm
+R2142:2146 mathcomp.ssreflect.fintype <> cardE thm
+prf 2161:2169 <> val_fnthK
+R2176:2181 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2183:2183 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2182:2182 Polyhedra.hpolyhedron <> VectToFsFun.T var
+binder 2172:2172 <> S:9
+R2191:2191 Polyhedra.hpolyhedron <> S:9 var
+binder 2187:2187 <> v:10
+R2210:2212 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R2196:2199 Polyhedra.extra_misc <> fnth def
+R2202:2206 Polyhedra.hpolyhedron <> frank def
+R2208:2208 Polyhedra.hpolyhedron <> v:10 var
+R2213:2217 mathcomp.finmap.finmap <> fsval proj
+R2219:2219 Polyhedra.hpolyhedron <> v:10 var
+R2240:2244 Polyhedra.hpolyhedron <> fnthK thm
+R2253:2258 Coq.ssr.ssrfun <> congr1 def
+R2260:2262 mathcomp.ssreflect.eqtype <> val proj
+prf 2278:2286 <> bij_frank
+R2293:2298 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2300:2300 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2299:2299 Polyhedra.hpolyhedron <> VectToFsFun.T var
+binder 2289:2289 <> S:11
+R2305:2313 Coq.ssr.ssrfun <> bijective variant
+R2317:2321 Polyhedra.hpolyhedron <> frank def
+R2323:2323 Polyhedra.hpolyhedron <> S:11 var
+R2342:2350 Coq.ssr.ssrfun <> Bijective constr
+R2365:2370 Polyhedra.hpolyhedron <> frankK thm
+R2354:2358 Polyhedra.hpolyhedron <> fnthK thm
+R2342:2350 Coq.ssr.ssrfun <> Bijective constr
+R2365:2370 Polyhedra.hpolyhedron <> frankK thm
+R2354:2358 Polyhedra.hpolyhedron <> fnthK thm
+def 2394:2406 <> vect_to_fsfun
+R2413:2418 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2420:2420 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2419:2419 Polyhedra.hpolyhedron <> VectToFsFun.T var
+binder 2409:2409 <> I:12
+R2428:2431 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R2433:2434 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R2432:2432 Polyhedra.hpolyhedron <> VectToFsFun.R var
+R2435:2437 mathcomp.finmap.finmap <> ::nat_scope:'#|`'_x_'|' not
+R2439:2439 mathcomp.finmap.finmap <> ::nat_scope:'#|`'_x_'|' not
+R2438:2438 Polyhedra.hpolyhedron <> I:12 var
+binder 2424:2424 <> c:13
+R2444:2450 Polyhedra.barycenter <> ::type_scope:'{'_'fsfun'_x_'~>'_x_'}' not
+R2452:2455 Polyhedra.barycenter <> ::type_scope:'{'_'fsfun'_x_'~>'_x_'}' not
+R2457:2457 Polyhedra.barycenter <> ::type_scope:'{'_'fsfun'_x_'~>'_x_'}' not
+R2451:2451 Polyhedra.hpolyhedron <> VectToFsFun.T var
+R2456:2456 Polyhedra.hpolyhedron <> VectToFsFun.R var
+R2464:2470 mathcomp.finmap.finmap <> ::fun_scope:'['_'fsfun'_x_':'_x_'=>'_x_']' not
+R2472:2474 mathcomp.finmap.finmap <> ::fun_scope:'['_'fsfun'_x_':'_x_'=>'_x_']' not
+R2476:2479 mathcomp.finmap.finmap <> ::fun_scope:'['_'fsfun'_x_':'_x_'=>'_x_']' not
+R2493:2493 mathcomp.finmap.finmap <> ::fun_scope:'['_'fsfun'_x_':'_x_'=>'_x_']' not
+R2475:2475 Polyhedra.hpolyhedron <> I:12 var
+binder 2471:2471 <> v:14
+R2480:2480 Polyhedra.hpolyhedron <> c:13 var
+R2483:2487 Polyhedra.hpolyhedron <> frank def
+R2489:2489 Polyhedra.hpolyhedron <> v:14 var
+binder 2471:2471 <> v:15
+prf 2503:2523 <> finsupp_vect_to_fsfun
+R2530:2535 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2537:2537 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2536:2536 Polyhedra.hpolyhedron <> VectToFsFun.T var
+binder 2526:2526 <> I:16
+R2545:2548 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R2550:2551 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R2549:2549 Polyhedra.hpolyhedron <> VectToFsFun.R var
+R2552:2554 mathcomp.finmap.finmap <> ::nat_scope:'#|`'_x_'|' not
+R2556:2556 mathcomp.finmap.finmap <> ::nat_scope:'#|`'_x_'|' not
+R2555:2555 Polyhedra.hpolyhedron <> I:16 var
+binder 2541:2541 <> c:17
+R2592:2597 mathcomp.finmap.finmap <> ::fset_scope:x_'`<=`'_x not
+R2564:2570 mathcomp.finmap.finmap <> finsupp abbrev
+R2574:2586 Polyhedra.hpolyhedron <> vect_to_fsfun def
+R2588:2588 Polyhedra.hpolyhedron <> I:16 var
+R2590:2590 Polyhedra.hpolyhedron <> c:17 var
+R2598:2598 Polyhedra.hpolyhedron <> I:16 var
+R2620:2627 mathcomp.finmap.finmap <> fsubsetP thm
+R2642:2652 mathcomp.finmap.finmap <> mem_finsupp thm
+R2654:2663 mathcomp.finmap.finmap <> fsfun_ffun thm
+R2620:2627 mathcomp.finmap.finmap <> fsubsetP thm
+R2642:2652 mathcomp.finmap.finmap <> mem_finsupp thm
+R2642:2652 mathcomp.finmap.finmap <> mem_finsupp thm
+R2654:2663 mathcomp.finmap.finmap <> fsfun_ffun thm
+R2654:2663 mathcomp.finmap.finmap <> fsfun_ffun thm
+R2675:2680 mathcomp.ssreflect.eqtype <> insubP thm
+R2698:2701 mathcomp.ssreflect.eqtype <> eqxx abbrev
+R2675:2680 mathcomp.ssreflect.eqtype <> insubP thm
+R2675:2680 mathcomp.ssreflect.eqtype <> insubP thm
+R2698:2701 mathcomp.ssreflect.eqtype <> eqxx abbrev
+R2698:2701 mathcomp.ssreflect.eqtype <> eqxx abbrev
+R2713:2723 Polyhedra.hpolyhedron VectToFsFun <> sec
+sec 2810:2826 <> VectToFsFunTheory
+R2842:2851 mathcomp.ssreflect.choice Choice.Exports choiceType abbrev
+binder 2838:2838 <> T:18
+R2859:2871 mathcomp.algebra.ssrnum Num.RealField.Exports realFieldType abbrev
+binder 2855:2855 <> R:19
+prf 2882:2900 <> conic_vect_to_fsfun
+R2907:2912 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2914:2914 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R2913:2913 Polyhedra.hpolyhedron <> VectToFsFunTheory.T var
+binder 2903:2903 <> I:20
+R2922:2925 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R2927:2928 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R2926:2926 Polyhedra.hpolyhedron <> VectToFsFunTheory.R var
+R2929:2931 mathcomp.finmap.finmap <> ::nat_scope:'#|`'_x_'|' not
+R2933:2933 mathcomp.finmap.finmap <> ::nat_scope:'#|`'_x_'|' not
+R2932:2932 Polyhedra.hpolyhedron <> I:20 var
+binder 2918:2918 <> c:21
+R2951:2954 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2943:2948 Polyhedra.vector_order <> ::ring_scope:x_'<=m'_x not
+R2950:2950 Polyhedra.vector_order <> ::ring_scope:x_'<=m'_x not
+R2949:2949 Polyhedra.hpolyhedron <> c:21 var
+R2955:2959 Polyhedra.barycenter <> conic def
+R2962:2974 Polyhedra.hpolyhedron <> vect_to_fsfun def
+R2976:2976 Polyhedra.hpolyhedron <> c:21 var
+R3007:3013 Polyhedra.barycenter <> conicwP thm
+R3029:3038 mathcomp.finmap.finmap <> fsfun_ffun thm
+R3007:3013 Polyhedra.barycenter <> conicwP thm
+R3029:3038 mathcomp.finmap.finmap <> fsfun_ffun thm
+R3029:3038 mathcomp.finmap.finmap <> fsfun_ffun thm
+R3050:3055 mathcomp.ssreflect.eqtype <> insubP thm
+R3078:3082 Polyhedra.vector_order <> gev0P thm
+R3050:3055 mathcomp.ssreflect.eqtype <> insubP thm
+R3050:3055 mathcomp.ssreflect.eqtype <> insubP thm
+R3078:3082 Polyhedra.vector_order <> gev0P thm
+prf 3097:3116 <> convex_vect_to_fsfun
+R3123:3128 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3130:3130 mathcomp.finmap.finmap <> ::type_scope:'{fset'_x_'}' not
+R3129:3129 Polyhedra.hpolyhedron <> VectToFsFunTheory.T var
+binder 3119:3119 <> I:22
+R3138:3141 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R3143:3144 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R3142:3142 Polyhedra.hpolyhedron <> VectToFsFunTheory.R var
+R3145:3147 mathcomp.finmap.finmap <> ::nat_scope:'#|`'_x_'|' not
+R3149:3149 mathcomp.finmap.finmap <> ::nat_scope:'#|`'_x_'|' not
+R3148:3148 Polyhedra.hpolyhedron <> I:22 var
+binder 3134:3134 <> c:23
+R3167:3170 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3159:3164 Polyhedra.vector_order <> ::ring_scope:x_'<=m'_x not
+R3166:3166 Polyhedra.vector_order <> ::ring_scope:x_'<=m'_x not
+R3165:3165 Polyhedra.hpolyhedron <> c:23 var
+R3191:3194 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3187:3189 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3171:3172 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R3183:3184 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R3186:3186 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R3173:3180 mathcomp.algebra.matrix <> const_mx def
+R3185:3185 Polyhedra.hpolyhedron <> c:23 var
+R3195:3200 Polyhedra.barycenter <> convex def
+R3203:3215 Polyhedra.hpolyhedron <> vect_to_fsfun def
+R3217:3217 Polyhedra.hpolyhedron <> c:23 var
+R3260:3265 Polyhedra.barycenter <> convex def
+R3267:3285 Polyhedra.hpolyhedron <> conic_vect_to_fsfun thm
+R3260:3265 Polyhedra.barycenter <> convex def
+R3260:3265 Polyhedra.barycenter <> convex def
+R3267:3285 Polyhedra.hpolyhedron <> conic_vect_to_fsfun thm
+R3267:3285 Polyhedra.hpolyhedron <> conic_vect_to_fsfun thm
+R3301:3308 Polyhedra.barycenter <> weightwE thm
+R3311:3331 Polyhedra.hpolyhedron <> finsupp_vect_to_fsfun thm
+R3339:3341 Coq.ssr.ssrbool <> rwP thm
+R3343:3345 mathcomp.ssreflect.eqtype <> eqP thm
+R3301:3308 Polyhedra.barycenter <> weightwE thm
+R3311:3331 Polyhedra.hpolyhedron <> finsupp_vect_to_fsfun thm
+R3301:3308 Polyhedra.barycenter <> weightwE thm
+R3311:3331 Polyhedra.hpolyhedron <> finsupp_vect_to_fsfun thm
+R3339:3341 Coq.ssr.ssrbool <> rwP thm
+R3343:3345 mathcomp.ssreflect.eqtype <> eqP thm
+R3339:3341 Coq.ssr.ssrbool <> rwP thm
+R3343:3345 mathcomp.ssreflect.eqtype <> eqP thm
+R3373:3377 Polyhedra.inner_product <> vdotC thm
+R3379:3393 Polyhedra.inner_product <> vdotr_const_mx1 thm
+R3373:3377 Polyhedra.inner_product <> vdotC thm
+R3373:3377 Polyhedra.inner_product <> vdotC thm
+R3379:3393 Polyhedra.inner_product <> vdotr_const_mx1 thm
+R3379:3393 Polyhedra.inner_product <> vdotr_const_mx1 thm
+R3411:3417 mathcomp.ssreflect.bigop <> reindex thm
+R3421:3425 Polyhedra.hpolyhedron <> frank def
+R3451:3457 Coq.ssr.ssrbool <> onW_bij thm
+R3459:3467 Polyhedra.hpolyhedron <> bij_frank thm
+R3411:3417 mathcomp.ssreflect.bigop <> reindex thm
+R3421:3425 Polyhedra.hpolyhedron <> frank def
+R3411:3417 mathcomp.ssreflect.bigop <> reindex thm
+R3421:3425 Polyhedra.hpolyhedron <> frank def
+R3451:3457 Coq.ssr.ssrbool <> onW_bij thm
+R3459:3467 Polyhedra.hpolyhedron <> bij_frank thm
+R3477:3483 mathcomp.ssreflect.bigop <> eq_bigr thm
+R3500:3509 mathcomp.finmap.finmap <> fsfun_ffun thm
+R3511:3516 mathcomp.ssreflect.eqtype <> insubT thm
+R3477:3483 mathcomp.ssreflect.bigop <> eq_bigr thm
+R3500:3509 mathcomp.finmap.finmap <> fsfun_ffun thm
+R3500:3509 mathcomp.finmap.finmap <> fsfun_ffun thm
+R3511:3516 mathcomp.ssreflect.eqtype <> insubT thm
+R3511:3516 mathcomp.ssreflect.eqtype <> insubT thm
+R3546:3553 mathcomp.finmap.finmap <> fsetsubE thm
+R3546:3553 mathcomp.finmap.finmap <> fsetsubE thm
+R3546:3553 mathcomp.finmap.finmap <> fsetsubE thm
+R3565:3581 Polyhedra.hpolyhedron VectToFsFunTheory <> sec
+sec 3668:3674 <> Combine
+R3690:3702 mathcomp.algebra.ssrnum Num.RealField.Exports realFieldType abbrev
+binder 3686:3686 <> R:24
+R3710:3712 Coq.Init.Datatypes <> nat ind
+binder 3706:3706 <> n:25
+R3723:3729 Polyhedra.lrel <> :::'base_t'_'['_x_','_x_']' not
+R3731:3731 Polyhedra.lrel <> :::'base_t'_'['_x_','_x_']' not
+R3733:3733 Polyhedra.lrel <> :::'base_t'_'['_x_','_x_']' not
+R3730:3730 Polyhedra.hpolyhedron <> R:24 var
+R3732:3732 Polyhedra.hpolyhedron <> n:25 var
+binder 3716:3719 <> base:26
+R3758:3764 Polyhedra.barycenter <> ::type_scope:'{'_'fsfun'_x_'~>'_x_'}' not
+R3774:3777 Polyhedra.barycenter <> ::type_scope:'{'_'fsfun'_x_'~>'_x_'}' not
+R3779:3779 Polyhedra.barycenter <> ::type_scope:'{'_'fsfun'_x_'~>'_x_'}' not
+R3765:3769 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R3771:3772 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R3770:3770 Polyhedra.hpolyhedron <> Combine.R var
+R3773:3773 Polyhedra.hpolyhedron <> Combine.n var
+R3778:3778 Polyhedra.hpolyhedron <> Combine.R var
+prf 3790:3799 <> combineb1E
+binder 3801:3801 <> w:27
+R3831:3836 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R3815:3820 mathcomp.finmap.finmap <> ::fset_scope:x_'`<=`'_x not
+R3806:3812 mathcomp.finmap.finmap <> finsupp abbrev
+R3814:3814 Polyhedra.hpolyhedron <> w:27 var
+R3821:3824 Polyhedra.hpolyhedron <> Combine.base var
+R3850:3852 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3837:3837 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R3847:3849 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R3838:3844 Polyhedra.barycenter <> combine def
+R3846:3846 Polyhedra.hpolyhedron <> w:27 var
+R3853:3858 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_':'_x_')'_x not
+R3860:3862 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_':'_x_')'_x not
+R3867:3868 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_':'_x_')'_x not
+R3863:3866 Polyhedra.hpolyhedron <> Combine.base var
+binder 3859:3859 <> v:28
+binder 3859:3859 <> v:29
+binder 3859:3859 <> v:30
+R3878:3881 mathcomp.algebra.ssralg <> ::ring_scope:x_'*:'_x not
+R3869:3869 Polyhedra.hpolyhedron <> w:27 var
+R3872:3874 mathcomp.ssreflect.eqtype <> val proj
+R3876:3876 Polyhedra.hpolyhedron <> v:28 var
+R3882:3882 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R3888:3890 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R3883:3885 mathcomp.ssreflect.eqtype <> val proj
+R3887:3887 Polyhedra.hpolyhedron <> v:28 var
+R3923:3931 Polyhedra.barycenter <> combinewE thm
+R3923:3931 Polyhedra.barycenter <> combinewE thm
+R3923:3931 Polyhedra.barycenter <> combinewE thm
+R3951:3959 mathcomp.ssreflect.bigop <> big_morph thm
+R3974:3982 Polyhedra.lrel <> beadd_p1E thm
+R3965:3968 Coq.ssr.ssrfun <> ::fun_scope:x_'\o'_x not
+R3962:3964 Coq.Init.Datatypes <> fst def
+R3969:3971 mathcomp.ssreflect.eqtype <> val proj
+R3951:3959 mathcomp.ssreflect.bigop <> big_morph thm
+R3974:3982 Polyhedra.lrel <> beadd_p1E thm
+R3965:3968 Coq.ssr.ssrfun <> ::fun_scope:x_'\o'_x not
+R3962:3964 Coq.Init.Datatypes <> fst def
+R3969:3971 mathcomp.ssreflect.eqtype <> val proj
+prf 3998:4007 <> combineb2E
+binder 4009:4009 <> w:31
+R4039:4044 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R4023:4028 mathcomp.finmap.finmap <> ::fset_scope:x_'`<=`'_x not
+R4014:4020 mathcomp.finmap.finmap <> finsupp abbrev
+R4022:4022 Polyhedra.hpolyhedron <> w:31 var
+R4029:4032 Polyhedra.hpolyhedron <> Combine.base var
+R4058:4060 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4045:4045 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R4055:4057 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R4046:4052 Polyhedra.barycenter <> combine def
+R4054:4054 Polyhedra.hpolyhedron <> w:31 var
+R4061:4066 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_':'_x_')'_x not
+R4068:4070 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_':'_x_')'_x not
+R4075:4076 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_':'_x_')'_x not
+R4071:4074 Polyhedra.hpolyhedron <> Combine.base var
+binder 4067:4067 <> v:32
+binder 4067:4067 <> v:33
+binder 4067:4067 <> v:34
+R4086:4088 mathcomp.algebra.ssralg <> ::ring_scope:x_'*'_x not
+R4077:4077 Polyhedra.hpolyhedron <> w:31 var
+R4080:4082 mathcomp.ssreflect.eqtype <> val proj
+R4084:4084 Polyhedra.hpolyhedron <> v:32 var
+R4089:4089 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R4095:4097 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R4090:4092 mathcomp.ssreflect.eqtype <> val proj
+R4094:4094 Polyhedra.hpolyhedron <> v:32 var
+R4130:4138 Polyhedra.barycenter <> combinewE thm
+R4130:4138 Polyhedra.barycenter <> combinewE thm
+R4130:4138 Polyhedra.barycenter <> combinewE thm
+R4158:4166 mathcomp.ssreflect.bigop <> big_morph thm
+R4181:4189 Polyhedra.lrel <> beadd_p2E thm
+R4172:4175 Coq.ssr.ssrfun <> ::fun_scope:x_'\o'_x not
+R4169:4171 Coq.Init.Datatypes <> snd def
+R4176:4178 mathcomp.ssreflect.eqtype <> val proj
+R4158:4166 mathcomp.ssreflect.bigop <> big_morph thm
+R4181:4189 Polyhedra.lrel <> beadd_p2E thm
+R4172:4175 Coq.ssr.ssrfun <> ::fun_scope:x_'\o'_x not
+R4169:4171 Coq.Init.Datatypes <> snd def
+R4176:4178 mathcomp.ssreflect.eqtype <> val proj
+def 4210:4218 <> combinebE
+binder 4220:4220 <> w:35
+R4237:4242 mathcomp.finmap.finmap <> ::fset_scope:x_'`<=`'_x not
+R4228:4234 mathcomp.finmap.finmap <> finsupp abbrev
+R4236:4236 Polyhedra.hpolyhedron <> w:35 var
+R4243:4246 Polyhedra.hpolyhedron <> Combine.base var
+binder 4223:4223 <> h:36
+R4260:4260 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R4276:4277 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R4293:4293 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R4262:4271 Polyhedra.hpolyhedron <> combineb1E thm
+R4273:4273 Polyhedra.hpolyhedron <> w:35 var
+R4275:4275 Polyhedra.hpolyhedron <> h:36 var
+R4279:4288 Polyhedra.hpolyhedron <> combineb2E thm
+R4290:4290 Polyhedra.hpolyhedron <> w:35 var
+R4292:4292 Polyhedra.hpolyhedron <> h:36 var
+R4300:4306 Polyhedra.hpolyhedron Combine <> sec
+mod 4392:4402 <> HPolyhedron
+sec 4414:4416 HPolyhedron Def
+var 4430:4430 HPolyhedron.Def R
+var 4450:4450 HPolyhedron.Def n
+R4434:4446 mathcomp.algebra.ssrnum Num.RealField.Exports realFieldType abbrev
+R4454:4456 Coq.Init.Datatypes <> nat ind
+rec 4468:4472 HPolyhedron hpoly
+proj 4487:4493 HPolyhedron nb_ineq
+R4497:4499 Coq.Init.Datatypes <> nat ind
+R4509:4511 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R4513:4515 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R4523:4523 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R4525:4525 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R4512:4512 Polyhedra.hpolyhedron <> HPolyhedron.Def.R var
+R4516:4522 Polyhedra.hpolyhedron <> nb_ineq:40 meth
+R4524:4524 Polyhedra.hpolyhedron <> HPolyhedron.Def.n var
+R4535:4538 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R4540:4541 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R4539:4539 Polyhedra.hpolyhedron <> HPolyhedron.Def.R var
+R4542:4548 Polyhedra.hpolyhedron <> nb_ineq:40 meth
+def 4565:4573 HPolyhedron mem_hpoly
+binder 4575:4575 <> P:41
+R4579:4584 Coq.ssr.ssrbool <> ::type_scope:'{'_'pred'_x_'}' not
+R4593:4593 Coq.ssr.ssrbool <> ::type_scope:'{'_'pred'_x_'}' not
+R4585:4588 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R4590:4591 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R4589:4589 Polyhedra.hpolyhedron <> HPolyhedron.Def.R var
+R4592:4592 Polyhedra.hpolyhedron <> HPolyhedron.Def.n var
+R4620:4620 Polyhedra.hpolyhedron <> P:41 var
+R4605:4609 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+R4627:4632 Coq.ssr.ssrbool <> ::fun_scope:'['_'pred'_x_':'_x_'|'_x_']' not
+R4634:4636 Coq.ssr.ssrbool <> ::fun_scope:'['_'pred'_x_':'_x_'|'_x_']' not
+R4642:4644 Coq.ssr.ssrbool <> ::fun_scope:'['_'pred'_x_':'_x_'|'_x_']' not
+R4659:4659 Coq.ssr.ssrbool <> ::fun_scope:'['_'pred'_x_':'_x_'|'_x_']' not
+R4637:4640 mathcomp.algebra.matrix <> ::type_scope:'''cV_'_x not
+R4641:4641 Polyhedra.hpolyhedron <> HPolyhedron.Def.n var
+binder 4633:4633 <> x:43
+R4645:4645 Polyhedra.vector_order <> ::ring_scope:x_'>=m'_x not
+R4652:4657 Polyhedra.vector_order <> ::ring_scope:x_'>=m'_x not
+R4647:4650 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R4651:4651 Polyhedra.hpolyhedron <> x:43 var
+R4662:4701 Polyhedra.hpolyhedron HPolyhedron mem_hpoly def
+R4709:4711 Polyhedra.hpolyhedron HPolyhedron.Def <> sec
+R4747:4751 Polyhedra.hpolyhedron HPolyhedron hpoly rec
+not 4724:4724 HPolyhedron :::'''hpoly['_x_']_'_x
+R4786:4790 Polyhedra.hpolyhedron HPolyhedron hpoly rec
+not 4768:4768 HPolyhedron :::'''hpoly_'_x
+sec 4807:4812 HPolyhedron Choice
+var 4825:4825 HPolyhedron.Choice R
+R4829:4841 mathcomp.algebra.ssrnum Num.RealField.Exports realFieldType abbrev
+var 4853:4853 HPolyhedron.Choice n
+R4857:4859 Coq.Init.Datatypes <> nat ind
+def 4874:4890 HPolyhedron matrix_from_hpoly
+R4897:4903 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R4905:4906 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R4904:4904 Polyhedra.hpolyhedron <> HPolyhedron.Choice.R var
+R4907:4907 Polyhedra.hpolyhedron <> HPolyhedron.Choice.n var
+binder 4893:4893 <> P:46
+R4935:4935 Polyhedra.hpolyhedron <> P:46 var
+R4920:4924 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+R4944:4949 Coq.ssr.ssrfun <> Tagged def
+R4990:4990 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R4992:4993 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R4995:4995 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+binder 4956:4956 <> m:48
+R4972:4974 Coq.Init.Datatypes <> ::type_scope:x_'*'_x not
+R4961:4963 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R4965:4967 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R4969:4969 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R4971:4971 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R4964:4964 Polyhedra.hpolyhedron <> HPolyhedron.Choice.R var
+R4968:4968 Polyhedra.hpolyhedron <> m:48 var
+R4970:4970 Polyhedra.hpolyhedron <> HPolyhedron.Choice.n var
+R4975:4978 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R4980:4981 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R4979:4979 Polyhedra.hpolyhedron <> HPolyhedron.Choice.R var
+R4982:4982 Polyhedra.hpolyhedron <> m:48 var
+def 5010:5026 HPolyhedron hpoly_from_matrix
+R5033:5033 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'&'_x_'}' not
+R5035:5037 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'&'_x_'}' not
+R5041:5043 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'&'_x_'}' not
+R5066:5066 Coq.Init.Specif <> ::type_scope:'{'_x_':'_x_'&'_x_'}' not
+R5038:5040 Coq.Init.Datatypes <> nat ind
+binder 5034:5034 <> m:49
+R5055:5057 Coq.Init.Datatypes <> ::type_scope:x_'*'_x not
+R5044:5046 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R5048:5050 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R5052:5052 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R5054:5054 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R5047:5047 Polyhedra.hpolyhedron <> HPolyhedron.Choice.R var
+R5051:5051 Polyhedra.hpolyhedron <> m:49 var
+R5053:5053 Polyhedra.hpolyhedron <> HPolyhedron.Choice.n var
+R5058:5061 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R5063:5064 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R5062:5062 Polyhedra.hpolyhedron <> HPolyhedron.Choice.R var
+R5065:5065 Polyhedra.hpolyhedron <> m:49 var
+binder 5029:5029 <> M:50
+R5094:5099 Coq.ssr.ssrfun <> tagged def
+R5101:5101 Polyhedra.hpolyhedron <> M:50 var
+R5084:5084 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R5086:5087 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R5089:5089 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R5110:5114 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+prf 5128:5145 HPolyhedron matrix_from_hpolyK
+R5151:5156 Coq.ssr.ssrfun <> cancel def
+R5176:5192 Polyhedra.hpolyhedron HPolyhedron hpoly_from_matrix def
+R5158:5174 Polyhedra.hpolyhedron HPolyhedron matrix_from_hpoly def
+R5231:5247 Polyhedra.hpolyhedron HPolyhedron matrix_from_hpoly def
+R5250:5266 Polyhedra.hpolyhedron HPolyhedron hpoly_from_matrix def
+R5231:5247 Polyhedra.hpolyhedron HPolyhedron matrix_from_hpoly def
+R5231:5247 Polyhedra.hpolyhedron HPolyhedron matrix_from_hpoly def
+R5250:5266 Polyhedra.hpolyhedron HPolyhedron hpoly_from_matrix def
+R5250:5266 Polyhedra.hpolyhedron HPolyhedron hpoly_from_matrix def
+def 5286:5298 HPolyhedron hpoly_eqMixin
+R5303:5312 mathcomp.ssreflect.eqtype <> CanEqMixin def
+R5314:5331 Polyhedra.hpolyhedron HPolyhedron matrix_from_hpolyK thm
+def 5344:5355 HPolyhedron hpoly_eqType
+R5372:5377 mathcomp.ssreflect.eqtype Equality.Exports EqType abbrev
+R5379:5385 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R5387:5388 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R5386:5386 Polyhedra.hpolyhedron <> HPolyhedron.Choice.R var
+R5389:5389 Polyhedra.hpolyhedron <> HPolyhedron.Choice.n var
+R5391:5403 Polyhedra.hpolyhedron HPolyhedron hpoly_eqMixin def
+def 5417:5433 HPolyhedron hpoly_choiceMixin
+R5438:5451 mathcomp.ssreflect.choice <> CanChoiceMixin def
+R5453:5470 Polyhedra.hpolyhedron HPolyhedron matrix_from_hpolyK thm
+def 5483:5498 HPolyhedron hpoly_choiceType
+R5515:5524 mathcomp.ssreflect.choice Choice.Exports ChoiceType abbrev
+R5526:5532 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R5534:5535 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R5533:5533 Polyhedra.hpolyhedron <> HPolyhedron.Choice.R var
+R5536:5536 Polyhedra.hpolyhedron <> HPolyhedron.Choice.n var
+R5538:5554 Polyhedra.hpolyhedron HPolyhedron hpoly_choiceMixin def
+R5562:5567 Polyhedra.hpolyhedron HPolyhedron.Choice <> sec
+sec 5579:5586 HPolyhedron PolyPred
+R5603:5615 mathcomp.algebra.ssrnum Num.RealField.Exports realFieldType abbrev
+binder 5599:5599 <> R:51
+R5623:5625 Coq.Init.Datatypes <> nat ind
+binder 5619:5619 <> n:52
+R5649:5655 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R5657:5658 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R5656:5656 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.R var
+R5659:5659 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.n var
+def 5675:5681 HPolyhedron hpoly_c
+R5688:5694 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R5696:5697 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R5695:5695 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.R var
+R5698:5698 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.n var
+binder 5684:5684 <> P:53
+R5703:5705 Coq.Init.Datatypes <> nat ind
+R5732:5732 Polyhedra.hpolyhedron <> P:53 var
+R5717:5721 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+def 5752:5758 HPolyhedron hpoly_A
+R5765:5771 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R5773:5774 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R5772:5772 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.R var
+R5775:5775 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.n var
+binder 5761:5761 <> P:55
+R5779:5782 mathcomp.algebra.matrix <> ::type_scope:'''M_'_'('_x_','_x_')' not
+R5792:5793 mathcomp.algebra.matrix <> ::type_scope:'''M_'_'('_x_','_x_')' not
+R5795:5795 mathcomp.algebra.matrix <> ::type_scope:'''M_'_'('_x_','_x_')' not
+R5783:5789 Polyhedra.hpolyhedron HPolyhedron hpoly_c def
+R5791:5791 Polyhedra.hpolyhedron <> P:55 var
+R5822:5822 Polyhedra.hpolyhedron <> P:55 var
+R5807:5811 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+def 5842:5848 HPolyhedron hpoly_b
+R5855:5861 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R5863:5864 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R5862:5862 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.R var
+R5865:5865 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.n var
+binder 5851:5851 <> P:57
+R5869:5873 mathcomp.algebra.matrix <> ::type_scope:'''cV_'_x not
+R5883:5883 mathcomp.algebra.matrix <> ::type_scope:'''cV_'_x not
+R5874:5880 Polyhedra.hpolyhedron HPolyhedron hpoly_c def
+R5882:5882 Polyhedra.hpolyhedron <> P:57 var
+R5910:5910 Polyhedra.hpolyhedron <> P:57 var
+R5895:5899 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+R5940:5946 Polyhedra.hpolyhedron HPolyhedron hpoly_c def
+not 5928:5928 HPolyhedron.PolyPred :::x_'.`c'
+R5973:5979 Polyhedra.hpolyhedron HPolyhedron hpoly_A def
+not 5961:5961 HPolyhedron.PolyPred :::x_'.`A'
+R6006:6012 Polyhedra.hpolyhedron HPolyhedron hpoly_b def
+not 5994:5994 HPolyhedron.PolyPred :::x_'.`b'
+prf 6025:6033 HPolyhedron in_hpolyE
+R6040:6046 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R6048:6049 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R6047:6047 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.R var
+R6050:6050 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.n var
+binder 6036:6036 <> P:59
+binder 6053:6053 <> x:60
+R6057:6057 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6065:6068 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6059:6063 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R6058:6058 Polyhedra.hpolyhedron <> x:60 var
+R6064:6064 Polyhedra.hpolyhedron <> P:59 var
+R6069:6069 Polyhedra.vector_order <> ::ring_scope:x_'>=m'_x not
+R6079:6085 Polyhedra.vector_order <> ::ring_scope:x_'>=m'_x not
+R6090:6090 Polyhedra.vector_order <> ::ring_scope:x_'>=m'_x not
+R6087:6089 Polyhedra.hpolyhedron HPolyhedron.PolyPred :::x_'.`b' not
+R6086:6086 Polyhedra.hpolyhedron <> P:59 var
+R6074:6077 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R6071:6073 Polyhedra.hpolyhedron HPolyhedron.PolyPred :::x_'.`A' not
+R6070:6070 Polyhedra.hpolyhedron <> P:59 var
+R6078:6078 Polyhedra.hpolyhedron <> x:60 var
+def 6129:6133 HPolyhedron mk_hs
+R6140:6144 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R6146:6147 Polyhedra.lrel <> :::'lrel'_'['_x_']_'_x not
+R6145:6145 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.R var
+R6148:6148 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.n var
+binder 6136:6136 <> b:61
+R6153:6159 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R6161:6162 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R6160:6160 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.R var
+R6163:6163 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.n var
+R6168:6172 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+R6182:6182 mathcomp.algebra.matrix <> ::ring_scope:x_'%:M' not
+R6186:6189 mathcomp.algebra.matrix <> ::ring_scope:x_'%:M' not
+R6184:6185 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R6183:6183 Polyhedra.hpolyhedron <> b:61 var
+R6174:6174 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R6178:6180 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R6176:6177 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R6175:6175 Polyhedra.hpolyhedron <> b:61 var
+prf 6199:6203 HPolyhedron in_hs
+binder 6205:6205 <> b:62
+binder 6207:6207 <> x:63
+R6227:6230 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6246:6246 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6212:6217 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R6225:6226 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R6211:6211 Polyhedra.hpolyhedron <> x:63 var
+R6218:6222 Polyhedra.hpolyhedron HPolyhedron mk_hs def
+R6224:6224 Polyhedra.hpolyhedron <> b:62 var
+R6239:6242 mathcomp.algebra.ssrnum Num.Syntax ::ring_scope:x_'>='_x not
+R6244:6245 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R6243:6243 Polyhedra.hpolyhedron <> b:62 var
+R6231:6232 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R6236:6236 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R6238:6238 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R6234:6235 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R6233:6233 Polyhedra.hpolyhedron <> b:62 var
+R6237:6237 Polyhedra.hpolyhedron <> x:63 var
+R6264:6266 mathcomp.finmap.finmap <> inE def
+R6268:6272 Polyhedra.inner_product <> vdotC thm
+R6275:6282 Polyhedra.inner_product <> vdot_def thm
+R6264:6266 mathcomp.finmap.finmap <> inE def
+R6264:6266 mathcomp.finmap.finmap <> inE def
+R6268:6272 Polyhedra.inner_product <> vdotC thm
+R6268:6272 Polyhedra.inner_product <> vdotC thm
+R6275:6282 Polyhedra.inner_product <> vdot_def thm
+R6275:6282 Polyhedra.inner_product <> vdot_def thm
+R6294:6300 mathcomp.ssreflect.fintype <> forallP thm
+R6302:6304 Coq.ssr.ssrbool <> idP thm
+R6338:6345 Polyhedra.extra_misc <> ord1_eq0 thm
+R6348:6350 mathcomp.algebra.matrix <> mxE thm
+R6356:6361 mathcomp.algebra.ssralg GRing.Theory mulr1n def
+R6294:6300 mathcomp.ssreflect.fintype <> forallP thm
+R6302:6304 Coq.ssr.ssrbool <> idP thm
+R6338:6345 Polyhedra.extra_misc <> ord1_eq0 thm
+R6338:6345 Polyhedra.extra_misc <> ord1_eq0 thm
+R6348:6350 mathcomp.algebra.matrix <> mxE thm
+R6348:6350 mathcomp.algebra.matrix <> mxE thm
+R6348:6350 mathcomp.algebra.matrix <> mxE thm
+R6348:6350 mathcomp.algebra.matrix <> mxE thm
+R6356:6361 mathcomp.algebra.ssralg GRing.Theory mulr1n def
+R6356:6361 mathcomp.algebra.ssralg GRing.Theory mulr1n def
+R6356:6361 mathcomp.algebra.ssralg GRing.Theory mulr1n def
+R6356:6361 mathcomp.algebra.ssralg GRing.Theory mulr1n def
+R6338:6345 Polyhedra.extra_misc <> ord1_eq0 thm
+R6338:6345 Polyhedra.extra_misc <> ord1_eq0 thm
+R6338:6345 Polyhedra.extra_misc <> ord1_eq0 thm
+R6348:6350 mathcomp.algebra.matrix <> mxE thm
+R6348:6350 mathcomp.algebra.matrix <> mxE thm
+R6348:6350 mathcomp.algebra.matrix <> mxE thm
+R6348:6350 mathcomp.algebra.matrix <> mxE thm
+R6356:6361 mathcomp.algebra.ssralg GRing.Theory mulr1n def
+R6356:6361 mathcomp.algebra.ssralg GRing.Theory mulr1n def
+R6356:6361 mathcomp.algebra.ssralg GRing.Theory mulr1n def
+R6356:6361 mathcomp.algebra.ssralg GRing.Theory mulr1n def
+def 6381:6385 HPolyhedron poly0
+R6390:6394 Polyhedra.hpolyhedron HPolyhedron mk_hs def
+R6396:6397 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R6399:6399 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R6401:6402 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+prf 6412:6419 HPolyhedron in_poly0
+R6428:6431 Coq.ssr.ssrbool <> ::type_scope:x_'=i'_x not
+R6423:6427 Polyhedra.hpolyhedron HPolyhedron poly0 def
+R6432:6436 Coq.ssr.ssrbool <> pred0 def
+R6468:6472 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R6474:6479 Polyhedra.inner_product <> vdot0l thm
+R6481:6483 mathcomp.finmap.finmap <> inE def
+R6485:6489 mathcomp.algebra.ssrnum Num.Theory ler10 thm
+R6468:6472 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R6468:6472 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R6474:6479 Polyhedra.inner_product <> vdot0l thm
+R6474:6479 Polyhedra.inner_product <> vdot0l thm
+R6481:6483 mathcomp.finmap.finmap <> inE def
+R6481:6483 mathcomp.finmap.finmap <> inE def
+R6485:6489 mathcomp.algebra.ssrnum Num.Theory ler10 thm
+R6485:6489 mathcomp.algebra.ssrnum Num.Theory ler10 thm
+def 6509:6513 HPolyhedron polyT
+R6517:6523 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R6525:6526 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R6524:6524 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.R var
+R6527:6527 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.n var
+R6533:6537 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+R6546:6553 mathcomp.algebra.matrix <> const_mx def
+prf 6568:6575 HPolyhedron in_polyT
+R6584:6587 Coq.ssr.ssrbool <> ::type_scope:x_'=i'_x not
+R6579:6583 Polyhedra.hpolyhedron HPolyhedron polyT def
+R6588:6592 Coq.ssr.ssrbool <> predT def
+R6625:6627 mathcomp.finmap.finmap <> inE def
+R6629:6634 mathcomp.algebra.matrix <> mul0mx thm
+R6636:6643 Polyhedra.vector_order <> lev_refl thm
+R6625:6627 mathcomp.finmap.finmap <> inE def
+R6625:6627 mathcomp.finmap.finmap <> inE def
+R6625:6627 mathcomp.finmap.finmap <> inE def
+R6625:6627 mathcomp.finmap.finmap <> inE def
+R6629:6634 mathcomp.algebra.matrix <> mul0mx thm
+R6629:6634 mathcomp.algebra.matrix <> mul0mx thm
+R6636:6643 Polyhedra.vector_order <> lev_refl thm
+R6636:6643 Polyhedra.vector_order <> lev_refl thm
+def 6663:6667 HPolyhedron polyI
+binder 6669:6669 <> P:64
+binder 6671:6671 <> Q:65
+R6698:6698 Polyhedra.hpolyhedron <> P:64 var
+R6683:6687 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+R6727:6727 Polyhedra.hpolyhedron <> Q:65 var
+R6710:6714 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+R6736:6740 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+R6757:6762 mathcomp.algebra.matrix <> col_mx def
+R6743:6748 mathcomp.algebra.matrix <> col_mx def
+prf 6778:6785 HPolyhedron in_polyI
+binder 6787:6787 <> P:68
+binder 6789:6789 <> Q:69
+R6793:6793 Coq.ssr.ssrbool <> ::type_scope:x_'=i'_x not
+R6803:6807 Coq.ssr.ssrbool <> ::type_scope:x_'=i'_x not
+R6794:6798 Polyhedra.hpolyhedron HPolyhedron polyI def
+R6802:6802 Polyhedra.hpolyhedron <> Q:69 var
+R6800:6800 Polyhedra.hpolyhedron <> P:68 var
+R6808:6814 Coq.ssr.ssrbool <> ::fun_scope:'['_'predI'_x_'&'_x_']' not
+R6816:6818 Coq.ssr.ssrbool <> ::fun_scope:'['_'predI'_x_'&'_x_']' not
+R6820:6820 Coq.ssr.ssrbool <> ::fun_scope:'['_'predI'_x_'&'_x_']' not
+R6815:6815 Polyhedra.hpolyhedron <> P:68 var
+R6819:6819 Polyhedra.hpolyhedron <> Q:69 var
+R6895:6897 mathcomp.finmap.finmap <> inE def
+R6899:6908 mathcomp.algebra.matrix <> mul_col_mx thm
+R6910:6919 Polyhedra.vector_order <> col_mx_lev thm
+R6895:6897 mathcomp.finmap.finmap <> inE def
+R6895:6897 mathcomp.finmap.finmap <> inE def
+R6895:6897 mathcomp.finmap.finmap <> inE def
+R6895:6897 mathcomp.finmap.finmap <> inE def
+R6895:6897 mathcomp.finmap.finmap <> inE def
+R6895:6897 mathcomp.finmap.finmap <> inE def
+R6895:6897 mathcomp.finmap.finmap <> inE def
+R6895:6897 mathcomp.finmap.finmap <> inE def
+R6899:6908 mathcomp.algebra.matrix <> mul_col_mx thm
+R6899:6908 mathcomp.algebra.matrix <> mul_col_mx thm
+R6910:6919 Polyhedra.vector_order <> col_mx_lev thm
+R6910:6919 Polyhedra.vector_order <> col_mx_lev thm
+def 6939:6945 HPolyhedron bounded
+binder 6947:6947 <> P:70
+binder 6949:6949 <> c:71
+R6976:6976 Polyhedra.hpolyhedron <> P:70 var
+R6961:6965 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+R6985:6999 Polyhedra.simplex Simplex bounded def
+R7005:7005 Polyhedra.hpolyhedron <> c:71 var
+def 7020:7028 HPolyhedron opt_value
+binder 7030:7030 <> P:73
+binder 7032:7032 <> c:74
+R7059:7059 Polyhedra.hpolyhedron <> P:73 var
+R7044:7048 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+R7068:7084 Polyhedra.simplex Simplex opt_value def
+R7090:7090 Polyhedra.hpolyhedron <> c:74 var
+def 7105:7115 HPolyhedron poly_subset
+binder 7117:7117 <> P:76
+binder 7119:7119 <> Q:77
+R7146:7146 Polyhedra.hpolyhedron <> P:76 var
+R7131:7135 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+R7175:7175 Polyhedra.hpolyhedron <> Q:77 var
+R7158:7162 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+R7184:7184 Coq.Init.Datatypes <> ::bool_scope:x_'||'_x not
+R7208:7218 Coq.Init.Datatypes <> ::bool_scope:x_'||'_x not
+R7185:7187 Coq.ssr.ssrbool <> ::bool_scope:'~~'_x not
+R7188:7203 Polyhedra.simplex Simplex feasible def
+R7219:7226 mathcomp.ssreflect.fintype FiniteQuant.Exports ::bool_scope:'['_'forall'_x_x_']' not
+R7314:7314 mathcomp.ssreflect.fintype FiniteQuant.Exports ::bool_scope:'['_'forall'_x_x_']' not
+binder 7227:7227 <> i:80
+R7228:7229 mathcomp.ssreflect.fintype FiniteQuant.Exports ::fin_quant_scope:','_x not
+R7230:7230 Coq.Init.Datatypes <> ::bool_scope:x_'&&'_x not
+R7263:7268 Coq.Init.Datatypes <> ::bool_scope:x_'&&'_x not
+R7313:7313 Coq.Init.Datatypes <> ::bool_scope:x_'&&'_x not
+R7231:7245 Polyhedra.simplex Simplex bounded def
+R7251:7251 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R7260:7262 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R7252:7254 mathcomp.algebra.matrix <> row def
+R7256:7256 Polyhedra.hpolyhedron <> i:80 var
+R7303:7306 mathcomp.algebra.ssrnum Num.Syntax ::ring_scope:x_'>='_x not
+R7310:7310 Polyhedra.hpolyhedron <> i:80 var
+R7269:7285 Polyhedra.simplex Simplex opt_value def
+R7291:7291 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R7300:7302 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R7292:7294 mathcomp.algebra.matrix <> row def
+R7296:7296 Polyhedra.hpolyhedron <> i:80 var
+binder 7227:7227 <> i:81
+binder 7227:7227 <> i:82
+prf 8451:8463 HPolyhedron poly_subsetPn
+R8472:8478 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R8480:8481 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R8479:8479 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.R var
+R8482:8482 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.n var
+binder 8466:8466 <> P:83
+binder 8468:8468 <> Q:84
+R8489:8495 Coq.ssr.ssrbool <> reflect abbrev
+R8498:8505 Coq.Init.Logic <> ::type_scope:'exists2'_x_','_x_'&'_x not
+R8507:8508 Coq.Init.Logic <> ::type_scope:'exists2'_x_','_x_'&'_x not
+R8516:8518 Coq.Init.Logic <> ::type_scope:'exists2'_x_','_x_'&'_x not
+binder 8506:8506 <> x:85
+R8510:8514 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R8509:8509 Polyhedra.hpolyhedron <> x:85 var
+R8515:8515 Polyhedra.hpolyhedron <> P:83 var
+binder 8506:8506 <> x:86
+R8520:8527 Coq.ssr.ssrbool <> ::bool_scope:x_'\notin'_x not
+R8519:8519 Polyhedra.hpolyhedron <> x:86 var
+R8528:8528 Polyhedra.hpolyhedron <> Q:84 var
+R8532:8535 Coq.ssr.ssrbool <> ::bool_scope:'~~'_x not
+R8551:8551 Coq.ssr.ssrbool <> ::bool_scope:'~~'_x not
+R8536:8546 Polyhedra.hpolyhedron HPolyhedron poly_subset def
+R8550:8550 Polyhedra.hpolyhedron <> Q:84 var
+R8548:8548 Polyhedra.hpolyhedron <> P:83 var
+R8618:8621 Coq.ssr.ssrbool <> iffP thm
+R8623:8625 Coq.ssr.ssrbool <> idP thm
+R8618:8621 Coq.ssr.ssrbool <> iffP thm
+R8623:8625 Coq.ssr.ssrbool <> idP thm
+R8692:8697 Coq.ssr.ssrbool <> contra thm
+R8709:8719 Polyhedra.hpolyhedron HPolyhedron poly_subset def
+R8692:8697 Coq.ssr.ssrbool <> contra thm
+R8709:8719 Polyhedra.hpolyhedron HPolyhedron poly_subset def
+R8709:8719 Polyhedra.hpolyhedron HPolyhedron poly_subset def
+R8729:8731 Coq.ssr.ssrbool <> orP thm
+R8754:8760 mathcomp.ssreflect.fintype <> forallP thm
+R8797:8803 Coq.ssr.ssrbool <> contraR thm
+R8797:8803 Coq.ssr.ssrbool <> contraR thm
+R8824:8840 Polyhedra.simplex Simplex feasibleP thm
+R8824:8840 Polyhedra.simplex Simplex feasibleP thm
+R8863:8869 mathcomp.ssreflect.fintype <> forallP thm
+R8863:8869 mathcomp.ssreflect.fintype <> forallP thm
+R8886:8889 Coq.ssr.ssrbool <> andP thm
+R8909:8924 Polyhedra.simplex Simplex boundedP thm
+R8958:8965 mathcomp.ssreflect.order Order.POrderTheory le_trans thm
+R8972:8988 Polyhedra.simplex Simplex opt_value def
+R8994:8994 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R9003:9005 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R8995:8997 mathcomp.algebra.matrix <> row def
+R8958:8965 mathcomp.ssreflect.order Order.POrderTheory le_trans thm
+R8972:8988 Polyhedra.simplex Simplex opt_value def
+R8994:8994 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R9003:9005 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R8995:8997 mathcomp.algebra.matrix <> row def
+R9045:9052 Polyhedra.inner_product <> row_vdot thm
+R9045:9052 Polyhedra.inner_product <> row_vdot thm
+R9045:9052 Polyhedra.inner_product <> row_vdot thm
+R9084:9090 Coq.ssr.ssrbool <> negb_or thm
+R9092:9096 Coq.ssr.ssrbool <> negbK thm
+R9098:9108 mathcomp.ssreflect.fintype <> negb_forall thm
+R9084:9090 Coq.ssr.ssrbool <> negb_or thm
+R9084:9090 Coq.ssr.ssrbool <> negb_or thm
+R9092:9096 Coq.ssr.ssrbool <> negbK thm
+R9092:9096 Coq.ssr.ssrbool <> negbK thm
+R9098:9108 mathcomp.ssreflect.fintype <> negb_forall thm
+R9098:9108 mathcomp.ssreflect.fintype <> negb_forall thm
+R9118:9121 Coq.ssr.ssrbool <> andP thm
+R9139:9145 mathcomp.ssreflect.fintype <> existsP thm
+R9151:9155 Coq.ssr.ssrbool <> nandP thm
+R9235:9238 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9200:9202 Coq.ssr.ssrbool <> ::bool_scope:'~~'_x not
+R9203:9217 Polyhedra.simplex Simplex bounded def
+R9223:9223 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R9232:9234 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R9224:9226 mathcomp.algebra.matrix <> row def
+R9239:9246 Coq.Init.Logic <> ::type_scope:'exists2'_x_':'_x_','_x_'&'_x not
+R9248:9250 Coq.Init.Logic <> ::type_scope:'exists2'_x_':'_x_','_x_'&'_x not
+R9256:9258 Coq.Init.Logic <> ::type_scope:'exists2'_x_':'_x_','_x_'&'_x not
+R9274:9278 Coq.Init.Logic <> ::type_scope:'exists2'_x_':'_x_','_x_'&'_x not
+R9299:9299 Coq.Init.Logic <> ::type_scope:'exists2'_x_':'_x_','_x_'&'_x not
+R9251:9254 mathcomp.algebra.matrix <> ::type_scope:'''cV_'_x not
+R9255:9255 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.n var
+binder 9247:9247 <> x:87
+R9260:9264 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R9259:9259 Polyhedra.hpolyhedron <> x:87 var
+R9265:9269 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+binder 9247:9247 <> x:88
+R9280:9287 Coq.ssr.ssrbool <> ::bool_scope:x_'\notin'_x not
+R9279:9279 Polyhedra.hpolyhedron <> x:88 var
+R9288:9292 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+R9316:9347 Polyhedra.simplex Simplex unbounded_is_not_bounded thm
+R9316:9347 Polyhedra.simplex Simplex unbounded_is_not_bounded thm
+R9316:9347 Polyhedra.simplex Simplex unbounded_is_not_bounded thm
+R9367:9384 Polyhedra.simplex Simplex unboundedP thm
+R9522:9528 Coq.ssr.ssrbool <> contraL thm
+R9522:9528 Coq.ssr.ssrbool <> contraL thm
+R9554:9558 mathcomp.ssreflect.order Order.TotalTheory leNgt thm
+R9560:9567 Polyhedra.inner_product <> row_vdot thm
+R9554:9558 mathcomp.ssreflect.order Order.TotalTheory leNgt thm
+R9554:9558 mathcomp.ssreflect.order Order.TotalTheory leNgt thm
+R9560:9567 Polyhedra.inner_product <> row_vdot thm
+R9560:9567 Polyhedra.inner_product <> row_vdot thm
+R9583:9589 mathcomp.ssreflect.fintype <> forallP thm
+R9583:9589 mathcomp.ssreflect.fintype <> forallP thm
+R9663:9667 Coq.ssr.ssrbool <> boolP thm
+R9670:9684 Polyhedra.simplex Simplex bounded def
+R9690:9690 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R9699:9701 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R9691:9693 mathcomp.algebra.matrix <> row def
+R9663:9667 Coq.ssr.ssrbool <> boolP thm
+R9670:9684 Polyhedra.simplex Simplex bounded def
+R9690:9690 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R9699:9701 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R9691:9693 mathcomp.algebra.matrix <> row def
+R9663:9667 Coq.ssr.ssrbool <> boolP thm
+R9670:9684 Polyhedra.simplex Simplex bounded def
+R9690:9690 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R9699:9701 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R9691:9693 mathcomp.algebra.matrix <> row def
+R9761:9765 mathcomp.ssreflect.order Order.TotalTheory ltNge thm
+R9761:9765 mathcomp.ssreflect.order Order.TotalTheory ltNge thm
+R9761:9765 mathcomp.ssreflect.order Order.TotalTheory ltNge thm
+R9786:9802 Polyhedra.simplex Simplex opt_point def
+R9808:9808 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R9817:9819 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R9809:9811 mathcomp.algebra.matrix <> row def
+R9836:9864 Polyhedra.simplex Simplex opt_point_is_feasible thm
+R9786:9802 Polyhedra.simplex Simplex opt_point def
+R9808:9808 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R9817:9819 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R9809:9811 mathcomp.algebra.matrix <> row def
+R9836:9864 Polyhedra.simplex Simplex opt_point_is_feasible thm
+R9888:9894 Coq.ssr.ssrbool <> contraL thm
+R9888:9894 Coq.ssr.ssrbool <> contraL thm
+R9926:9930 mathcomp.ssreflect.order Order.TotalTheory leNgt thm
+R9933:9949 Polyhedra.simplex Simplex opt_value def
+R9951:9958 Polyhedra.inner_product <> row_vdot thm
+R9926:9930 mathcomp.ssreflect.order Order.TotalTheory leNgt thm
+R9926:9930 mathcomp.ssreflect.order Order.TotalTheory leNgt thm
+R9933:9949 Polyhedra.simplex Simplex opt_value def
+R9933:9949 Polyhedra.simplex Simplex opt_value def
+R9951:9958 Polyhedra.inner_product <> row_vdot thm
+R9951:9958 Polyhedra.inner_product <> row_vdot thm
+R9972:9978 mathcomp.ssreflect.fintype <> forallP thm
+R9972:9978 mathcomp.ssreflect.fintype <> forallP thm
+prf 10012:10023 HPolyhedron poly_subsetP
+R10032:10038 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R10040:10041 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R10039:10039 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.R var
+R10042:10042 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.n var
+binder 10026:10026 <> P:89
+binder 10028:10028 <> Q:90
+R10049:10055 Coq.ssr.ssrbool <> reflect abbrev
+R10057:10064 Coq.ssr.ssrbool <> ::type_scope:'{'_'subset'_x_'<='_x_'}' not
+R10066:10069 Coq.ssr.ssrbool <> ::type_scope:'{'_'subset'_x_'<='_x_'}' not
+R10071:10071 Coq.ssr.ssrbool <> ::type_scope:'{'_'subset'_x_'<='_x_'}' not
+R10065:10065 Polyhedra.hpolyhedron <> P:89 var
+R10070:10070 Polyhedra.hpolyhedron <> Q:90 var
+R10074:10084 Polyhedra.hpolyhedron HPolyhedron poly_subset def
+R10088:10088 Polyhedra.hpolyhedron <> Q:90 var
+R10086:10086 Polyhedra.hpolyhedron <> P:89 var
+R10106:10109 Coq.ssr.ssrbool <> iffP thm
+R10111:10113 Coq.ssr.ssrbool <> idP thm
+R10106:10109 Coq.ssr.ssrbool <> iffP thm
+R10111:10113 Coq.ssr.ssrbool <> idP thm
+R10173:10180 Coq.ssr.ssrbool <> contraTT def
+R10173:10180 Coq.ssr.ssrbool <> contraTT def
+R10207:10219 Polyhedra.hpolyhedron HPolyhedron poly_subsetPn thm
+R10207:10219 Polyhedra.hpolyhedron HPolyhedron poly_subsetPn thm
+R10244:10250 Coq.ssr.ssrbool <> contraT thm
+R10244:10250 Coq.ssr.ssrbool <> contraT thm
+R10258:10270 Polyhedra.hpolyhedron HPolyhedron poly_subsetPn thm
+prf 10304:10311 HPolyhedron boundedP
+R10318:10324 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R10326:10327 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R10325:10325 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.R var
+R10328:10328 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.n var
+binder 10314:10314 <> P:91
+binder 10331:10331 <> c:92
+R10337:10343 Coq.ssr.ssrbool <> reflect abbrev
+R10346:10353 Coq.Init.Logic <> ::type_scope:'exists2'_x_','_x_'&'_x not
+R10355:10357 Coq.Init.Logic <> ::type_scope:'exists2'_x_','_x_'&'_x not
+R10365:10368 Coq.Init.Logic <> ::type_scope:'exists2'_x_','_x_'&'_x not
+binder 10354:10354 <> x:93
+R10359:10363 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R10358:10358 Polyhedra.hpolyhedron <> x:93 var
+R10364:10364 Polyhedra.hpolyhedron <> P:91 var
+binder 10354:10354 <> x:94
+R10369:10379 Polyhedra.hpolyhedron HPolyhedron poly_subset def
+R10384:10388 Polyhedra.hpolyhedron HPolyhedron mk_hs def
+R10390:10391 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R10393:10394 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R10401:10402 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R10392:10392 Polyhedra.hpolyhedron <> c:92 var
+R10395:10396 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R10398:10398 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R10400:10400 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R10397:10397 Polyhedra.hpolyhedron <> c:92 var
+R10399:10399 Polyhedra.hpolyhedron <> x:94 var
+R10381:10381 Polyhedra.hpolyhedron <> P:91 var
+R10407:10413 Polyhedra.hpolyhedron HPolyhedron bounded def
+R10417:10417 Polyhedra.hpolyhedron <> c:92 var
+R10415:10415 Polyhedra.hpolyhedron <> P:91 var
+R10462:10467 Coq.ssr.ssrbool <> equivP thm
+R10470:10485 Polyhedra.simplex Simplex boundedP thm
+R10462:10467 Coq.ssr.ssrbool <> equivP thm
+R10470:10485 Polyhedra.simplex Simplex boundedP thm
+R10558:10569 Polyhedra.hpolyhedron HPolyhedron poly_subsetP thm
+R10617:10628 Polyhedra.hpolyhedron HPolyhedron poly_subsetP thm
+R10617:10628 Polyhedra.hpolyhedron HPolyhedron poly_subsetP thm
+R10653:10657 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R10653:10657 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R10653:10657 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R10732:10734 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R10724:10726 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R10728:10729 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R10731:10731 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R10735:10751 Polyhedra.simplex Simplex opt_value def
+R10771:10798 Polyhedra.simplex Simplex opt_value_is_optimal thm
+R10771:10798 Polyhedra.simplex Simplex opt_value_is_optimal thm
+R10851:10855 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R10851:10855 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R10851:10855 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R10923:10927 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R10923:10927 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R10923:10927 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+prf 10956:10964 HPolyhedron boundedPn
+binder 10966:10966 <> P:95
+binder 10968:10968 <> c:96
+R10998:11005 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R10974:10977 Coq.ssr.ssrbool <> ::bool_scope:'~~'_x not
+R10997:10997 Coq.ssr.ssrbool <> ::bool_scope:'~~'_x not
+R10978:10988 Polyhedra.hpolyhedron HPolyhedron poly_subset def
+R10992:10996 Polyhedra.hpolyhedron HPolyhedron poly0 def
+R10990:10990 Polyhedra.hpolyhedron <> P:95 var
+R11006:11012 Coq.ssr.ssrbool <> reflect abbrev
+binder 11022:11022 <> K:97
+R11025:11028 Coq.ssr.ssrbool <> ::bool_scope:'~~'_x not
+R11059:11059 Coq.ssr.ssrbool <> ::bool_scope:'~~'_x not
+R11029:11039 Polyhedra.hpolyhedron HPolyhedron poly_subset def
+R11044:11048 Polyhedra.hpolyhedron HPolyhedron mk_hs def
+R11050:11051 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R11053:11054 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R11056:11057 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R11052:11052 Polyhedra.hpolyhedron <> c:96 var
+R11055:11055 Polyhedra.hpolyhedron <> K:97 var
+R11041:11041 Polyhedra.hpolyhedron <> P:95 var
+R11063:11065 Coq.ssr.ssrbool <> ::bool_scope:'~~'_x not
+R11066:11072 Polyhedra.hpolyhedron HPolyhedron bounded def
+R11076:11076 Polyhedra.hpolyhedron <> c:96 var
+R11074:11074 Polyhedra.hpolyhedron <> P:95 var
+R11221:11237 Polyhedra.simplex Simplex feasibleP thm
+R11143:11158 Polyhedra.simplex Simplex feasible def
+R11174:11186 Polyhedra.hpolyhedron HPolyhedron poly_subsetPn thm
+R11221:11237 Polyhedra.simplex Simplex feasibleP thm
+R11259:11265 Polyhedra.hpolyhedron HPolyhedron bounded def
+R11268:11299 Polyhedra.simplex Simplex bounded_is_not_unbounded thm
+R11315:11319 Coq.ssr.ssrbool <> negbK thm
+R11259:11265 Polyhedra.hpolyhedron HPolyhedron bounded def
+R11259:11265 Polyhedra.hpolyhedron HPolyhedron bounded def
+R11268:11299 Polyhedra.simplex Simplex bounded_is_not_unbounded thm
+R11268:11299 Polyhedra.simplex Simplex bounded_is_not_unbounded thm
+R11315:11319 Coq.ssr.ssrbool <> negbK thm
+R11315:11319 Coq.ssr.ssrbool <> negbK thm
+R11329:11334 Coq.ssr.ssrbool <> equivP thm
+R11337:11354 Polyhedra.simplex Simplex unboundedP thm
+R11329:11334 Coq.ssr.ssrbool <> equivP thm
+R11337:11354 Polyhedra.simplex Simplex unboundedP thm
+R11434:11446 Polyhedra.hpolyhedron HPolyhedron poly_subsetPn thm
+R11434:11446 Polyhedra.hpolyhedron HPolyhedron poly_subsetPn thm
+R11546:11550 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R11553:11557 mathcomp.ssreflect.order Order.TotalTheory ltNge thm
+R11546:11550 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R11546:11550 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R11553:11557 mathcomp.ssreflect.order Order.TotalTheory ltNge thm
+R11553:11557 mathcomp.ssreflect.order Order.TotalTheory ltNge thm
+R11567:11579 Polyhedra.hpolyhedron HPolyhedron poly_subsetPn thm
+R11673:11677 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R11680:11684 mathcomp.ssreflect.order Order.TotalTheory ltNge thm
+R11673:11677 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R11673:11677 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R11680:11684 mathcomp.ssreflect.order Order.TotalTheory ltNge thm
+R11680:11684 mathcomp.ssreflect.order Order.TotalTheory ltNge thm
+def 11719:11725 HPolyhedron pointed
+binder 11727:11727 <> P:98
+R11758:11764 Coq.ssr.ssrbool <> ::bool_scope:x_'==>'_x not
+R11734:11737 Coq.ssr.ssrbool <> ::bool_scope:'~~'_x not
+R11757:11757 Coq.ssr.ssrbool <> ::bool_scope:'~~'_x not
+R11738:11748 Polyhedra.hpolyhedron HPolyhedron poly_subset def
+R11752:11756 Polyhedra.hpolyhedron HPolyhedron poly0 def
+R11750:11750 Polyhedra.hpolyhedron <> P:98 var
+R11785:11785 Polyhedra.hpolyhedron <> P:98 var
+R11770:11774 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+R11790:11804 Polyhedra.simplex Simplex pointed def
+prf 11816:11824 HPolyhedron pointedPn
+binder 11826:11826 <> P:100
+R11832:11838 Coq.ssr.ssrbool <> reflect abbrev
+R11841:11847 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+R11849:11850 Coq.Init.Logic <> ::type_scope:'exists'_x_'..'_x_','_x not
+binder 11848:11848 <> x:101
+R11851:11858 Coq.Init.Logic <> ::type_scope:'exists2'_x_','_x_'&'_x not
+R11860:11862 Coq.Init.Logic <> ::type_scope:'exists2'_x_','_x_'&'_x not
+R11869:11873 Coq.Init.Logic <> ::type_scope:'exists2'_x_','_x_'&'_x not
+R11902:11902 Coq.Init.Logic <> ::type_scope:'exists2'_x_','_x_'&'_x not
+binder 11859:11859 <> d:102
+R11864:11867 mathcomp.ssreflect.eqtype <> ::bool_scope:x_'!='_x not
+R11863:11863 Polyhedra.hpolyhedron <> d:102 var
+binder 11859:11859 <> d:103
+binder 11881:11882 <> μ:104
+R11896:11900 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R11886:11888 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R11885:11885 Polyhedra.hpolyhedron <> x:101 var
+R11891:11894 mathcomp.algebra.ssralg <> ::ring_scope:x_'*:'_x not
+R11889:11890 Polyhedra.hpolyhedron <> μ:104 var
+R11895:11895 Polyhedra.hpolyhedron <> d:103 var
+R11901:11901 Polyhedra.hpolyhedron <> P:100 var
+R11906:11908 Coq.ssr.ssrbool <> ::bool_scope:'~~'_x not
+R11909:11915 Polyhedra.hpolyhedron HPolyhedron pointed def
+R11917:11917 Polyhedra.hpolyhedron <> P:100 var
+R11966:11972 Polyhedra.hpolyhedron HPolyhedron pointed def
+R11982:11985 Coq.ssr.ssrbool <> iffP thm
+R11987:11989 Coq.ssr.ssrbool <> idP thm
+R11966:11972 Polyhedra.hpolyhedron HPolyhedron pointed def
+R11966:11972 Polyhedra.hpolyhedron HPolyhedron pointed def
+R11982:11985 Coq.ssr.ssrbool <> iffP thm
+R11987:11989 Coq.ssr.ssrbool <> idP thm
+R12003:12012 Coq.ssr.ssrbool <> negb_imply thm
+R12003:12012 Coq.ssr.ssrbool <> negb_imply thm
+R12003:12012 Coq.ssr.ssrbool <> negb_imply thm
+R12018:12021 Coq.ssr.ssrbool <> andP thm
+R12025:12037 Polyhedra.hpolyhedron HPolyhedron poly_subsetPn thm
+R12059:12075 Polyhedra.simplex Simplex pointedPn thm
+R12094:12114 Polyhedra.simplex Simplex feasible_dirP thm
+R12128:12148 Polyhedra.simplex Simplex feasible_dirP thm
+R12214:12217 mathcomp.algebra.ssrnum Num.Theory lerP thm
+R12214:12217 mathcomp.algebra.ssrnum Num.Theory lerP thm
+R12214:12217 mathcomp.algebra.ssrnum Num.Theory lerP thm
+R12295:12299 mathcomp.algebra.ssralg GRing.Theory opprK def
+R12301:12307 mathcomp.algebra.ssralg GRing.Theory scalerN def
+R12310:12316 mathcomp.algebra.ssralg GRing.Theory scaleNr def
+R12295:12299 mathcomp.algebra.ssralg GRing.Theory opprK def
+R12295:12299 mathcomp.algebra.ssralg GRing.Theory opprK def
+R12301:12307 mathcomp.algebra.ssralg GRing.Theory scalerN def
+R12301:12307 mathcomp.algebra.ssralg GRing.Theory scalerN def
+R12310:12316 mathcomp.algebra.ssralg GRing.Theory scaleNr def
+R12310:12316 mathcomp.algebra.ssralg GRing.Theory scaleNr def
+R12363:12370 mathcomp.algebra.ssrnum Num.Theory oppr_ge0 thm
+R12372:12374 mathcomp.ssreflect.order Order.POrderTheory ltW thm
+R12363:12370 mathcomp.algebra.ssrnum Num.Theory oppr_ge0 thm
+R12363:12370 mathcomp.algebra.ssrnum Num.Theory oppr_ge0 thm
+R12372:12374 mathcomp.ssreflect.order Order.POrderTheory ltW thm
+R12372:12374 mathcomp.ssreflect.order Order.POrderTheory ltW thm
+R12465:12471 mathcomp.algebra.ssralg GRing.Theory scale0r def
+R12473:12477 mathcomp.algebra.ssralg GRing.Theory addr0 def
+R12422:12426 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R12427:12431 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+R12465:12471 mathcomp.algebra.ssralg GRing.Theory scale0r def
+R12465:12471 mathcomp.algebra.ssralg GRing.Theory scale0r def
+R12473:12477 mathcomp.algebra.ssralg GRing.Theory addr0 def
+R12473:12477 mathcomp.algebra.ssralg GRing.Theory addr0 def
+R12536:12548 Polyhedra.hpolyhedron HPolyhedron poly_subsetPn thm
+R12575:12582 Polyhedra.hpolyhedron HPolyhedron in_poly0 thm
+R12494:12496 Coq.ssr.ssrbool <> ::bool_scope:'~~'_x not
+R12497:12507 Polyhedra.hpolyhedron HPolyhedron poly_subset def
+R12521:12525 Polyhedra.hpolyhedron HPolyhedron poly0 def
+R12510:12514 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+R12536:12548 Polyhedra.hpolyhedron HPolyhedron poly_subsetPn thm
+R12575:12582 Polyhedra.hpolyhedron HPolyhedron in_poly0 thm
+R12575:12582 Polyhedra.hpolyhedron HPolyhedron in_poly0 thm
+R12593:12609 Polyhedra.simplex Simplex pointedPn thm
+R12593:12609 Polyhedra.simplex Simplex pointedPn thm
+R12647:12667 Polyhedra.simplex Simplex feasible_dirP thm
+R12702:12708 mathcomp.algebra.ssralg GRing.Theory scalerN def
+R12712:12718 mathcomp.algebra.ssralg GRing.Theory scaleNr def
+R12647:12667 Polyhedra.simplex Simplex feasible_dirP thm
+R12647:12667 Polyhedra.simplex Simplex feasible_dirP thm
+R12702:12708 mathcomp.algebra.ssralg GRing.Theory scalerN def
+R12702:12708 mathcomp.algebra.ssralg GRing.Theory scalerN def
+R12712:12718 mathcomp.algebra.ssralg GRing.Theory scaleNr def
+R12712:12718 mathcomp.algebra.ssralg GRing.Theory scaleNr def
+R12702:12708 mathcomp.algebra.ssralg GRing.Theory scalerN def
+R12702:12708 mathcomp.algebra.ssralg GRing.Theory scalerN def
+R12702:12708 mathcomp.algebra.ssralg GRing.Theory scalerN def
+R12712:12718 mathcomp.algebra.ssralg GRing.Theory scaleNr def
+R12712:12718 mathcomp.algebra.ssralg GRing.Theory scaleNr def
+R12712:12718 mathcomp.algebra.ssralg GRing.Theory scaleNr def
+prf 12744:12751 HPolyhedron convexP2
+R12758:12764 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R12766:12767 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R12765:12765 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.R var
+R12768:12768 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.n var
+binder 12754:12754 <> P:105
+R12778:12781 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R12783:12784 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R12782:12782 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.R var
+R12785:12785 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.n var
+binder 12772:12772 <> v:106
+binder 12774:12774 <> w:107
+binder 12788:12789 <> α:108
+R12802:12805 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12796:12800 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R12795:12795 Polyhedra.hpolyhedron <> v:106 var
+R12801:12801 Polyhedra.hpolyhedron <> P:105 var
+R12813:12816 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12807:12811 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R12806:12806 Polyhedra.hpolyhedron <> w:107 var
+R12812:12812 Polyhedra.hpolyhedron <> P:105 var
+R12829:12832 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R12818:12821 mathcomp.algebra.ssrnum Num.Syntax ::ring_scope:x_'<='_x_'<='_x not
+R12824:12827 mathcomp.algebra.ssrnum Num.Syntax ::ring_scope:x_'<='_x_'<='_x not
+R12822:12823 Polyhedra.hpolyhedron <> α:108 var
+R12822:12823 Polyhedra.hpolyhedron <> α:108 var
+R12854:12858 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R12844:12846 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R12833:12833 mathcomp.algebra.ssralg <> ::ring_scope:x_'*:'_x not
+R12838:12842 mathcomp.algebra.ssralg <> ::ring_scope:x_'*:'_x not
+R12835:12835 mathcomp.algebra.ssralg <> ::ring_scope:x_'-'_x not
+R12836:12837 Polyhedra.hpolyhedron <> α:108 var
+R12843:12843 Polyhedra.hpolyhedron <> v:106 var
+R12849:12852 mathcomp.algebra.ssralg <> ::ring_scope:x_'*:'_x not
+R12847:12848 Polyhedra.hpolyhedron <> α:108 var
+R12853:12853 Polyhedra.hpolyhedron <> w:107 var
+R12859:12859 Polyhedra.hpolyhedron <> P:105 var
+R12896:12898 mathcomp.finmap.finmap <> inE def
+R12896:12898 mathcomp.finmap.finmap <> inE def
+R12896:12898 mathcomp.finmap.finmap <> inE def
+R12896:12898 mathcomp.finmap.finmap <> inE def
+R12896:12898 mathcomp.finmap.finmap <> inE def
+R12896:12898 mathcomp.finmap.finmap <> inE def
+R12946:12952 mathcomp.algebra.matrix <> mulmxDr thm
+R12956:12964 mathcomp.algebra.matrix <> scalemxAr thm
+R12915:12918 Coq.ssr.ssrbool <> andP thm
+R12946:12952 mathcomp.algebra.matrix <> mulmxDr thm
+R12946:12952 mathcomp.algebra.matrix <> mulmxDr thm
+R12956:12964 mathcomp.algebra.matrix <> scalemxAr thm
+R12956:12964 mathcomp.algebra.matrix <> scalemxAr thm
+R12956:12964 mathcomp.algebra.matrix <> scalemxAr thm
+R12956:12964 mathcomp.algebra.matrix <> scalemxAr thm
+R12979:12985 mathcomp.algebra.ssralg GRing.Theory scale1r def
+R12995:12999 mathcomp.algebra.ssralg GRing.Theory subrK def
+R13005:13012 mathcomp.algebra.ssralg GRing.Theory scalerDl def
+R12979:12985 mathcomp.algebra.ssralg GRing.Theory scale1r def
+R12979:12985 mathcomp.algebra.ssralg GRing.Theory scale1r def
+R12995:12999 mathcomp.algebra.ssralg GRing.Theory subrK def
+R12995:12999 mathcomp.algebra.ssralg GRing.Theory subrK def
+R13005:13012 mathcomp.algebra.ssralg GRing.Theory scalerDl def
+R13005:13012 mathcomp.algebra.ssralg GRing.Theory scalerDl def
+R13026:13032 Polyhedra.vector_order <> lev_add thm
+R13037:13048 Polyhedra.vector_order <> lev_wpscalar thm
+R13053:13060 mathcomp.algebra.ssrnum Num.Theory subr_ge0 thm
+R13026:13032 Polyhedra.vector_order <> lev_add thm
+R13026:13032 Polyhedra.vector_order <> lev_add thm
+R13037:13048 Polyhedra.vector_order <> lev_wpscalar thm
+R13037:13048 Polyhedra.vector_order <> lev_wpscalar thm
+R13037:13048 Polyhedra.vector_order <> lev_wpscalar thm
+R13037:13048 Polyhedra.vector_order <> lev_wpscalar thm
+R13053:13060 mathcomp.algebra.ssrnum Num.Theory subr_ge0 thm
+R13053:13060 mathcomp.algebra.ssrnum Num.Theory subr_ge0 thm
+def 13080:13089 HPolyhedron poly_equiv
+binder 13091:13091 <> P:109
+binder 13093:13093 <> Q:110
+R13098:13098 Coq.Init.Datatypes <> ::bool_scope:x_'&&'_x not
+R13114:13119 Coq.Init.Datatypes <> ::bool_scope:x_'&&'_x not
+R13135:13135 Coq.Init.Datatypes <> ::bool_scope:x_'&&'_x not
+R13099:13109 Polyhedra.hpolyhedron HPolyhedron poly_subset def
+R13113:13113 Polyhedra.hpolyhedron <> Q:110 var
+R13111:13111 Polyhedra.hpolyhedron <> P:109 var
+R13120:13130 Polyhedra.hpolyhedron HPolyhedron poly_subset def
+R13134:13134 Polyhedra.hpolyhedron <> P:109 var
+R13132:13132 Polyhedra.hpolyhedron <> Q:110 var
+prf 13145:13155 HPolyhedron poly_equivP
+R13164:13170 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R13172:13173 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R13171:13171 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.R var
+R13174:13174 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.n var
+binder 13158:13158 <> P:111
+binder 13160:13160 <> Q:112
+R13179:13185 Coq.ssr.ssrbool <> reflect abbrev
+R13189:13192 Coq.ssr.ssrbool <> ::type_scope:x_'=i'_x not
+R13188:13188 Polyhedra.hpolyhedron <> P:111 var
+R13193:13193 Polyhedra.hpolyhedron <> Q:112 var
+R13197:13206 Polyhedra.hpolyhedron HPolyhedron poly_equiv def
+R13210:13210 Polyhedra.hpolyhedron <> Q:112 var
+R13208:13208 Polyhedra.hpolyhedron <> P:111 var
+R13228:13231 Coq.ssr.ssrbool <> iffP thm
+R13233:13236 Coq.ssr.ssrbool <> andP thm
+R13228:13231 Coq.ssr.ssrbool <> iffP thm
+R13233:13236 Coq.ssr.ssrbool <> andP thm
+R13245:13256 Polyhedra.hpolyhedron HPolyhedron poly_subsetP thm
+R13266:13277 Polyhedra.hpolyhedron HPolyhedron poly_subsetP thm
+R13309:13311 Coq.ssr.ssrbool <> idP thm
+R13313:13315 Coq.ssr.ssrbool <> idP thm
+R13309:13311 Coq.ssr.ssrbool <> idP thm
+R13313:13315 Coq.ssr.ssrbool <> idP thm
+R13369:13380 Polyhedra.hpolyhedron HPolyhedron poly_subsetP thm
+R13369:13380 Polyhedra.hpolyhedron HPolyhedron poly_subsetP thm
+R13369:13380 Polyhedra.hpolyhedron HPolyhedron poly_subsetP thm
+prf 13416:13430 HPolyhedron poly_equiv_refl
+R13434:13442 Coq.ssr.ssrbool <> reflexive def
+R13444:13453 Polyhedra.hpolyhedron HPolyhedron poly_equiv def
+R13483:13493 Polyhedra.hpolyhedron HPolyhedron poly_equivP thm
+R13483:13493 Polyhedra.hpolyhedron HPolyhedron poly_equivP thm
+prf 13508:13521 HPolyhedron poly_equiv_sym
+R13525:13533 Coq.ssr.ssrbool <> symmetric def
+R13535:13544 Polyhedra.hpolyhedron HPolyhedron poly_equiv def
+R13578:13582 Coq.ssr.ssrbool <> sameP thm
+R13584:13594 Polyhedra.hpolyhedron HPolyhedron poly_equivP thm
+R13609:13612 Coq.ssr.ssrbool <> iffP thm
+R13614:13624 Polyhedra.hpolyhedron HPolyhedron poly_equivP thm
+R13578:13582 Coq.ssr.ssrbool <> sameP thm
+R13584:13594 Polyhedra.hpolyhedron HPolyhedron poly_equivP thm
+R13609:13612 Coq.ssr.ssrbool <> iffP thm
+R13614:13624 Polyhedra.hpolyhedron HPolyhedron poly_equivP thm
+prf 13666:13681 HPolyhedron poly_equiv_trans
+R13685:13694 Coq.ssr.ssrbool <> transitive def
+R13696:13705 Polyhedra.hpolyhedron HPolyhedron poly_equiv def
+R13733:13743 Polyhedra.hpolyhedron HPolyhedron poly_equivP thm
+R13754:13764 Polyhedra.hpolyhedron HPolyhedron poly_equivP thm
+R13786:13796 Polyhedra.hpolyhedron HPolyhedron poly_equivP thm
+R13786:13796 Polyhedra.hpolyhedron HPolyhedron poly_equivP thm
+sec 13910:13915 HPolyhedron.PolyPred Farkas
+var 13928:13931 HPolyhedron.PolyPred.Farkas base
+R13935:13941 Polyhedra.lrel <> :::'base_t'_'['_x_','_x_']' not
+R13943:13943 Polyhedra.lrel <> :::'base_t'_'['_x_','_x_']' not
+R13945:13945 Polyhedra.lrel <> :::'base_t'_'['_x_','_x_']' not
+R13942:13942 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.R var
+R13944:13944 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.n var
+var 13954:13954 HPolyhedron.PolyPred.Farkas P
+R13959:13963 mathcomp.ssreflect.bigop <> ::big_scope:'\big'_'['_x_'/'_x_']_'_'('_x_':'_x_')'_x not
+R13969:13969 mathcomp.ssreflect.bigop <> ::big_scope:'\big'_'['_x_'/'_x_']_'_'('_x_':'_x_')'_x not
+R13975:13977 mathcomp.ssreflect.bigop <> ::big_scope:'\big'_'['_x_'/'_x_']_'_'('_x_':'_x_')'_x not
+R13979:13981 mathcomp.ssreflect.bigop <> ::big_scope:'\big'_'['_x_'/'_x_']_'_'('_x_':'_x_')'_x not
+R13986:13988 mathcomp.ssreflect.bigop <> ::big_scope:'\big'_'['_x_'/'_x_']_'_'('_x_':'_x_')'_x not
+R14002:14002 mathcomp.ssreflect.bigop <> ::big_scope:'\big'_'['_x_'/'_x_']_'_'('_x_':'_x_')'_x not
+R13970:13974 Polyhedra.hpolyhedron HPolyhedron polyT def
+R13982:13985 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.base var
+binder 13978:13978 <> b:114
+binder 13978:13978 <> b:115
+binder 13978:13978 <> b:116
+R13964:13968 Polyhedra.hpolyhedron HPolyhedron polyI def
+R13989:13993 Polyhedra.hpolyhedron HPolyhedron mk_hs def
+R13996:13998 mathcomp.ssreflect.eqtype <> val proj
+R14000:14000 Polyhedra.hpolyhedron <> b:114 var
+abbrev 14015:14015 HPolyhedron m
+R14020:14022 mathcomp.finmap.finmap <> ::nat_scope:'#|`'_x_'|' not
+R14027:14027 mathcomp.finmap.finmap <> ::nat_scope:'#|`'_x_'|' not
+R14023:14026 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.base var
+var 14035:14035 HPolyhedron.PolyPred.Farkas A
+R14040:14048 mathcomp.algebra.matrix <> ::ring_scope:'\matrix_'_'('_x_'<'_x_')'_x not
+R14050:14052 mathcomp.algebra.matrix <> ::ring_scope:'\matrix_'_'('_x_'<'_x_')'_x not
+R14054:14055 mathcomp.algebra.matrix <> ::ring_scope:'\matrix_'_'('_x_'<'_x_')'_x not
+R14053:14053 Polyhedra.hpolyhedron HPolyhedron m abbrev
+binder 14049:14049 <> i:117
+R14056:14056 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R14067:14069 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R14057:14057 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R14064:14066 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R14058:14061 Polyhedra.extra_misc <> fnth def
+R14063:14063 Polyhedra.hpolyhedron <> i:117 var
+var 14076:14076 HPolyhedron.PolyPred.Farkas b
+R14084:14089 mathcomp.algebra.matrix <> ::ring_scope:'\col_'_'('_x_'<'_x_')'_x not
+R14091:14093 mathcomp.algebra.matrix <> ::ring_scope:'\col_'_'('_x_'<'_x_')'_x not
+R14095:14096 mathcomp.algebra.matrix <> ::ring_scope:'\col_'_'('_x_'<'_x_')'_x not
+R14094:14094 Polyhedra.hpolyhedron HPolyhedron m abbrev
+binder 14090:14090 <> i:118
+R14097:14097 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R14104:14106 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R14098:14101 Polyhedra.extra_misc <> fnth def
+R14103:14103 Polyhedra.hpolyhedron <> i:118 var
+prf 14116:14125 HPolyhedron fnth_baseE
+binder 14127:14127 <> i:119
+R14145:14147 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R14132:14135 Polyhedra.extra_misc <> fnth def
+R14139:14142 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.base var
+R14144:14144 Polyhedra.hpolyhedron <> i:119 var
+R14148:14150 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R14160:14161 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R14167:14169 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R14151:14153 mathcomp.algebra.matrix <> col def
+R14158:14159 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R14157:14157 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.A var
+R14155:14155 Polyhedra.hpolyhedron <> i:119 var
+R14162:14162 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.b var
+R14164:14164 Polyhedra.hpolyhedron <> i:119 var
+R14185:14187 mathcomp.ssreflect.eqtype <> eqP thm
+R14189:14194 Polyhedra.lrel <> be_eqP thm
+R14185:14187 mathcomp.ssreflect.eqtype <> eqP thm
+R14189:14194 Polyhedra.lrel <> be_eqP thm
+R14221:14224 mathcomp.algebra.matrix <> colP thm
+R14240:14242 mathcomp.algebra.matrix <> mxE thm
+R14221:14224 mathcomp.algebra.matrix <> colP thm
+R14240:14242 mathcomp.algebra.matrix <> mxE thm
+R14240:14242 mathcomp.algebra.matrix <> mxE thm
+R14240:14242 mathcomp.algebra.matrix <> mxE thm
+R14240:14242 mathcomp.algebra.matrix <> mxE thm
+R14240:14242 mathcomp.algebra.matrix <> mxE thm
+R14240:14242 mathcomp.algebra.matrix <> mxE thm
+R14258:14260 mathcomp.algebra.matrix <> mxE thm
+R14258:14260 mathcomp.algebra.matrix <> mxE thm
+R14258:14260 mathcomp.algebra.matrix <> mxE thm
+prf 14275:14283 HPolyhedron combinemE
+binder 14285:14285 <> w:120
+R14316:14318 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R14291:14297 Polyhedra.barycenter <> combine def
+R14300:14312 Polyhedra.hpolyhedron <> vect_to_fsfun def
+R14314:14314 Polyhedra.hpolyhedron <> w:120 var
+R14319:14321 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R14330:14331 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R14339:14341 Polyhedra.lrel <> :::'[<'_x_','_x_'>]' not
+R14325:14328 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R14323:14324 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R14322:14322 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.A var
+R14329:14329 Polyhedra.hpolyhedron <> w:120 var
+R14332:14333 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R14335:14336 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R14338:14338 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R14334:14334 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.b var
+R14337:14337 Polyhedra.hpolyhedron <> w:120 var
+R14360:14368 Polyhedra.barycenter <> combinewE thm
+R14371:14391 Polyhedra.hpolyhedron <> finsupp_vect_to_fsfun thm
+R14360:14368 Polyhedra.barycenter <> combinewE thm
+R14371:14391 Polyhedra.hpolyhedron <> finsupp_vect_to_fsfun thm
+R14360:14368 Polyhedra.barycenter <> combinewE thm
+R14371:14391 Polyhedra.hpolyhedron <> finsupp_vect_to_fsfun thm
+R14410:14412 mathcomp.ssreflect.fintype <> :::'''I_'_x not
+R14413:14413 Polyhedra.hpolyhedron HPolyhedron m abbrev
+binder 14406:14406 <> i:121
+R14419:14420 mathcomp.finmap.finmap <> ::fset_scope:'[`'_x_']' not
+R14428:14428 mathcomp.finmap.finmap <> ::fset_scope:'[`'_x_']' not
+R14421:14425 Polyhedra.extra_misc <> fnthP thm
+R14427:14427 Polyhedra.hpolyhedron <> i:121 var
+R14445:14451 mathcomp.ssreflect.bigop <> reindex thm
+R14445:14451 mathcomp.ssreflect.bigop <> reindex thm
+R14445:14451 mathcomp.ssreflect.bigop <> reindex thm
+R14483:14489 Coq.ssr.ssrbool <> onW_bij thm
+R14492:14500 Coq.ssr.ssrfun <> Bijective constr
+R14518:14522 Polyhedra.hpolyhedron <> fnthK thm
+R14504:14509 Polyhedra.hpolyhedron <> frankK thm
+R14483:14489 Coq.ssr.ssrbool <> onW_bij thm
+R14492:14500 Coq.ssr.ssrfun <> Bijective constr
+R14518:14522 Polyhedra.hpolyhedron <> fnthK thm
+R14504:14509 Polyhedra.hpolyhedron <> frankK thm
+R14539:14545 Coq.ssr.ssrfun <> can_inj thm
+R14549:14564 Polyhedra.lrel <> col_to_base_eltK thm
+R14539:14545 Coq.ssr.ssrfun <> can_inj thm
+R14549:14564 Polyhedra.lrel <> col_to_base_eltK thm
+R14587:14602 Polyhedra.lrel <> base_elt_to_colM thm
+R14604:14612 mathcomp.algebra.ssralg GRing.Theory raddf_sum def
+R14617:14629 Polyhedra.extra_matrix <> mulmx_sum_col thm
+R14587:14602 Polyhedra.lrel <> base_elt_to_colM thm
+R14587:14602 Polyhedra.lrel <> base_elt_to_colM thm
+R14604:14612 mathcomp.algebra.ssralg GRing.Theory raddf_sum def
+R14604:14612 mathcomp.algebra.ssralg GRing.Theory raddf_sum def
+R14617:14629 Polyhedra.extra_matrix <> mulmx_sum_col thm
+R14617:14629 Polyhedra.extra_matrix <> mulmx_sum_col thm
+R14639:14645 mathcomp.ssreflect.bigop <> eq_bigr thm
+R14662:14668 mathcomp.algebra.ssralg GRing.Theory linearZ def
+R14639:14645 mathcomp.ssreflect.bigop <> eq_bigr thm
+R14662:14668 mathcomp.algebra.ssralg GRing.Theory linearZ def
+R14662:14668 mathcomp.algebra.ssralg GRing.Theory linearZ def
+R14683:14695 Polyhedra.hpolyhedron <> vect_to_fsfun def
+R14697:14706 mathcomp.finmap.finmap <> fsfun_ffun thm
+R14708:14713 mathcomp.ssreflect.eqtype <> insubT thm
+R14735:14739 Polyhedra.extra_misc <> fnthP thm
+R14683:14695 Polyhedra.hpolyhedron <> vect_to_fsfun def
+R14683:14695 Polyhedra.hpolyhedron <> vect_to_fsfun def
+R14697:14706 mathcomp.finmap.finmap <> fsfun_ffun thm
+R14697:14706 mathcomp.finmap.finmap <> fsfun_ffun thm
+R14708:14713 mathcomp.ssreflect.eqtype <> insubT thm
+R14708:14713 mathcomp.ssreflect.eqtype <> insubT thm
+R14735:14739 Polyhedra.extra_misc <> fnthP thm
+R14768:14783 mathcomp.ssreflect.eqtype <> bool_irrelevance thm
+R14788:14792 Polyhedra.extra_misc <> fnthP thm
+R14798:14803 Polyhedra.hpolyhedron <> frankK thm
+R14768:14783 mathcomp.ssreflect.eqtype <> bool_irrelevance thm
+R14788:14792 Polyhedra.extra_misc <> fnthP thm
+R14768:14783 mathcomp.ssreflect.eqtype <> bool_irrelevance thm
+R14788:14792 Polyhedra.extra_misc <> fnthP thm
+R14798:14803 Polyhedra.hpolyhedron <> frankK thm
+R14798:14803 Polyhedra.hpolyhedron <> frankK thm
+R14814:14822 mathcomp.algebra.matrix <> tr_row_mx thm
+R14824:14833 mathcomp.algebra.matrix <> col_col_mx thm
+R14842:14845 mathcomp.algebra.matrix <> colP thm
+R14814:14822 mathcomp.algebra.matrix <> tr_row_mx thm
+R14814:14822 mathcomp.algebra.matrix <> tr_row_mx thm
+R14824:14833 mathcomp.algebra.matrix <> col_col_mx thm
+R14824:14833 mathcomp.algebra.matrix <> col_col_mx thm
+R14842:14845 mathcomp.algebra.matrix <> colP thm
+R14861:14875 Polyhedra.lrel <> base_elt_to_col def
+R14878:14887 Polyhedra.hpolyhedron HPolyhedron fnth_baseE thm
+R14861:14875 Polyhedra.lrel <> base_elt_to_col def
+R14861:14875 Polyhedra.lrel <> base_elt_to_col def
+R14878:14887 Polyhedra.hpolyhedron HPolyhedron fnth_baseE thm
+R14878:14887 Polyhedra.hpolyhedron HPolyhedron fnth_baseE thm
+R14878:14887 Polyhedra.hpolyhedron HPolyhedron fnth_baseE thm
+R14903:14905 Coq.ssr.ssreflect <> ::core_scope:x_':'_x not
+R14916:14918 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R14906:14913 mathcomp.algebra.matrix <> const_mx def
+R14919:14921 mathcomp.algebra.matrix <> col def
+R14926:14927 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R14925:14925 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.b var
+R14903:14905 Coq.ssr.ssreflect <> ::core_scope:x_':'_x not
+R14916:14918 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R14906:14913 mathcomp.algebra.matrix <> const_mx def
+R14919:14921 mathcomp.algebra.matrix <> col def
+R14926:14927 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R14925:14925 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.b var
+R14903:14905 Coq.ssr.ssreflect <> ::core_scope:x_':'_x not
+R14916:14918 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R14906:14913 mathcomp.algebra.matrix <> const_mx def
+R14919:14921 mathcomp.algebra.matrix <> col def
+R14926:14927 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R14925:14925 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.b var
+R14943:14946 mathcomp.algebra.matrix <> colP thm
+R14962:14964 mathcomp.algebra.matrix <> mxE thm
+R14943:14946 mathcomp.algebra.matrix <> colP thm
+R14962:14964 mathcomp.algebra.matrix <> mxE thm
+R14962:14964 mathcomp.algebra.matrix <> mxE thm
+R14962:14964 mathcomp.algebra.matrix <> mxE thm
+R14962:14964 mathcomp.algebra.matrix <> mxE thm
+R14962:14964 mathcomp.algebra.matrix <> mxE thm
+R14962:14964 mathcomp.algebra.matrix <> mxE thm
+R14962:14964 mathcomp.algebra.matrix <> mxE thm
+prf 14979:14982 HPolyhedron memP
+R14987:14990 Coq.ssr.ssrbool <> ::type_scope:x_'=i'_x not
+R14986:14986 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.P var
+R14991:14995 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+R14999:14999 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.b var
+R14997:14997 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.A var
+R15035:15035 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R15065:15066 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R15077:15077 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+binder 15040:15041 <> P1:122
+binder 15043:15044 <> P2:123
+R15049:15056 Polyhedra.hpolyhedron HPolyhedron in_polyI thm
+R15061:15062 Polyhedra.hpolyhedron <> P2:123 var
+R15058:15059 Polyhedra.hpolyhedron <> P1:122 var
+R15067:15074 Polyhedra.hpolyhedron HPolyhedron in_polyT thm
+R15096:15104 mathcomp.ssreflect.bigop <> big_morph thm
+binder 15111:15111 <> P:124
+R15117:15121 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R15122:15122 Polyhedra.hpolyhedron <> P:124 var
+R15096:15104 mathcomp.ssreflect.bigop <> big_morph thm
+binder 15111:15111 <> P:125
+R15117:15121 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R15122:15122 Polyhedra.hpolyhedron <> P:125 var
+R15096:15104 mathcomp.ssreflect.bigop <> big_morph thm
+binder 15111:15111 <> P:126
+R15117:15121 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R15122:15122 Polyhedra.hpolyhedron <> P:126 var
+R15142:15144 mathcomp.finmap.finmap <> inE def
+R15146:15153 mathcomp.ssreflect.bigop <> big_andE thm
+R15162:15171 mathcomp.ssreflect.fintype <> forall_inP thm
+R15173:15179 mathcomp.ssreflect.fintype <> forallP thm
+R15142:15144 mathcomp.finmap.finmap <> inE def
+R15142:15144 mathcomp.finmap.finmap <> inE def
+R15142:15144 mathcomp.finmap.finmap <> inE def
+R15142:15144 mathcomp.finmap.finmap <> inE def
+R15146:15153 mathcomp.ssreflect.bigop <> big_andE thm
+R15146:15153 mathcomp.ssreflect.bigop <> big_andE thm
+R15162:15171 mathcomp.ssreflect.fintype <> forall_inP thm
+R15173:15179 mathcomp.ssreflect.fintype <> forallP thm
+R15210:15211 mathcomp.finmap.finmap <> ::fset_scope:'[`'_x_']' not
+R15219:15219 mathcomp.finmap.finmap <> ::fset_scope:'[`'_x_']' not
+R15212:15216 Polyhedra.extra_misc <> fnthP thm
+R15226:15228 Coq.ssr.ssrbool <> isT def
+R15245:15247 mathcomp.finmap.finmap <> inE def
+R15253:15262 Polyhedra.hpolyhedron HPolyhedron fnth_baseE thm
+R15268:15273 mathcomp.algebra.matrix <> tr_row thm
+R15275:15279 mathcomp.algebra.matrix <> trmxK thm
+R15245:15247 mathcomp.finmap.finmap <> inE def
+R15245:15247 mathcomp.finmap.finmap <> inE def
+R15253:15262 Polyhedra.hpolyhedron HPolyhedron fnth_baseE thm
+R15253:15262 Polyhedra.hpolyhedron HPolyhedron fnth_baseE thm
+R15253:15262 Polyhedra.hpolyhedron HPolyhedron fnth_baseE thm
+R15268:15273 mathcomp.algebra.matrix <> tr_row thm
+R15268:15273 mathcomp.algebra.matrix <> tr_row thm
+R15275:15279 mathcomp.algebra.matrix <> trmxK thm
+R15275:15279 mathcomp.algebra.matrix <> trmxK thm
+R15296:15302 mathcomp.algebra.matrix <> row_mul thm
+R15304:15309 Polyhedra.extra_matrix <> row_cV thm
+R15312:15324 Polyhedra.vector_order <> lev_scalar_mx thm
+R15296:15302 mathcomp.algebra.matrix <> row_mul thm
+R15296:15302 mathcomp.algebra.matrix <> row_mul thm
+R15304:15309 Polyhedra.extra_matrix <> row_cV thm
+R15304:15309 Polyhedra.extra_matrix <> row_cV thm
+R15312:15324 Polyhedra.vector_order <> lev_scalar_mx thm
+R15312:15324 Polyhedra.vector_order <> lev_scalar_mx thm
+R15349:15351 mathcomp.finmap.finmap <> inE def
+R15349:15351 mathcomp.finmap.finmap <> inE def
+R15349:15351 mathcomp.finmap.finmap <> inE def
+R15366:15370 Polyhedra.hpolyhedron <> frank def
+R15402:15404 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R15388:15391 Polyhedra.extra_misc <> fnth def
+R15394:15398 Polyhedra.hpolyhedron <> frank def
+R15405:15409 mathcomp.finmap.finmap <> fsval proj
+R15411:15412 mathcomp.finmap.finmap <> ::fset_scope:'[`'_x_']' not
+R15428:15428 mathcomp.finmap.finmap <> ::fset_scope:'[`'_x_']' not
+R15413:15417 Polyhedra.extra_misc <> fnthP thm
+R15420:15424 Polyhedra.hpolyhedron <> frank def
+R15455:15464 Polyhedra.hpolyhedron HPolyhedron fnth_baseE thm
+R15466:15470 Polyhedra.hpolyhedron <> fnthK thm
+R15490:15502 Polyhedra.vector_order <> lev_scalar_mx thm
+R15455:15464 Polyhedra.hpolyhedron HPolyhedron fnth_baseE thm
+R15455:15464 Polyhedra.hpolyhedron HPolyhedron fnth_baseE thm
+R15466:15470 Polyhedra.hpolyhedron <> fnthK thm
+R15466:15470 Polyhedra.hpolyhedron <> fnthK thm
+R15490:15502 Polyhedra.vector_order <> lev_scalar_mx thm
+R15490:15502 Polyhedra.vector_order <> lev_scalar_mx thm
+R15518:15523 mathcomp.algebra.matrix <> tr_col thm
+R15525:15529 mathcomp.algebra.matrix <> trmxK thm
+R15532:15538 mathcomp.algebra.matrix <> row_mul thm
+R15540:15545 Polyhedra.extra_matrix <> row_cV thm
+R15518:15523 mathcomp.algebra.matrix <> tr_col thm
+R15518:15523 mathcomp.algebra.matrix <> tr_col thm
+R15525:15529 mathcomp.algebra.matrix <> trmxK thm
+R15525:15529 mathcomp.algebra.matrix <> trmxK thm
+R15532:15538 mathcomp.algebra.matrix <> row_mul thm
+R15532:15538 mathcomp.algebra.matrix <> row_mul thm
+R15540:15545 Polyhedra.extra_matrix <> row_cV thm
+R15540:15545 Polyhedra.extra_matrix <> row_cV thm
+prf 15560:15565 HPolyhedron farkas
+R15572:15575 Polyhedra.lrel <> :::'lrel' not
+binder 15568:15568 <> e:127
+R15609:15614 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15585:15588 Coq.ssr.ssrbool <> ::bool_scope:'~~'_x not
+R15608:15608 Coq.ssr.ssrbool <> ::bool_scope:'~~'_x not
+R15589:15599 Polyhedra.hpolyhedron HPolyhedron poly_subset def
+R15603:15607 Polyhedra.hpolyhedron HPolyhedron poly0 def
+R15601:15601 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.P var
+R15615:15615 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15639:15645 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R15616:15626 Polyhedra.hpolyhedron HPolyhedron poly_subset def
+R15631:15635 Polyhedra.hpolyhedron HPolyhedron mk_hs def
+R15637:15637 Polyhedra.hpolyhedron <> e:127 var
+R15628:15628 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.P var
+R15646:15653 Coq.Init.Logic <> ::type_scope:'exists2'_x_':'_x_','_x_'&'_x not
+R15655:15657 Coq.Init.Logic <> ::type_scope:'exists2'_x_':'_x_','_x_'&'_x not
+R15675:15685 Coq.Init.Logic <> ::type_scope:'exists2'_x_':'_x_','_x_'&'_x not
+R15712:15721 Coq.Init.Logic <> ::type_scope:'exists2'_x_':'_x_','_x_'&'_x not
+R15658:15664 Polyhedra.barycenter <> ::type_scope:'{'_'conic'_x_'~>'_x_'}' not
+R15669:15672 Polyhedra.barycenter <> ::type_scope:'{'_'conic'_x_'~>'_x_'}' not
+R15674:15674 Polyhedra.barycenter <> ::type_scope:'{'_'conic'_x_'~>'_x_'}' not
+R15665:15668 Polyhedra.lrel <> :::'lrel' not
+R15673:15673 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.R var
+binder 15654:15654 <> w:128
+R15696:15701 mathcomp.finmap.finmap <> ::fset_scope:x_'`<=`'_x not
+R15687:15693 mathcomp.finmap.finmap <> finsupp abbrev
+R15695:15695 Polyhedra.hpolyhedron <> w:128 var
+R15702:15705 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.base var
+binder 15654:15654 <> w:129
+R15741:15744 Coq.Init.Logic <> ::type_scope:x_'/\'_x not
+R15735:15737 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R15722:15722 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R15732:15734 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R15723:15729 Polyhedra.barycenter <> combine def
+R15731:15731 Polyhedra.hpolyhedron <> w:129 var
+R15739:15740 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R15738:15738 Polyhedra.hpolyhedron <> e:127 var
+R15758:15761 mathcomp.algebra.ssrnum Num.Syntax ::ring_scope:x_'>='_x not
+R15763:15764 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R15762:15762 Polyhedra.hpolyhedron <> e:127 var
+R15745:15745 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R15755:15757 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R15746:15752 Polyhedra.barycenter <> combine def
+R15754:15754 Polyhedra.hpolyhedron <> w:129 var
+R15814:15829 Polyhedra.simplex Simplex simplexP thm
+R15836:15837 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R15833:15833 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.b var
+R15831:15831 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.A var
+R15787:15798 Polyhedra.hpolyhedron HPolyhedron poly_subsetP thm
+R15814:15829 Polyhedra.simplex Simplex simplexP thm
+R15836:15837 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R15833:15833 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.b var
+R15831:15831 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.A var
+R15814:15829 Polyhedra.simplex Simplex simplexP thm
+R15836:15837 Coq.ssr.ssrfun <> ::pair_scope:x_'.1' not
+R15833:15833 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.b var
+R15831:15831 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.A var
+R15854:15866 Polyhedra.extra_misc <> intro_existsT thm
+R15869:15887 Polyhedra.simplex Simplex infeasibleP thm
+R15896:15899 Coq.ssr.ssrbool <> negP thm
+R15912:15928 Polyhedra.simplex Simplex feasibleP thm
+R15912:15928 Polyhedra.simplex Simplex feasibleP thm
+R15936:15948 Polyhedra.hpolyhedron HPolyhedron poly_subsetPn thm
+R15996:15998 mathcomp.finmap.finmap <> inE def
+R16000:16003 Polyhedra.hpolyhedron HPolyhedron memP thm
+R15996:15998 mathcomp.finmap.finmap <> inE def
+R15996:15998 mathcomp.finmap.finmap <> inE def
+R16000:16003 Polyhedra.hpolyhedron HPolyhedron memP thm
+R16000:16003 Polyhedra.hpolyhedron HPolyhedron memP thm
+R16034:16046 Polyhedra.extra_misc <> intro_existsT thm
+R16049:16071 Polyhedra.simplex Simplex unboundedP_cert thm
+R16089:16106 Polyhedra.simplex Simplex unboundedP thm
+R16112:16113 Coq.ssr.ssrfun <> ::pair_scope:x_'.2' not
+R16174:16177 Polyhedra.hpolyhedron HPolyhedron memP thm
+R16179:16181 mathcomp.finmap.finmap <> inE def
+R16156:16160 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R16161:16161 Polyhedra.hpolyhedron <> HPolyhedron.PolyPred.Farkas.P var
+R16174:16177 Polyhedra.hpolyhedron HPolyhedron memP thm
+R16174:16177 Polyhedra.hpolyhedron HPolyhedron memP thm
+R16179:16181 mathcomp.finmap.finmap <> inE def
+R16179:16181 mathcomp.finmap.finmap <> inE def
+R16197:16201 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R16235:16238 mathcomp.ssreflect.order Order.POrderTheory ltxx thm
+R16197:16201 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R16197:16201 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R16208:16218 mathcomp.ssreflect.order Order.POrderTheory lt_le_trans thm
+R16235:16238 mathcomp.ssreflect.order Order.POrderTheory ltxx thm
+R16235:16238 mathcomp.ssreflect.order Order.POrderTheory ltxx thm
+R16301:16303 mathcomp.finmap.finmap <> inE def
+R16301:16303 mathcomp.finmap.finmap <> inE def
+R16301:16303 mathcomp.finmap.finmap <> inE def
+R16312:16315 Coq.ssr.ssrbool <> andP thm
+R16318:16320 mathcomp.ssreflect.eqtype <> eqP thm
+R16348:16357 Polyhedra.barycenter <> mkConicFun constr
+R16360:16378 Polyhedra.hpolyhedron <> conic_vect_to_fsfun thm
+R16348:16357 Polyhedra.barycenter <> mkConicFun constr
+R16360:16378 Polyhedra.hpolyhedron <> conic_vect_to_fsfun thm
+R16403:16423 Polyhedra.hpolyhedron <> finsupp_vect_to_fsfun thm
+R16403:16423 Polyhedra.hpolyhedron <> finsupp_vect_to_fsfun thm
+R16438:16446 Polyhedra.hpolyhedron HPolyhedron combinemE thm
+R16438:16446 Polyhedra.hpolyhedron HPolyhedron combinemE thm
+R16438:16446 Polyhedra.hpolyhedron HPolyhedron combinemE thm
+R16486:16490 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R16502:16505 Polyhedra.hpolyhedron HPolyhedron memP thm
+R16507:16509 mathcomp.finmap.finmap <> inE def
+R16486:16490 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R16486:16490 Polyhedra.hpolyhedron HPolyhedron in_hs thm
+R16502:16505 Polyhedra.hpolyhedron HPolyhedron memP thm
+R16502:16505 Polyhedra.hpolyhedron HPolyhedron memP thm
+R16507:16509 mathcomp.finmap.finmap <> inE def
+R16507:16509 mathcomp.finmap.finmap <> inE def
+R16521:16526 Polyhedra.hpolyhedron HPolyhedron.PolyPred.Farkas <> sec
+R16533:16540 Polyhedra.hpolyhedron HPolyhedron.PolyPred <> sec
+sec 16552:16555 HPolyhedron Lift
+var 16569:16569 HPolyhedron.Lift R
+var 16589:16589 HPolyhedron.Lift n
+var 16591:16591 HPolyhedron.Lift k
+R16573:16585 mathcomp.algebra.ssrnum Num.RealField.Exports realFieldType abbrev
+R16595:16597 Coq.Init.Datatypes <> nat ind
+def 16613:16621 HPolyhedron lift_poly
+R16628:16634 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R16636:16637 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R16635:16635 Polyhedra.hpolyhedron <> HPolyhedron.Lift.R var
+R16638:16638 Polyhedra.hpolyhedron <> HPolyhedron.Lift.n var
+binder 16624:16624 <> P:133
+R16643:16649 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R16651:16653 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R16657:16657 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R16650:16650 Polyhedra.hpolyhedron <> HPolyhedron.Lift.R var
+R16655:16655 mathcomp.ssreflect.ssrnat <> ::nat_scope:x_'+'_x not
+R16654:16654 Polyhedra.hpolyhedron <> HPolyhedron.Lift.n var
+R16656:16656 Polyhedra.hpolyhedron <> HPolyhedron.Lift.k var
+R16684:16684 Polyhedra.hpolyhedron <> P:133 var
+R16669:16673 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+R16691:16695 Polyhedra.hpolyhedron HPolyhedron HPoly constr
+R16698:16703 mathcomp.algebra.matrix <> row_mx def
+prf 16720:16729 HPolyhedron lift_polyP
+R16736:16742 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R16744:16745 Polyhedra.hpolyhedron HPolyhedron :::'''hpoly['_x_']_'_x not
+R16743:16743 Polyhedra.hpolyhedron <> HPolyhedron.Lift.R var
+R16746:16746 Polyhedra.hpolyhedron <> HPolyhedron.Lift.n var
+binder 16732:16732 <> P:135
+binder 16749:16749 <> x:136
+R16755:16755 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R16773:16777 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R16792:16792 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R16757:16761 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R16756:16756 Polyhedra.hpolyhedron <> x:136 var
+R16762:16770 Polyhedra.hpolyhedron HPolyhedron lift_poly def
+R16772:16772 Polyhedra.hpolyhedron <> P:135 var
+R16786:16790 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R16778:16783 mathcomp.algebra.matrix <> usubmx def
+R16785:16785 Polyhedra.hpolyhedron <> x:136 var
+R16791:16791 Polyhedra.hpolyhedron <> P:135 var
+R16811:16819 Polyhedra.hpolyhedron HPolyhedron lift_poly def
+R16811:16819 Polyhedra.hpolyhedron HPolyhedron lift_poly def
+R16811:16819 Polyhedra.hpolyhedron HPolyhedron lift_poly def
+R16852:16854 mathcomp.finmap.finmap <> inE def
+R16863:16869 mathcomp.algebra.matrix <> vsubmxK thm
+R16871:16881 mathcomp.algebra.matrix <> mul_row_col thm
+R16883:16888 mathcomp.algebra.matrix <> mul0mx thm
+R16890:16894 mathcomp.algebra.ssralg GRing.Theory addr0 def
+R16852:16854 mathcomp.finmap.finmap <> inE def
+R16852:16854 mathcomp.finmap.finmap <> inE def
+R16852:16854 mathcomp.finmap.finmap <> inE def
+R16852:16854 mathcomp.finmap.finmap <> inE def
+R16863:16869 mathcomp.algebra.matrix <> vsubmxK thm
+R16863:16869 mathcomp.algebra.matrix <> vsubmxK thm
+R16871:16881 mathcomp.algebra.matrix <> mul_row_col thm
+R16871:16881 mathcomp.algebra.matrix <> mul_row_col thm
+R16883:16888 mathcomp.algebra.matrix <> mul0mx thm
+R16883:16888 mathcomp.algebra.matrix <> mul0mx thm
+R16890:16894 mathcomp.algebra.ssralg GRing.Theory addr0 def
+R16890:16894 mathcomp.algebra.ssralg GRing.Theory addr0 def
+R16907:16910 Polyhedra.hpolyhedron HPolyhedron.Lift <> sec
+mod 16928:16934 <> HPolyhedron.Exports
+R16947:16958 Polyhedra.hpolyhedron HPolyhedron hpoly_eqType canonstruc
+R16971:16986 Polyhedra.hpolyhedron HPolyhedron hpoly_choiceType canonstruc
+R17022:17026 Polyhedra.hpolyhedron HPolyhedron hpoly rec
+not 16998:16998 HPolyhedron.Exports :::'''hpoly['_x_']_'_x
+R17061:17067 Polyhedra.hpolyhedron HPolyhedron.Exports :::'''hpoly['_x_']_'_x not
+R17069:17070 Polyhedra.hpolyhedron HPolyhedron.Exports :::'''hpoly['_x_']_'_x not
+not 17043:17043 HPolyhedron.Exports :::'''hpoly_'_x
+R17096:17102 Polyhedra.hpolyhedron HPolyhedron hpoly_c def
+not 17084:17084 HPolyhedron.Exports :::x_'.`c'
+R17129:17135 Polyhedra.hpolyhedron HPolyhedron hpoly_A def
+not 17117:17117 HPolyhedron.Exports :::x_'.`A'
+R17162:17168 Polyhedra.hpolyhedron HPolyhedron hpoly_b def
+not 17150:17150 HPolyhedron.Exports :::x_'.`b'
+R17178:17184 Polyhedra.hpolyhedron HPolyhedron.Exports <> mod
+R17191:17201 Polyhedra.hpolyhedron HPolyhedron <> mod
+R17212:17230 Polyhedra.hpolyhedron HPolyhedron.Exports <> mod
+def 17242:17250 <> mem_hpoly
+R17255:17275 Polyhedra.hpolyhedron <> mem_hpoly def

@@ -12,7 +12,7 @@ From mathcomp Require Import ssralg ssrnum zmodp matrix mxalgebra vector finmap.
 
 Import Order.Theory.
 
-Require Import extra_misc extra_matrix inner_product row_submx vector_order barycenter lrel hpolyhedron affine.
+From Polyhedra Require Import extra_misc extra_matrix inner_product row_submx vector_order barycenter lrel hpolyhedron affine.
 
 Set Implicit Arguments.
 Unset Strict Implicit.

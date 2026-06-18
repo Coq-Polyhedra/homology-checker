@@ -8,8 +8,8 @@
 
 (* -------------------------------------------------------------------- *)
 From mathcomp Require Import all_ssreflect all_algebra finmap.
-Require Import extra_misc inner_product vector_order extra_matrix row_submx.
-Require Import simplex barycenter lrel.
+From Polyhedra Require Import extra_misc inner_product vector_order extra_matrix row_submx.
+From Polyhedra Require Import simplex barycenter lrel.
 
 Import Order.Theory.
 

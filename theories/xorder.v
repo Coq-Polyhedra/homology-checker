@@ -8,7 +8,7 @@
 
 (* -------------------------------------------------------------------- *)
 From mathcomp Require Import all_ssreflect ssralg ssrnum ssrint.
-Require Import extra_misc.
+From Polyhedra Require Import extra_misc.
 
 Import Order.
 Import Order.Theory.

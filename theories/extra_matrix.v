@@ -8,7 +8,7 @@
 
 (* -------------------------------------------------------------------- *)
 From mathcomp Require Import all_ssreflect ssralg ssrnum zmodp matrix mxalgebra vector fingroup perm.
-Require Import extra_misc.
+From Polyhedra Require Import extra_misc.
 
 Set Implicit Arguments.
 Unset Strict Implicit.

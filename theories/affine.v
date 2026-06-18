@@ -8,7 +8,7 @@
 
 (* -------------------------------------------------------------------- *)
 From mathcomp Require Import all_ssreflect all_algebra finmap.
-Require Import extra_misc inner_product lrel.
+From Polyhedra Require Import extra_misc inner_product lrel.
 
 Import Order.Theory.
 

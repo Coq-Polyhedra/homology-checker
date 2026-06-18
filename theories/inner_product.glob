@@ -1,0 +1,1550 @@
+DIGEST e75e14cfa643024a82406d38dd4daffe
+FPolyhedra.inner_product
+R848:860 mathcomp.ssreflect.all_ssreflect <> <> lib
+R892:896 mathcomp.ssreflect.bigop <> <> lib
+R898:903 mathcomp.algebra.ssralg <> <> lib
+R905:910 mathcomp.algebra.ssrnum <> <> lib
+R912:916 mathcomp.algebra.zmodp <> <> lib
+R918:923 mathcomp.algebra.matrix <> <> lib
+R925:930 mathcomp.algebra.vector <> <> lib
+R932:939 mathcomp.fingroup.fingroup <> <> lib
+R941:944 mathcomp.fingroup.perm <> <> lib
+R946:950 mathcomp.ssreflect.order <> <> lib
+R983:994 Polyhedra.extra_matrix <> <> lib
+R1004:1015 mathcomp.ssreflect.order Order.Theory <> mod
+R1138:1149 mathcomp.algebra.ssralg GRing.Theory <> mod
+R1151:1160 mathcomp.algebra.ssrnum Num.Theory <> mod
+sec 1172:1183 <> InnerProduct
+var 1195:1195 InnerProduct n
+R1199:1201 Coq.Init.Datatypes <> nat ind
+var 1213:1213 InnerProduct R
+R1217:1229 mathcomp.algebra.ssrnum Num.RealField.Exports realFieldType abbrev
+R1255:1258 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R1260:1261 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R1259:1259 Polyhedra.inner_product <> InnerProduct.R var
+R1262:1262 Polyhedra.inner_product <> InnerProduct.n var
+def 1552:1555 <> vdot
+binder 1557:1557 <> u:3
+binder 1559:1559 <> v:4
+R1564:1568 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_x_x not
+R1570:1570 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_x_x not
+binder 1569:1569 <> i:5
+binder 1569:1569 <> i:6
+binder 1569:1569 <> i:7
+R1576:1579 mathcomp.algebra.ssralg <> ::ring_scope:x_'*'_x not
+R1585:1585 mathcomp.algebra.ssralg <> ::ring_scope:x_'*'_x not
+R1571:1571 Polyhedra.inner_product <> u:3 var
+R1573:1573 Polyhedra.inner_product <> i:5 var
+R1580:1580 Polyhedra.inner_product <> v:4 var
+R1582:1582 Polyhedra.inner_product <> i:5 var
+def 1668:1677 <> vdotr_head
+binder 1679:1679 <> k:8
+binder 1681:1681 <> u:9
+binder 1683:1683 <> v:10
+R1699:1699 Polyhedra.inner_product <> k:8 var
+R1693:1694 Coq.Init.Datatypes <> tt constr
+R1704:1707 Polyhedra.inner_product <> vdot def
+R1711:1711 Polyhedra.inner_product <> u:9 var
+R1709:1709 Polyhedra.inner_product <> v:10 var
+def 1725:1734 <> vnorm_head
+binder 1736:1736 <> k:12
+binder 1738:1738 <> u:13
+R1756:1756 Polyhedra.inner_product <> k:12 var
+R1750:1751 Coq.Init.Datatypes <> tt constr
+R1761:1764 Polyhedra.inner_product <> vdot def
+R1768:1768 Polyhedra.inner_product <> u:13 var
+R1766:1766 Polyhedra.inner_product <> u:13 var
+R1800:1803 Polyhedra.inner_product <> vdot def
+not 1781:1781 InnerProduct ::ring_scope:'''['_x_','_x_']'
+R1890:1891 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R1893:1894 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R1896:1896 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+not 1872:1872 InnerProduct ::ring_scope:'''[|'_x_'|]^2'
+abbrev 1922:1926 <> vdotr
+R1932:1941 Polyhedra.inner_product <> vdotr_head def
+R1943:1944 Coq.Init.Datatypes <> tt constr
+abbrev 1957:1961 <> vnorm
+R1967:1976 Polyhedra.inner_product <> vnorm_head def
+R1978:1979 Coq.Init.Datatypes <> tt constr
+prf 1990:1995 <> vdotrE
+binder 1997:1997 <> u:15
+binder 1999:1999 <> v:16
+R2012:2014 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R2003:2007 Polyhedra.inner_product <> vdotr abbrev
+R2011:2011 Polyhedra.inner_product <> u:15 var
+R2009:2009 Polyhedra.inner_product <> v:16 var
+R2015:2016 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2018:2019 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2021:2021 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2017:2017 Polyhedra.inner_product <> u:15 var
+R2020:2020 Polyhedra.inner_product <> v:16 var
+prf 2090:2097 <> vdot_def
+R2106:2109 mathcomp.algebra.matrix <> ::type_scope:'''cV_'_x not
+R2110:2110 Polyhedra.inner_product <> InnerProduct.n var
+binder 2100:2100 <> u:17
+binder 2102:2102 <> v:18
+R2124:2126 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R2121:2123 mathcomp.algebra.matrix <> ::ring_scope:x_'%:M' not
+R2115:2116 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2118:2118 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2120:2120 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2117:2117 Polyhedra.inner_product <> u:17 var
+R2119:2119 Polyhedra.inner_product <> v:18 var
+R2130:2133 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R2128:2129 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R2127:2127 Polyhedra.inner_product <> v:18 var
+R2134:2134 Polyhedra.inner_product <> u:17 var
+R2156:2157 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R2160:2170 mathcomp.algebra.matrix <> mx11_scalar thm
+R2179:2184 Coq.ssr.ssrfun <> congr1 def
+R2196:2198 mathcomp.algebra.matrix <> mxE thm
+R2160:2170 mathcomp.algebra.matrix <> mx11_scalar thm
+R2156:2157 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R2156:2157 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R2160:2170 mathcomp.algebra.matrix <> mx11_scalar thm
+R2179:2184 Coq.ssr.ssrfun <> congr1 def
+R2196:2198 mathcomp.algebra.matrix <> mxE thm
+R2196:2198 mathcomp.algebra.matrix <> mxE thm
+R2196:2198 mathcomp.algebra.matrix <> mxE thm
+R2211:2217 mathcomp.ssreflect.bigop <> eq_bigr thm
+R2236:2238 mathcomp.algebra.matrix <> mxE thm
+R2240:2244 mathcomp.algebra.ssralg GRing.Theory mulrC def
+R2211:2217 mathcomp.ssreflect.bigop <> eq_bigr thm
+R2236:2238 mathcomp.algebra.matrix <> mxE thm
+R2236:2238 mathcomp.algebra.matrix <> mxE thm
+R2236:2238 mathcomp.algebra.matrix <> mxE thm
+R2240:2244 mathcomp.algebra.ssralg GRing.Theory mulrC def
+R2240:2244 mathcomp.algebra.ssralg GRing.Theory mulrC def
+prf 2259:2273 <> vdotr_is_linear
+binder 2275:2275 <> u:19
+R2279:2284 mathcomp.algebra.ssralg GRing.Linear.Exports linear abbrev
+R2294:2296 Coq.ssr.ssreflect <> ::core_scope:x_':'_x not
+R2302:2305 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R2297:2300 mathcomp.algebra.matrix <> ::type_scope:'''cV_'_x not
+R2301:2301 Polyhedra.inner_product <> InnerProduct.n var
+R2307:2308 mathcomp.algebra.ssralg <> ::type_scope:x_'^o' not
+R2306:2306 Polyhedra.inner_product <> InnerProduct.R var
+R2287:2291 Polyhedra.inner_product <> vdotr abbrev
+R2293:2293 Polyhedra.inner_product <> u:19 var
+R2345:2354 mathcomp.algebra.ssralg GRing.Theory linear_sum def
+R2357:2365 mathcomp.ssreflect.bigop <> big_split thm
+R2379:2385 mathcomp.ssreflect.bigop <> eq_bigr thm
+R2345:2354 mathcomp.algebra.ssralg GRing.Theory linear_sum def
+R2345:2354 mathcomp.algebra.ssralg GRing.Theory linear_sum def
+R2357:2365 mathcomp.ssreflect.bigop <> big_split thm
+R2357:2365 mathcomp.ssreflect.bigop <> big_split thm
+R2379:2385 mathcomp.ssreflect.bigop <> eq_bigr thm
+R2414:2416 mathcomp.algebra.matrix <> mxE thm
+R2418:2423 mathcomp.algebra.ssralg GRing.Theory mulrDl def
+R2426:2430 mathcomp.algebra.ssralg GRing.Theory mulrA def
+R2414:2416 mathcomp.algebra.matrix <> mxE thm
+R2414:2416 mathcomp.algebra.matrix <> mxE thm
+R2414:2416 mathcomp.algebra.matrix <> mxE thm
+R2414:2416 mathcomp.algebra.matrix <> mxE thm
+R2418:2423 mathcomp.algebra.ssralg GRing.Theory mulrDl def
+R2418:2423 mathcomp.algebra.ssralg GRing.Theory mulrDl def
+R2426:2430 mathcomp.algebra.ssralg GRing.Theory mulrA def
+R2426:2430 mathcomp.algebra.ssralg GRing.Theory mulrA def
+def 2449:2462 <> vdotr_additive
+binder 2464:2464 <> u:20
+R2469:2476 mathcomp.algebra.ssralg GRing.Additive.Exports Additive abbrev
+R2479:2493 Polyhedra.inner_product <> vdotr_is_linear thm
+R2495:2495 Polyhedra.inner_product <> u:20 var
+def 2509:2520 <> vdotr_linear
+binder 2524:2524 <> u:21
+R2529:2534 mathcomp.algebra.ssralg GRing.Linear.Exports Linear abbrev
+R2539:2553 Polyhedra.inner_product <> vdotr_is_linear thm
+R2555:2555 Polyhedra.inner_product <> u:21 var
+prf 2566:2571 <> vdot0l
+binder 2573:2573 <> u:22
+R2583:2585 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R2577:2578 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2580:2580 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2582:2582 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2581:2581 Polyhedra.inner_product <> u:22 var
+R2608:2613 Polyhedra.inner_product <> vdotrE thm
+R2615:2621 mathcomp.algebra.ssralg GRing.Theory linear0 def
+R2608:2613 Polyhedra.inner_product <> vdotrE thm
+R2608:2613 Polyhedra.inner_product <> vdotrE thm
+R2615:2621 mathcomp.algebra.ssralg GRing.Theory linear0 def
+R2615:2621 mathcomp.algebra.ssralg GRing.Theory linear0 def
+prf 2635:2640 <> vdotNl
+binder 2642:2642 <> u:23
+binder 2644:2644 <> v:24
+R2657:2659 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R2648:2649 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2653:2654 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2656:2656 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2650:2651 mathcomp.algebra.ssralg <> ::ring_scope:'-'_x not
+R2652:2652 Polyhedra.inner_product <> u:23 var
+R2655:2655 Polyhedra.inner_product <> v:24 var
+R2660:2661 mathcomp.algebra.ssralg <> ::ring_scope:'-'_x not
+R2662:2663 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2665:2666 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2668:2668 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2664:2664 Polyhedra.inner_product <> u:23 var
+R2667:2667 Polyhedra.inner_product <> v:24 var
+R2690:2695 Polyhedra.inner_product <> vdotrE thm
+R2697:2703 mathcomp.algebra.ssralg GRing.Theory linearN def
+R2690:2695 Polyhedra.inner_product <> vdotrE thm
+R2690:2695 Polyhedra.inner_product <> vdotrE thm
+R2697:2703 mathcomp.algebra.ssralg GRing.Theory linearN def
+R2697:2703 mathcomp.algebra.ssralg GRing.Theory linearN def
+prf 2717:2722 <> vdotDl
+binder 2724:2724 <> u:25
+binder 2726:2726 <> v:26
+binder 2728:2728 <> w:27
+R2743:2745 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R2732:2733 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2739:2740 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2742:2742 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2735:2737 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R2734:2734 Polyhedra.inner_product <> u:25 var
+R2738:2738 Polyhedra.inner_product <> v:26 var
+R2741:2741 Polyhedra.inner_product <> w:27 var
+R2753:2755 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R2746:2747 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2749:2750 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2752:2752 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2748:2748 Polyhedra.inner_product <> u:25 var
+R2751:2751 Polyhedra.inner_product <> w:27 var
+R2756:2757 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2759:2760 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2762:2762 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2758:2758 Polyhedra.inner_product <> v:26 var
+R2761:2761 Polyhedra.inner_product <> w:27 var
+R2784:2789 Polyhedra.inner_product <> vdotrE thm
+R2791:2797 mathcomp.algebra.ssralg GRing.Theory linearD def
+R2784:2789 Polyhedra.inner_product <> vdotrE thm
+R2784:2789 Polyhedra.inner_product <> vdotrE thm
+R2791:2797 mathcomp.algebra.ssralg GRing.Theory linearD def
+R2791:2797 mathcomp.algebra.ssralg GRing.Theory linearD def
+prf 2811:2816 <> vdotBl
+binder 2818:2818 <> u:28
+binder 2820:2820 <> v:29
+binder 2822:2822 <> w:30
+R2837:2839 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R2826:2827 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2833:2834 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2836:2836 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2829:2831 mathcomp.algebra.ssralg <> ::ring_scope:x_'-'_x not
+R2828:2828 Polyhedra.inner_product <> u:28 var
+R2832:2832 Polyhedra.inner_product <> v:29 var
+R2835:2835 Polyhedra.inner_product <> w:30 var
+R2847:2849 mathcomp.algebra.ssralg <> ::ring_scope:x_'-'_x not
+R2840:2841 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2843:2844 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2846:2846 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2842:2842 Polyhedra.inner_product <> u:28 var
+R2845:2845 Polyhedra.inner_product <> w:30 var
+R2850:2851 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2853:2854 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2856:2856 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2852:2852 Polyhedra.inner_product <> v:29 var
+R2855:2855 Polyhedra.inner_product <> w:30 var
+R2878:2883 Polyhedra.inner_product <> vdotrE thm
+R2885:2891 mathcomp.algebra.ssralg GRing.Theory linearB def
+R2878:2883 Polyhedra.inner_product <> vdotrE thm
+R2878:2883 Polyhedra.inner_product <> vdotrE thm
+R2885:2891 mathcomp.algebra.ssralg GRing.Theory linearB def
+R2885:2891 mathcomp.algebra.ssralg GRing.Theory linearB def
+prf 2905:2911 <> vdotMnl
+binder 2913:2913 <> u:31
+binder 2915:2915 <> v:32
+binder 2917:2917 <> m:33
+R2933:2935 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R2921:2922 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2929:2930 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2932:2932 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2924:2927 mathcomp.algebra.ssralg <> ::ring_scope:x_'*+'_x not
+R2923:2923 Polyhedra.inner_product <> u:31 var
+R2928:2928 Polyhedra.inner_product <> m:33 var
+R2931:2931 Polyhedra.inner_product <> v:32 var
+R2943:2946 mathcomp.algebra.ssralg <> ::ring_scope:x_'*+'_x not
+R2936:2937 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2939:2940 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2942:2942 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R2938:2938 Polyhedra.inner_product <> u:31 var
+R2941:2941 Polyhedra.inner_product <> v:32 var
+R2947:2947 Polyhedra.inner_product <> m:33 var
+R2970:2975 Polyhedra.inner_product <> vdotrE thm
+R2977:2984 mathcomp.algebra.ssralg GRing.Theory linearMn def
+R2970:2975 Polyhedra.inner_product <> vdotrE thm
+R2970:2975 Polyhedra.inner_product <> vdotrE thm
+R2970:2975 Polyhedra.inner_product <> vdotrE thm
+R2970:2975 Polyhedra.inner_product <> vdotrE thm
+R2977:2984 mathcomp.algebra.ssralg GRing.Theory linearMn def
+R2977:2984 mathcomp.algebra.ssralg GRing.Theory linearMn def
+prf 2998:3003 <> vdotZl
+binder 3005:3005 <> a:34
+binder 3007:3007 <> u:35
+binder 3009:3009 <> v:36
+R3025:3027 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3013:3014 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3021:3022 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3024:3024 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3016:3019 mathcomp.algebra.ssralg <> ::ring_scope:x_'*:'_x not
+R3015:3015 Polyhedra.inner_product <> a:34 var
+R3020:3020 Polyhedra.inner_product <> u:35 var
+R3023:3023 Polyhedra.inner_product <> v:36 var
+R3029:3031 mathcomp.algebra.ssralg <> ::ring_scope:x_'*'_x not
+R3028:3028 Polyhedra.inner_product <> a:34 var
+R3032:3033 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3035:3036 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3038:3038 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3034:3034 Polyhedra.inner_product <> u:35 var
+R3037:3037 Polyhedra.inner_product <> v:36 var
+R3060:3065 Polyhedra.inner_product <> vdotrE thm
+R3067:3073 mathcomp.algebra.ssralg GRing.Theory linearZ def
+R3060:3065 Polyhedra.inner_product <> vdotrE thm
+R3060:3065 Polyhedra.inner_product <> vdotrE thm
+R3067:3073 mathcomp.algebra.ssralg GRing.Theory linearZ def
+R3067:3073 mathcomp.algebra.ssralg GRing.Theory linearZ def
+prf 3088:3092 <> vdotC
+binder 3094:3094 <> u:37
+binder 3096:3096 <> v:38
+R3106:3108 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3100:3101 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3103:3103 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3105:3105 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3102:3102 Polyhedra.inner_product <> u:37 var
+R3104:3104 Polyhedra.inner_product <> v:38 var
+R3109:3110 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3112:3112 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3114:3114 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3111:3111 Polyhedra.inner_product <> v:38 var
+R3113:3113 Polyhedra.inner_product <> u:37 var
+R3136:3142 mathcomp.ssreflect.bigop <> eq_bigr thm
+R3160:3164 mathcomp.algebra.ssralg GRing.Theory mulrC def
+R3136:3142 mathcomp.ssreflect.bigop <> eq_bigr thm
+R3160:3164 mathcomp.algebra.ssralg GRing.Theory mulrC def
+R3160:3164 mathcomp.algebra.ssralg GRing.Theory mulrC def
+prf 3179:3192 <> vdotr_delta_mx
+binder 3194:3194 <> u:39
+binder 3196:3196 <> i:40
+R3218:3220 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3200:3201 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3203:3204 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3217:3217 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3202:3202 Polyhedra.inner_product <> u:39 var
+R3205:3212 mathcomp.algebra.matrix <> delta_mx def
+R3214:3214 Polyhedra.inner_product <> i:40 var
+R3221:3221 Polyhedra.inner_product <> u:39 var
+R3223:3223 Polyhedra.inner_product <> i:40 var
+R3244:3247 Polyhedra.inner_product <> vdot def
+R3250:3254 mathcomp.ssreflect.bigop <> bigD1 thm
+R3265:3267 mathcomp.algebra.matrix <> mxE thm
+R3269:3275 mathcomp.ssreflect.eqtype <> eq_refl thm
+R3277:3281 mathcomp.algebra.ssralg GRing.Theory mulr1 def
+R3244:3247 Polyhedra.inner_product <> vdot def
+R3244:3247 Polyhedra.inner_product <> vdot def
+R3250:3254 mathcomp.ssreflect.bigop <> bigD1 thm
+R3250:3254 mathcomp.ssreflect.bigop <> bigD1 thm
+R3265:3267 mathcomp.algebra.matrix <> mxE thm
+R3265:3267 mathcomp.algebra.matrix <> mxE thm
+R3269:3275 mathcomp.ssreflect.eqtype <> eq_refl thm
+R3269:3275 mathcomp.ssreflect.eqtype <> eq_refl thm
+R3277:3281 mathcomp.algebra.ssralg GRing.Theory mulr1 def
+R3277:3281 mathcomp.algebra.ssralg GRing.Theory mulr1 def
+R3363:3367 mathcomp.algebra.ssralg GRing.Theory addr0 def
+R3349:3351 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3293:3298 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_'<'_x_'|'_x_')'_x not
+R3300:3302 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_'<'_x_'|'_x_')'_x not
+R3304:3306 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_'<'_x_'|'_x_')'_x not
+R3313:3314 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_'<'_x_'|'_x_')'_x not
+R3303:3303 Polyhedra.inner_product <> InnerProduct.n var
+binder 3299:3299 <> j:41
+binder 3299:3299 <> j:42
+binder 3299:3299 <> j:43
+R3308:3311 mathcomp.ssreflect.eqtype <> ::bool_scope:x_'!='_x not
+R3307:3307 Polyhedra.inner_product <> j:41 var
+R3320:3322 mathcomp.algebra.ssralg <> ::ring_scope:x_'*'_x not
+R3317:3317 Polyhedra.inner_product <> j:41 var
+R3323:3324 Coq.ssr.ssreflect <> ::core_scope:x_':'_x not
+R3337:3338 Coq.ssr.ssreflect <> ::core_scope:x_':'_x not
+R3344:3348 Coq.ssr.ssreflect <> ::core_scope:x_':'_x not
+R3339:3342 mathcomp.algebra.matrix <> ::type_scope:'''cV_'_x not
+R3343:3343 Polyhedra.inner_product <> InnerProduct.n var
+R3325:3332 mathcomp.algebra.matrix <> delta_mx def
+R3346:3346 Polyhedra.inner_product <> j:41 var
+R3363:3367 mathcomp.algebra.ssralg GRing.Theory addr0 def
+R3380:3383 mathcomp.ssreflect.bigop <> big1 thm
+R3399:3401 mathcomp.algebra.matrix <> mxE thm
+R3428:3432 mathcomp.algebra.ssralg GRing.Theory mulr0 def
+R3380:3383 mathcomp.ssreflect.bigop <> big1 thm
+R3399:3401 mathcomp.algebra.matrix <> mxE thm
+R3399:3401 mathcomp.algebra.matrix <> mxE thm
+R3409:3414 Coq.ssr.ssrbool <> negbTE thm
+R3428:3432 mathcomp.algebra.ssralg GRing.Theory mulr0 def
+R3428:3432 mathcomp.algebra.ssralg GRing.Theory mulr0 def
+prf 3447:3460 <> vdotl_delta_mx
+binder 3462:3462 <> u:44
+binder 3464:3464 <> i:45
+R3486:3488 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3468:3469 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3482:3483 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3485:3485 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3470:3477 mathcomp.algebra.matrix <> delta_mx def
+R3479:3479 Polyhedra.inner_product <> i:45 var
+R3484:3484 Polyhedra.inner_product <> u:44 var
+R3489:3489 Polyhedra.inner_product <> u:44 var
+R3491:3491 Polyhedra.inner_product <> i:45 var
+R3514:3518 Polyhedra.inner_product <> vdotC thm
+R3520:3533 Polyhedra.inner_product <> vdotr_delta_mx thm
+R3514:3518 Polyhedra.inner_product <> vdotC thm
+R3514:3518 Polyhedra.inner_product <> vdotC thm
+R3520:3533 Polyhedra.inner_product <> vdotr_delta_mx thm
+R3520:3533 Polyhedra.inner_product <> vdotr_delta_mx thm
+prf 3548:3562 <> vdotr_const_mx1
+binder 3564:3564 <> u:46
+R3584:3586 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3568:3569 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3571:3572 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3583:3583 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3570:3570 Polyhedra.inner_product <> u:46 var
+R3573:3580 mathcomp.algebra.matrix <> const_mx def
+R3587:3591 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_x_x not
+R3593:3593 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_x_x not
+binder 3592:3592 <> i:47
+binder 3592:3592 <> i:48
+binder 3592:3592 <> i:49
+R3594:3594 Polyhedra.inner_product <> u:46 var
+R3596:3596 Polyhedra.inner_product <> i:47 var
+R3617:3620 Polyhedra.inner_product <> vdot def
+R3617:3620 Polyhedra.inner_product <> vdot def
+R3617:3620 Polyhedra.inner_product <> vdot def
+R3630:3636 mathcomp.ssreflect.bigop <> eq_bigr thm
+R3630:3636 mathcomp.ssreflect.bigop <> eq_bigr thm
+R3659:3661 mathcomp.algebra.matrix <> mxE thm
+R3663:3667 mathcomp.algebra.ssralg GRing.Theory mulr1 def
+R3659:3661 mathcomp.algebra.matrix <> mxE thm
+R3659:3661 mathcomp.algebra.matrix <> mxE thm
+R3663:3667 mathcomp.algebra.ssralg GRing.Theory mulr1 def
+R3663:3667 mathcomp.algebra.ssralg GRing.Theory mulr1 def
+prf 3682:3687 <> vdotBr
+binder 3689:3689 <> u:50
+binder 3691:3691 <> v:51
+binder 3693:3693 <> w:52
+R3708:3710 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3697:3698 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3700:3701 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3707:3707 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3699:3699 Polyhedra.inner_product <> u:50 var
+R3703:3705 mathcomp.algebra.ssralg <> ::ring_scope:x_'-'_x not
+R3702:3702 Polyhedra.inner_product <> v:51 var
+R3706:3706 Polyhedra.inner_product <> w:52 var
+R3718:3720 mathcomp.algebra.ssralg <> ::ring_scope:x_'-'_x not
+R3711:3712 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3714:3715 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3717:3717 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3713:3713 Polyhedra.inner_product <> u:50 var
+R3716:3716 Polyhedra.inner_product <> v:51 var
+R3721:3722 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3724:3725 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3727:3727 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3723:3723 Polyhedra.inner_product <> u:50 var
+R3726:3726 Polyhedra.inner_product <> w:52 var
+R3750:3754 Polyhedra.inner_product <> vdotC thm
+R3759:3764 Polyhedra.inner_product <> vdotBl thm
+R3750:3754 Polyhedra.inner_product <> vdotC thm
+R3750:3754 Polyhedra.inner_product <> vdotC thm
+R3750:3754 Polyhedra.inner_product <> vdotC thm
+R3750:3754 Polyhedra.inner_product <> vdotC thm
+R3750:3754 Polyhedra.inner_product <> vdotC thm
+R3759:3764 Polyhedra.inner_product <> vdotBl thm
+R3759:3764 Polyhedra.inner_product <> vdotBl thm
+def 3782:3794 <> vdot_additive
+binder 3796:3796 <> u:53
+R3801:3808 mathcomp.algebra.ssralg GRing.Additive.Exports Additive abbrev
+R3811:3816 Polyhedra.inner_product <> vdotBr thm
+R3818:3818 Polyhedra.inner_product <> u:53 var
+prf 3829:3834 <> vdot0r
+binder 3836:3836 <> u:54
+R3846:3848 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3840:3841 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3843:3843 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3845:3845 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3842:3842 Polyhedra.inner_product <> u:54 var
+R3866:3871 mathcomp.algebra.ssralg GRing.Theory raddf0 def
+R3866:3871 mathcomp.algebra.ssralg GRing.Theory raddf0 def
+prf 3885:3890 <> vdotNr
+binder 3892:3892 <> u:55
+binder 3894:3894 <> v:56
+R3907:3909 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3898:3899 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3901:3902 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3906:3906 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3900:3900 Polyhedra.inner_product <> u:55 var
+R3903:3904 mathcomp.algebra.ssralg <> ::ring_scope:'-'_x not
+R3905:3905 Polyhedra.inner_product <> v:56 var
+R3910:3911 mathcomp.algebra.ssralg <> ::ring_scope:'-'_x not
+R3912:3913 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3915:3916 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3918:3918 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3914:3914 Polyhedra.inner_product <> u:55 var
+R3917:3917 Polyhedra.inner_product <> v:56 var
+R3935:3940 mathcomp.algebra.ssralg GRing.Theory raddfN def
+R3935:3940 mathcomp.algebra.ssralg GRing.Theory raddfN def
+prf 3954:3959 <> vdotDr
+binder 3961:3961 <> u:57
+binder 3963:3963 <> v:58
+binder 3965:3965 <> w:59
+R3980:3982 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R3969:3970 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3972:3973 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3979:3979 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3971:3971 Polyhedra.inner_product <> u:57 var
+R3975:3977 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R3974:3974 Polyhedra.inner_product <> v:58 var
+R3978:3978 Polyhedra.inner_product <> w:59 var
+R3990:3992 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R3983:3984 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3986:3987 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3989:3989 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3985:3985 Polyhedra.inner_product <> u:57 var
+R3988:3988 Polyhedra.inner_product <> v:58 var
+R3993:3994 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3996:3997 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3999:3999 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R3995:3995 Polyhedra.inner_product <> u:57 var
+R3998:3998 Polyhedra.inner_product <> w:59 var
+R4016:4021 mathcomp.algebra.ssralg GRing.Theory raddfD def
+R4016:4021 mathcomp.algebra.ssralg GRing.Theory raddfD def
+prf 4035:4041 <> vdotMnr
+binder 4043:4043 <> u:60
+binder 4045:4045 <> v:61
+binder 4047:4047 <> m:62
+R4063:4065 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4051:4052 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4054:4055 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4062:4062 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4053:4053 Polyhedra.inner_product <> u:60 var
+R4057:4060 mathcomp.algebra.ssralg <> ::ring_scope:x_'*+'_x not
+R4056:4056 Polyhedra.inner_product <> v:61 var
+R4061:4061 Polyhedra.inner_product <> m:62 var
+R4073:4076 mathcomp.algebra.ssralg <> ::ring_scope:x_'*+'_x not
+R4066:4067 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4069:4070 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4072:4072 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4068:4068 Polyhedra.inner_product <> u:60 var
+R4071:4071 Polyhedra.inner_product <> v:61 var
+R4077:4077 Polyhedra.inner_product <> m:62 var
+R4094:4100 mathcomp.algebra.ssralg GRing.Theory raddfMn def
+R4094:4100 mathcomp.algebra.ssralg GRing.Theory raddfMn def
+prf 4114:4119 <> vdotZr
+binder 4121:4121 <> a:63
+binder 4123:4123 <> u:64
+binder 4125:4125 <> v:65
+R4141:4143 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4129:4130 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4132:4133 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4140:4140 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4131:4131 Polyhedra.inner_product <> u:64 var
+R4135:4138 mathcomp.algebra.ssralg <> ::ring_scope:x_'*:'_x not
+R4134:4134 Polyhedra.inner_product <> a:63 var
+R4139:4139 Polyhedra.inner_product <> v:65 var
+R4145:4147 mathcomp.algebra.ssralg <> ::ring_scope:x_'*'_x not
+R4144:4144 Polyhedra.inner_product <> a:63 var
+R4148:4149 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4151:4152 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4154:4154 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4150:4150 Polyhedra.inner_product <> u:64 var
+R4153:4153 Polyhedra.inner_product <> v:65 var
+R4177:4181 Polyhedra.inner_product <> vdotC thm
+R4186:4191 Polyhedra.inner_product <> vdotZl thm
+R4177:4181 Polyhedra.inner_product <> vdotC thm
+R4177:4181 Polyhedra.inner_product <> vdotC thm
+R4177:4181 Polyhedra.inner_product <> vdotC thm
+R4177:4181 Polyhedra.inner_product <> vdotC thm
+R4186:4191 Polyhedra.inner_product <> vdotZl thm
+R4186:4191 Polyhedra.inner_product <> vdotZl thm
+prf 4206:4214 <> vdot_perm
+R4220:4222 mathcomp.fingroup.perm <> :::'''S_'_x not
+R4223:4223 Polyhedra.inner_product <> InnerProduct.n var
+binder 4217:4217 <> s:66
+binder 4226:4226 <> u:67
+binder 4228:4228 <> v:68
+R4263:4265 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4234:4235 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4248:4249 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4262:4262 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4236:4243 mathcomp.algebra.matrix <> row_perm def
+R4247:4247 Polyhedra.inner_product <> u:67 var
+R4245:4245 Polyhedra.inner_product <> s:66 var
+R4250:4257 mathcomp.algebra.matrix <> row_perm def
+R4261:4261 Polyhedra.inner_product <> v:68 var
+R4259:4259 Polyhedra.inner_product <> s:66 var
+R4266:4267 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4269:4269 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4271:4271 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4268:4268 Polyhedra.inner_product <> u:67 var
+R4270:4270 Polyhedra.inner_product <> v:68 var
+R4319:4321 Coq.Init.Logic <> ::type_scope:x_'='_x_':>'_x not
+R4331:4334 Coq.Init.Logic <> ::type_scope:x_'='_x_':>'_x not
+R4335:4337 mathcomp.algebra.matrix <> ::type_scope:'''M_'_x not
+R4316:4318 mathcomp.algebra.matrix <> ::ring_scope:x_'%:M' not
+R4287:4288 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4301:4302 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4315:4315 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4289:4296 mathcomp.algebra.matrix <> row_perm def
+R4303:4310 mathcomp.algebra.matrix <> row_perm def
+R4328:4330 mathcomp.algebra.matrix <> ::ring_scope:x_'%:M' not
+R4322:4323 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4325:4325 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4327:4327 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4377:4379 mathcomp.algebra.matrix <> mxE thm
+R4351:4357 mathcomp.algebra.matrix <> matrixP thm
+R4377:4379 mathcomp.algebra.matrix <> mxE thm
+R4377:4379 mathcomp.algebra.matrix <> mxE thm
+R4377:4379 mathcomp.algebra.matrix <> mxE thm
+R4377:4379 mathcomp.algebra.matrix <> mxE thm
+R4394:4401 Polyhedra.inner_product <> vdot_def thm
+R4411:4427 Polyhedra.extra_matrix <> mulmx_tr_row_perm thm
+R4394:4401 Polyhedra.inner_product <> vdot_def thm
+R4394:4401 Polyhedra.inner_product <> vdot_def thm
+R4394:4401 Polyhedra.inner_product <> vdot_def thm
+R4411:4427 Polyhedra.extra_matrix <> mulmx_tr_row_perm thm
+prf 4443:4452 <> vdot_sumDl
+R4458:4463 mathcomp.ssreflect.eqtype Equality.Exports eqType abbrev
+binder 4455:4455 <> I:69
+binder 4466:4466 <> r:70
+R4472:4475 Coq.ssr.ssrbool <> pred def
+R4477:4477 Polyhedra.inner_product <> I:69 var
+binder 4469:4469 <> P:71
+binder 4480:4480 <> F:72
+binder 4482:4482 <> x:73
+R4515:4517 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4486:4487 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4511:4512 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4514:4514 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4488:4493 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_'<-'_x_'|'_x_')'_x not
+R4495:4498 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_'<-'_x_'|'_x_')'_x not
+R4500:4502 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_'<-'_x_'|'_x_')'_x not
+R4506:4507 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_'<-'_x_'|'_x_')'_x not
+R4499:4499 Polyhedra.inner_product <> r:70 var
+binder 4494:4494 <> i:74
+binder 4494:4494 <> i:75
+binder 4494:4494 <> i:76
+R4503:4503 Polyhedra.inner_product <> P:71 var
+R4505:4505 Polyhedra.inner_product <> i:74 var
+R4508:4508 Polyhedra.inner_product <> F:72 var
+R4510:4510 Polyhedra.inner_product <> i:74 var
+R4513:4513 Polyhedra.inner_product <> x:73 var
+R4518:4523 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_'<-'_x_'|'_x_')'_x not
+R4525:4528 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_'<-'_x_'|'_x_')'_x not
+R4530:4532 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_'<-'_x_'|'_x_')'_x not
+R4536:4537 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_'<-'_x_'|'_x_')'_x not
+R4529:4529 Polyhedra.inner_product <> r:70 var
+binder 4524:4524 <> i:77
+binder 4524:4524 <> i:78
+binder 4524:4524 <> i:79
+R4533:4533 Polyhedra.inner_product <> P:71 var
+R4535:4535 Polyhedra.inner_product <> i:77 var
+R4538:4539 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4543:4544 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4546:4546 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4540:4540 Polyhedra.inner_product <> F:72 var
+R4542:4542 Polyhedra.inner_product <> i:77 var
+R4545:4545 Polyhedra.inner_product <> x:73 var
+R4564:4572 mathcomp.ssreflect.bigop <> big_morph thm
+binder 4579:4579 <> y:80
+R4584:4585 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4587:4587 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4589:4589 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4586:4586 Polyhedra.inner_product <> y:80 var
+R4564:4572 mathcomp.ssreflect.bigop <> big_morph thm
+binder 4579:4579 <> y:81
+R4584:4585 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4587:4587 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4589:4589 Polyhedra.inner_product InnerProduct ::ring_scope:'''['_x_','_x_']' not
+R4586:4586 Polyhedra.inner_product <> y:81 var
+R4617:4622 Polyhedra.inner_product <> vdotDl thm
+R4617:4622 Polyhedra.inner_product <> vdotDl thm
+R4634:4639 Polyhedra.inner_product <> vdot0l thm
+R4634:4639 Polyhedra.inner_product <> vdot0l thm
+prf 4677:4685 <> vnorm_ge0
+binder 4687:4687 <> x:82
+R4692:4695 mathcomp.algebra.ssrnum Num.Syntax ::ring_scope:x_'<='_x not
+R4696:4699 Polyhedra.inner_product InnerProduct ::ring_scope:'''[|'_x_'|]^2' not
+R4701:4705 Polyhedra.inner_product InnerProduct ::ring_scope:'''[|'_x_'|]^2' not
+R4700:4700 Polyhedra.inner_product <> x:82 var
+R4700:4700 Polyhedra.inner_product <> x:82 var
+R4726:4733 mathcomp.algebra.ssrnum Num.Theory sumr_ge0 thm
+R4753:4759 mathcomp.algebra.ssrnum Num.Theory sqr_ge0 thm
+R4726:4733 mathcomp.algebra.ssrnum Num.Theory sumr_ge0 thm
+R4726:4733 mathcomp.algebra.ssrnum Num.Theory sumr_ge0 thm
+R4753:4759 mathcomp.algebra.ssrnum Num.Theory sqr_ge0 thm
+prf 4774:4782 <> vnorm_eq0
+binder 4784:4784 <> u:83
+R4788:4788 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4804:4808 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4815:4815 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R4799:4802 mathcomp.ssreflect.eqtype <> ::bool_scope:x_'=='_x not
+R4789:4792 Polyhedra.inner_product InnerProduct ::ring_scope:'''[|'_x_'|]^2' not
+R4794:4798 Polyhedra.inner_product InnerProduct ::ring_scope:'''[|'_x_'|]^2' not
+R4793:4793 Polyhedra.inner_product <> u:83 var
+R4793:4793 Polyhedra.inner_product <> u:83 var
+R4810:4813 mathcomp.ssreflect.eqtype <> ::bool_scope:x_'=='_x not
+R4809:4809 Polyhedra.inner_product <> u:83 var
+R4831:4833 Coq.ssr.ssrbool <> idP thm
+R4835:4837 mathcomp.ssreflect.eqtype <> eqP thm
+R4864:4869 Polyhedra.inner_product <> vdot0r thm
+R4831:4833 Coq.ssr.ssrbool <> idP thm
+R4835:4837 mathcomp.ssreflect.eqtype <> eqP thm
+R4864:4869 Polyhedra.inner_product <> vdot0r thm
+R4864:4869 Polyhedra.inner_product <> vdot0r thm
+R4907:4913 mathcomp.algebra.matrix <> matrixP thm
+R4877:4879 mathcomp.ssreflect.eqtype <> eqP thm
+R4881:4890 mathcomp.algebra.ssrnum Num.Theory psumr_eq0P thm
+R4907:4913 mathcomp.algebra.matrix <> matrixP thm
+R4928:4930 mathcomp.ssreflect.eqtype <> eqP thm
+R4941:4944 mathcomp.algebra.zmodp <> ord1 thm
+R4947:4949 mathcomp.algebra.matrix <> mxE thm
+R4952:4959 mathcomp.algebra.ssralg GRing.Theory sqrf_eq0 def
+R4961:4965 mathcomp.algebra.ssralg GRing.Theory expr2 def
+R4928:4930 mathcomp.ssreflect.eqtype <> eqP thm
+R4941:4944 mathcomp.algebra.zmodp <> ord1 thm
+R4941:4944 mathcomp.algebra.zmodp <> ord1 thm
+R4947:4949 mathcomp.algebra.matrix <> mxE thm
+R4947:4949 mathcomp.algebra.matrix <> mxE thm
+R4947:4949 mathcomp.algebra.matrix <> mxE thm
+R4952:4959 mathcomp.algebra.ssralg GRing.Theory sqrf_eq0 def
+R4952:4959 mathcomp.algebra.ssralg GRing.Theory sqrf_eq0 def
+R4961:4965 mathcomp.algebra.ssralg GRing.Theory expr2 def
+R4961:4965 mathcomp.algebra.ssralg GRing.Theory expr2 def
+R5000:5006 mathcomp.algebra.ssrnum Num.Theory sqr_ge0 thm
+R5000:5006 mathcomp.algebra.ssrnum Num.Theory sqr_ge0 thm
+prf 5021:5029 <> vnorm_gt0
+binder 5031:5031 <> u:84
+R5035:5035 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5050:5054 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5061:5061 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5046:5048 mathcomp.algebra.ssrnum Num.Syntax ::ring_scope:x_'>'_x not
+R5036:5039 Polyhedra.inner_product InnerProduct ::ring_scope:'''[|'_x_'|]^2' not
+R5041:5045 Polyhedra.inner_product InnerProduct ::ring_scope:'''[|'_x_'|]^2' not
+R5040:5040 Polyhedra.inner_product <> u:84 var
+R5040:5040 Polyhedra.inner_product <> u:84 var
+R5056:5059 mathcomp.ssreflect.eqtype <> ::bool_scope:x_'!='_x not
+R5055:5055 Polyhedra.inner_product <> u:84 var
+R5082:5087 mathcomp.ssreflect.order Order.POrderTheory lt_def thm
+R5089:5097 Polyhedra.inner_product <> vnorm_ge0 thm
+R5099:5107 Polyhedra.inner_product <> vnorm_eq0 thm
+R5109:5113 Coq.ssr.ssrbool <> andbT thm
+R5082:5087 mathcomp.ssreflect.order Order.POrderTheory lt_def thm
+R5082:5087 mathcomp.ssreflect.order Order.POrderTheory lt_def thm
+R5089:5097 Polyhedra.inner_product <> vnorm_ge0 thm
+R5089:5097 Polyhedra.inner_product <> vnorm_ge0 thm
+R5099:5107 Polyhedra.inner_product <> vnorm_eq0 thm
+R5099:5107 Polyhedra.inner_product <> vnorm_eq0 thm
+R5109:5113 Coq.ssr.ssrbool <> andbT thm
+R5109:5113 Coq.ssr.ssrbool <> andbT thm
+R5126:5137 Polyhedra.inner_product InnerProduct <> sec
+R5169:5172 Polyhedra.inner_product <> vdot def
+not 5150:5150 <> ::ring_scope:'''['_x_','_x_']'
+R5259:5260 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5262:5263 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5265:5265 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+not 5241:5241 <> ::ring_scope:'''[|'_x_'|]^2'
+sec 5290:5294 <> Extra
+var 5307:5307 Extra m
+var 5309:5309 Extra n
+var 5311:5311 Extra p
+R5315:5317 Coq.Init.Datatypes <> nat ind
+var 5329:5329 Extra R
+R5333:5345 mathcomp.algebra.ssrnum Num.RealField.Exports realFieldType abbrev
+prf 5355:5364 <> vdot_mulmx
+R5371:5373 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R5375:5377 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R5379:5379 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R5381:5381 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R5374:5374 Polyhedra.inner_product <> Extra.R var
+R5378:5378 Polyhedra.inner_product <> Extra.n var
+R5380:5380 Polyhedra.inner_product <> Extra.p var
+binder 5367:5367 <> A:89
+binder 5384:5384 <> u:90
+binder 5386:5386 <> v:91
+R5402:5404 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5390:5391 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5393:5394 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5401:5401 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5392:5392 Polyhedra.inner_product <> u:90 var
+R5396:5399 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R5395:5395 Polyhedra.inner_product <> A:89 var
+R5400:5400 Polyhedra.inner_product <> v:91 var
+R5405:5406 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5415:5416 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5418:5418 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5410:5413 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R5408:5409 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R5407:5407 Polyhedra.inner_product <> A:89 var
+R5414:5414 Polyhedra.inner_product <> u:90 var
+R5417:5417 Polyhedra.inner_product <> v:91 var
+R5519:5521 mathcomp.algebra.matrix <> mxE thm
+R5453:5456 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5481:5481 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5450:5452 mathcomp.algebra.matrix <> ::ring_scope:x_'%:M' not
+R5438:5439 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5441:5442 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5449:5449 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5444:5447 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R5474:5476 Coq.ssr.ssreflect <> ::core_scope:x_':'_x not
+R5477:5479 mathcomp.algebra.matrix <> ::type_scope:'''M_'_x not
+R5471:5473 mathcomp.algebra.matrix <> ::ring_scope:x_'%:M' not
+R5457:5458 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5467:5468 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5470:5470 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5462:5465 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R5460:5461 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R5493:5499 mathcomp.algebra.matrix <> matrixP thm
+R5519:5521 mathcomp.algebra.matrix <> mxE thm
+R5519:5521 mathcomp.algebra.matrix <> mxE thm
+R5519:5521 mathcomp.algebra.matrix <> mxE thm
+R5519:5521 mathcomp.algebra.matrix <> mxE thm
+R5541:5548 Polyhedra.inner_product <> vdot_def thm
+R5550:5557 mathcomp.algebra.matrix <> trmx_mul thm
+R5559:5564 mathcomp.algebra.matrix <> mulmxA thm
+R5541:5548 Polyhedra.inner_product <> vdot_def thm
+R5541:5548 Polyhedra.inner_product <> vdot_def thm
+R5541:5548 Polyhedra.inner_product <> vdot_def thm
+R5550:5557 mathcomp.algebra.matrix <> trmx_mul thm
+R5550:5557 mathcomp.algebra.matrix <> trmx_mul thm
+R5559:5564 mathcomp.algebra.matrix <> mulmxA thm
+R5559:5564 mathcomp.algebra.matrix <> mulmxA thm
+prf 5579:5589 <> vdot_col_mx
+R5599:5602 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R5604:5605 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R5603:5603 Polyhedra.inner_product <> Extra.R var
+R5606:5606 Polyhedra.inner_product <> Extra.n var
+binder 5593:5593 <> x:92
+binder 5595:5595 <> y:93
+R5616:5619 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R5621:5622 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R5620:5620 Polyhedra.inner_product <> Extra.R var
+R5623:5623 Polyhedra.inner_product <> Extra.p var
+binder 5610:5610 <> v:94
+binder 5612:5612 <> w:95
+R5656:5658 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5630:5631 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5642:5644 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5655:5655 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5632:5637 mathcomp.algebra.matrix <> col_mx def
+R5641:5641 Polyhedra.inner_product <> v:94 var
+R5639:5639 Polyhedra.inner_product <> x:92 var
+R5645:5650 mathcomp.algebra.matrix <> col_mx def
+R5654:5654 Polyhedra.inner_product <> w:95 var
+R5652:5652 Polyhedra.inner_product <> y:93 var
+R5668:5670 mathcomp.algebra.ssralg <> ::ring_scope:x_'+'_x not
+R5659:5661 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5663:5665 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5667:5667 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5662:5662 Polyhedra.inner_product <> x:92 var
+R5666:5666 Polyhedra.inner_product <> y:93 var
+R5671:5672 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5674:5676 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5678:5678 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5673:5673 Polyhedra.inner_product <> v:94 var
+R5677:5677 Polyhedra.inner_product <> w:95 var
+R5697:5700 Polyhedra.inner_product <> vdot def
+R5702:5714 mathcomp.ssreflect.bigop <> big_split_ord thm
+R5697:5700 Polyhedra.inner_product <> vdot def
+R5697:5700 Polyhedra.inner_product <> vdot def
+R5702:5714 mathcomp.ssreflect.bigop <> big_split_ord thm
+R5702:5714 mathcomp.ssreflect.bigop <> big_split_ord thm
+R5730:5735 Coq.ssr.ssrfun <> congr2 def
+R5745:5751 mathcomp.ssreflect.bigop <> eq_bigr thm
+R5771:5778 mathcomp.algebra.matrix <> col_mxEu thm
+R5782:5789 mathcomp.algebra.matrix <> col_mxEd thm
+R5730:5735 Coq.ssr.ssrfun <> congr2 def
+R5745:5751 mathcomp.ssreflect.bigop <> eq_bigr thm
+R5745:5751 mathcomp.ssreflect.bigop <> eq_bigr thm
+R5771:5778 mathcomp.algebra.matrix <> col_mxEu thm
+R5771:5778 mathcomp.algebra.matrix <> col_mxEu thm
+R5771:5778 mathcomp.algebra.matrix <> col_mxEu thm
+R5782:5789 mathcomp.algebra.matrix <> col_mxEd thm
+R5782:5789 mathcomp.algebra.matrix <> col_mxEd thm
+R5771:5778 mathcomp.algebra.matrix <> col_mxEu thm
+R5771:5778 mathcomp.algebra.matrix <> col_mxEu thm
+R5782:5789 mathcomp.algebra.matrix <> col_mxEd thm
+R5782:5789 mathcomp.algebra.matrix <> col_mxEd thm
+R5782:5789 mathcomp.algebra.matrix <> col_mxEd thm
+prf 5804:5814 <> vdot_castmx
+R5824:5826 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5823:5823 Polyhedra.inner_product <> Extra.n var
+R5827:5827 Polyhedra.inner_product <> Extra.p var
+binder 5817:5819 <> epn:96
+R5833:5836 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R5838:5839 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R5837:5837 Polyhedra.inner_product <> Extra.R var
+R5840:5840 Polyhedra.inner_product <> Extra.n var
+binder 5831:5831 <> u:97
+binder 5843:5843 <> v:98
+R5902:5904 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5847:5848 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5874:5875 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5901:5901 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5849:5854 mathcomp.algebra.matrix <> castmx def
+R5873:5873 Polyhedra.inner_product <> u:97 var
+R5856:5856 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R5860:5861 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R5871:5871 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R5857:5859 Polyhedra.inner_product <> epn:96 var
+R5862:5866 Coq.ssr.ssrfun <> erefl abbrev
+R5876:5881 mathcomp.algebra.matrix <> castmx def
+R5900:5900 Polyhedra.inner_product <> v:98 var
+R5883:5883 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R5887:5888 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R5898:5898 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R5884:5886 Polyhedra.inner_product <> epn:96 var
+R5889:5893 Coq.ssr.ssrfun <> erefl abbrev
+R5905:5906 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5908:5908 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5910:5910 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R5907:5907 Polyhedra.inner_product <> u:97 var
+R5909:5909 Polyhedra.inner_product <> v:98 var
+R5986:5988 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R5955:5959 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R5985:5985 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R5926:5926 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R5952:5954 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R5927:5932 mathcomp.algebra.matrix <> castmx def
+R5934:5934 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R5938:5939 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R5949:5949 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R5940:5944 Coq.ssr.ssrfun <> erefl abbrev
+R5960:5965 mathcomp.algebra.matrix <> castmx def
+R5967:5967 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R5971:5972 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R5982:5982 Coq.Init.Datatypes <> ::core_scope:'('_x_','_x_','_'..'_','_x_')' not
+R5973:5977 Coq.ssr.ssrfun <> erefl abbrev
+R5992:5995 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R5990:5991 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R6015:6022 Polyhedra.inner_product <> vdot_def thm
+R6056:6058 mathcomp.algebra.matrix <> mxE thm
+R6015:6022 Polyhedra.inner_product <> vdot_def thm
+R6015:6022 Polyhedra.inner_product <> vdot_def thm
+R6015:6022 Polyhedra.inner_product <> vdot_def thm
+R6030:6036 mathcomp.algebra.matrix <> matrixP thm
+R6056:6058 mathcomp.algebra.matrix <> mxE thm
+R6056:6058 mathcomp.algebra.matrix <> mxE thm
+R6056:6058 mathcomp.algebra.matrix <> mxE thm
+R6056:6058 mathcomp.algebra.matrix <> mxE thm
+R6074:6082 mathcomp.algebra.matrix <> trmx_cast thm
+R6092:6096 Coq.ssr.ssrfun <> esymK thm
+R6074:6082 mathcomp.algebra.matrix <> trmx_cast thm
+R6074:6082 mathcomp.algebra.matrix <> trmx_cast thm
+R6092:6096 Coq.ssr.ssrfun <> esymK thm
+R6092:6096 Coq.ssr.ssrfun <> esymK thm
+R6127:6129 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6118:6122 Coq.ssr.ssrfun <> erefl abbrev
+R6130:6133 Coq.ssr.ssrfun <> esym def
+R6136:6140 Coq.ssr.ssrfun <> erefl abbrev
+R6169:6178 Polyhedra.extra_matrix <> mulmx_cast thm
+R6180:6184 Coq.ssr.ssrfun <> esymK thm
+R6191:6195 Coq.ssr.ssrfun <> esymK thm
+R6202:6210 mathcomp.algebra.matrix <> castmx_id thm
+R6212:6219 mathcomp.algebra.matrix <> castmxKV thm
+R6169:6178 Polyhedra.extra_matrix <> mulmx_cast thm
+R6169:6178 Polyhedra.extra_matrix <> mulmx_cast thm
+R6180:6184 Coq.ssr.ssrfun <> esymK thm
+R6180:6184 Coq.ssr.ssrfun <> esymK thm
+R6191:6195 Coq.ssr.ssrfun <> esymK thm
+R6191:6195 Coq.ssr.ssrfun <> esymK thm
+R6202:6210 mathcomp.algebra.matrix <> castmx_id thm
+R6202:6210 mathcomp.algebra.matrix <> castmx_id thm
+R6212:6219 mathcomp.algebra.matrix <> castmxKV thm
+R6212:6219 mathcomp.algebra.matrix <> castmxKV thm
+prf 6234:6241 <> row_vdot
+R6248:6250 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R6252:6254 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R6256:6256 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R6258:6258 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R6251:6251 Polyhedra.inner_product <> Extra.R var
+R6255:6255 Polyhedra.inner_product <> Extra.n var
+R6257:6257 Polyhedra.inner_product <> Extra.p var
+binder 6244:6244 <> A:99
+binder 6261:6261 <> x:100
+binder 6263:6263 <> i:101
+R6284:6287 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6300:6300 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6267:6268 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R6280:6281 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R6283:6283 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R6269:6269 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R6277:6279 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R6270:6272 mathcomp.algebra.matrix <> row def
+R6276:6276 Polyhedra.inner_product <> A:99 var
+R6274:6274 Polyhedra.inner_product <> i:101 var
+R6282:6282 Polyhedra.inner_product <> x:100 var
+R6288:6288 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R6290:6293 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R6295:6299 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R6289:6289 Polyhedra.inner_product <> A:99 var
+R6294:6294 Polyhedra.inner_product <> x:100 var
+R6297:6297 Polyhedra.inner_product <> i:101 var
+R6318:6320 mathcomp.algebra.matrix <> mxE thm
+R6318:6320 mathcomp.algebra.matrix <> mxE thm
+R6318:6320 mathcomp.algebra.matrix <> mxE thm
+R6330:6336 mathcomp.ssreflect.bigop <> eq_bigr thm
+R6330:6336 mathcomp.ssreflect.bigop <> eq_bigr thm
+R6358:6360 mathcomp.algebra.matrix <> mxE thm
+R6358:6360 mathcomp.algebra.matrix <> mxE thm
+R6358:6360 mathcomp.algebra.matrix <> mxE thm
+R6358:6360 mathcomp.algebra.matrix <> mxE thm
+R6358:6360 mathcomp.algebra.matrix <> mxE thm
+prf 6375:6385 <> matrix_vdot
+R6392:6394 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R6396:6398 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R6400:6400 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R6402:6402 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R6395:6395 Polyhedra.inner_product <> Extra.R var
+R6399:6399 Polyhedra.inner_product <> Extra.n var
+R6401:6401 Polyhedra.inner_product <> Extra.p var
+binder 6388:6388 <> A:102
+R6410:6412 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R6414:6416 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R6418:6418 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R6420:6420 mathcomp.algebra.matrix <> ::type_scope:'''M['_x_']_'_'('_x_','_x_')' not
+R6413:6413 Polyhedra.inner_product <> Extra.R var
+R6417:6417 Polyhedra.inner_product <> Extra.p var
+R6419:6419 Polyhedra.inner_product <> Extra.m var
+binder 6406:6406 <> B:103
+binder 6423:6423 <> i:104
+binder 6425:6425 <> j:105
+R6454:6456 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6431:6432 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R6444:6445 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R6453:6453 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R6433:6433 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R6441:6443 mathcomp.algebra.matrix <> ::ring_scope:x_'^T' not
+R6434:6436 mathcomp.algebra.matrix <> row def
+R6440:6440 Polyhedra.inner_product <> A:102 var
+R6438:6438 Polyhedra.inner_product <> i:104 var
+R6446:6448 mathcomp.algebra.matrix <> col def
+R6452:6452 Polyhedra.inner_product <> B:103 var
+R6450:6450 Polyhedra.inner_product <> j:105 var
+R6457:6457 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R6459:6462 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R6464:6468 mathcomp.algebra.matrix <> ::ring_scope:x_'*m'_x not
+R6458:6458 Polyhedra.inner_product <> A:102 var
+R6463:6463 Polyhedra.inner_product <> B:103 var
+R6466:6466 Polyhedra.inner_product <> i:104 var
+R6468:6468 Polyhedra.inner_product <> j:105 var
+R6486:6488 mathcomp.algebra.matrix <> mxE thm
+R6486:6488 mathcomp.algebra.matrix <> mxE thm
+R6486:6488 mathcomp.algebra.matrix <> mxE thm
+R6498:6504 mathcomp.ssreflect.bigop <> eq_bigr thm
+R6498:6504 mathcomp.ssreflect.bigop <> eq_bigr thm
+R6525:6527 mathcomp.algebra.matrix <> mxE thm
+R6525:6527 mathcomp.algebra.matrix <> mxE thm
+R6525:6527 mathcomp.algebra.matrix <> mxE thm
+R6525:6527 mathcomp.algebra.matrix <> mxE thm
+R6525:6527 mathcomp.algebra.matrix <> mxE thm
+R6525:6527 mathcomp.algebra.matrix <> mxE thm
+prf 6542:6546 <> vdot1
+R6552:6555 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R6557:6558 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R6556:6556 Polyhedra.inner_product <> Extra.R var
+binder 6549:6549 <> v:106
+R6574:6576 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R6564:6565 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R6570:6571 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R6573:6573 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R6567:6569 mathcomp.algebra.matrix <> ::ring_scope:x_'%:M' not
+R6572:6572 Polyhedra.inner_product <> v:106 var
+R6577:6577 Polyhedra.inner_product <> v:106 var
+R6598:6610 Polyhedra.extra_matrix <> scalar_mx_inj thm
+R6613:6618 mathcomp.ssreflect.ssrnat <> ltn0Sn thm
+R6598:6610 Polyhedra.extra_matrix <> scalar_mx_inj thm
+R6613:6618 mathcomp.ssreflect.ssrnat <> ltn0Sn thm
+R6636:6640 Polyhedra.inner_product <> vdotC thm
+R6642:6649 Polyhedra.inner_product <> vdot_def thm
+R6651:6655 mathcomp.algebra.matrix <> trmx1 thm
+R6657:6662 mathcomp.algebra.matrix <> mul1mx thm
+R6665:6675 mathcomp.algebra.matrix <> mx11_scalar thm
+R6636:6640 Polyhedra.inner_product <> vdotC thm
+R6636:6640 Polyhedra.inner_product <> vdotC thm
+R6642:6649 Polyhedra.inner_product <> vdot_def thm
+R6642:6649 Polyhedra.inner_product <> vdot_def thm
+R6651:6655 mathcomp.algebra.matrix <> trmx1 thm
+R6651:6655 mathcomp.algebra.matrix <> trmx1 thm
+R6657:6662 mathcomp.algebra.matrix <> mul1mx thm
+R6657:6662 mathcomp.algebra.matrix <> mul1mx thm
+R6665:6675 mathcomp.algebra.matrix <> mx11_scalar thm
+R6665:6675 mathcomp.algebra.matrix <> mx11_scalar thm
+R6688:6692 Polyhedra.inner_product Extra <> sec
+sec 6704:6713 <> Orthogonal
+R6730:6742 mathcomp.algebra.ssrnum Num.RealField.Exports realFieldType abbrev
+binder 6726:6726 <> R:107
+R6750:6752 Coq.Init.Datatypes <> nat ind
+binder 6746:6746 <> n:108
+var 6761:6761 Orthogonal E
+R6766:6775 mathcomp.algebra.vector Vector.Exports ::form_scope:'['_'vectType'_x_'of'_x_']' not
+R6777:6780 mathcomp.algebra.vector Vector.Exports ::form_scope:'['_'vectType'_x_'of'_x_']' not
+R6789:6789 mathcomp.algebra.vector Vector.Exports ::form_scope:'['_'vectType'_x_'of'_x_']' not
+R6776:6776 Polyhedra.inner_product <> Orthogonal.R var
+R6781:6784 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R6786:6787 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R6785:6785 Polyhedra.inner_product <> Orthogonal.R var
+R6788:6788 Polyhedra.inner_product <> Orthogonal.n var
+R6812:6819 mathcomp.algebra.vector Vector.Exports ::type_scope:'{'_'vspace'_x_'}' not
+R6821:6821 mathcomp.algebra.vector Vector.Exports ::type_scope:'{'_'vspace'_x_'}' not
+R6820:6820 Polyhedra.inner_product <> Orthogonal.E var
+R6829:6832 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R6834:6835 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R6833:6833 Polyhedra.inner_product <> Orthogonal.R var
+R6836:6836 Polyhedra.inner_product <> Orthogonal.n var
+def 6852:6860 <> orth_fun0
+binder 6862:6862 <> V:109
+binder 6864:6864 <> x:110
+R7006:7011 mathcomp.algebra.vector <> vbasis def
+R7013:7013 Polyhedra.inner_product <> V:109 var
+binder 7001:7001 <> B:111
+R7020:7025 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_'<'_x_')'_x not
+R7027:7029 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_'<'_x_')'_x not
+R7036:7037 mathcomp.algebra.ssralg <> ::ring_scope:'\sum_'_'('_x_'<'_x_')'_x not
+R7030:7034 mathcomp.algebra.vector <> ::nat_scope:'\dim'_x not
+R7035:7035 Polyhedra.inner_product <> V:109 var
+binder 7026:7026 <> i:112
+binder 7026:7026 <> i:113
+binder 7026:7026 <> i:114
+R7048:7051 mathcomp.algebra.ssralg <> ::ring_scope:x_'*:'_x not
+R7038:7039 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R7044:7045 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R7047:7047 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R7041:7042 mathcomp.algebra.ssralg <> ::ring_scope:x_'`_'_x not
+R7040:7040 Polyhedra.inner_product <> B:111 var
+R7043:7043 Polyhedra.inner_product <> i:112 var
+R7046:7046 Polyhedra.inner_product <> x:110 var
+R7053:7054 mathcomp.algebra.ssralg <> ::ring_scope:x_'`_'_x not
+R7052:7052 Polyhedra.inner_product <> B:111 var
+R7055:7055 Polyhedra.inner_product <> i:112 var
+prf 7065:7079 <> orth_fun_lmorph
+binder 7081:7081 <> V:115
+R7085:7093 mathcomp.algebra.ssralg GRing.Linear.Exports lmorphism abbrev
+R7096:7104 Polyhedra.inner_product <> orth_fun0 def
+R7106:7106 Polyhedra.inner_product <> V:115 var
+R7148:7156 Polyhedra.inner_product <> orth_fun0 def
+R7148:7156 Polyhedra.inner_product <> orth_fun0 def
+R7148:7156 Polyhedra.inner_product <> orth_fun0 def
+R7170:7175 mathcomp.ssreflect.bigop <> eq_big thm
+R7192:7197 Polyhedra.inner_product <> vdotBr thm
+R7199:7206 mathcomp.algebra.ssralg GRing.Theory scalerBl def
+R7218:7222 mathcomp.algebra.ssralg GRing.Theory sumrB def
+R7170:7175 mathcomp.ssreflect.bigop <> eq_big thm
+R7170:7175 mathcomp.ssreflect.bigop <> eq_big thm
+R7192:7197 Polyhedra.inner_product <> vdotBr thm
+R7192:7197 Polyhedra.inner_product <> vdotBr thm
+R7199:7206 mathcomp.algebra.ssralg GRing.Theory scalerBl def
+R7199:7206 mathcomp.algebra.ssralg GRing.Theory scalerBl def
+R7218:7222 mathcomp.algebra.ssralg GRing.Theory sumrB def
+R7218:7222 mathcomp.algebra.ssralg GRing.Theory sumrB def
+R7249:7257 Polyhedra.inner_product <> orth_fun0 def
+R7249:7257 Polyhedra.inner_product <> orth_fun0 def
+R7249:7257 Polyhedra.inner_product <> orth_fun0 def
+R7271:7276 mathcomp.ssreflect.bigop <> eq_big thm
+R7293:7298 Polyhedra.inner_product <> vdotZr thm
+R7301:7307 mathcomp.algebra.ssralg GRing.Theory scalerA def
+R7319:7329 mathcomp.algebra.ssralg GRing.Theory scaler_sumr def
+R7271:7276 mathcomp.ssreflect.bigop <> eq_big thm
+R7271:7276 mathcomp.ssreflect.bigop <> eq_big thm
+R7293:7298 Polyhedra.inner_product <> vdotZr thm
+R7293:7298 Polyhedra.inner_product <> vdotZr thm
+R7301:7307 mathcomp.algebra.ssralg GRing.Theory scalerA def
+R7301:7307 mathcomp.algebra.ssralg GRing.Theory scalerA def
+R7319:7329 mathcomp.algebra.ssralg GRing.Theory scaler_sumr def
+R7319:7329 mathcomp.algebra.ssralg GRing.Theory scaler_sumr def
+prf 7343:7354 <> orth_fun_key
+R7358:7361 Coq.Init.Datatypes <> unit ind
+def 7394:7401 <> orth_fun
+binder 7403:7403 <> V:116
+R7408:7413 mathcomp.algebra.vector <> linfun def
+R7416:7421 mathcomp.algebra.ssralg GRing.Linear.Exports Linear abbrev
+R7424:7438 Polyhedra.inner_product <> orth_fun_lmorph thm
+R7440:7440 Polyhedra.inner_product <> V:116 var
+def 7457:7461 <> orthv
+binder 7463:7463 <> V:117
+R7468:7471 mathcomp.algebra.vector <> lker def
+R7474:7481 Polyhedra.inner_product <> orth_fun def
+R7483:7483 Polyhedra.inner_product <> V:117 var
+R7510:7514 Polyhedra.inner_product <> orthv def
+not 7497:7497 Orthogonal ::vspace_scope:x_'^OC'
+prf 7571:7576 <> orthvP
+binder 7579:7579 <> V:118
+binder 7581:7581 <> x:119
+R7588:7594 Coq.ssr.ssrbool <> reflect abbrev
+binder 7604:7604 <> y:120
+R7614:7617 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R7608:7612 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R7607:7607 Polyhedra.inner_product <> y:120 var
+R7613:7613 Polyhedra.inner_product <> V:118 var
+R7624:7626 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7618:7619 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R7621:7621 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R7623:7623 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R7620:7620 Polyhedra.inner_product <> y:120 var
+R7622:7622 Polyhedra.inner_product <> x:119 var
+R7632:7636 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R7631:7631 Polyhedra.inner_product <> x:119 var
+R7638:7640 Polyhedra.inner_product Orthogonal ::vspace_scope:x_'^OC' not
+R7637:7637 Polyhedra.inner_product <> V:118 var
+R7663:7668 mathcomp.algebra.vector <> vbasis def
+R7663:7668 mathcomp.algebra.vector <> vbasis def
+R7663:7668 mathcomp.algebra.vector <> vbasis def
+R7688:7688 Coq.Init.Logic <> ::type_scope:x_'<->'_x not
+R7724:7730 Coq.Init.Logic <> ::type_scope:x_'<->'_x not
+R7762:7762 Coq.Init.Logic <> ::type_scope:x_'<->'_x not
+R7699:7701 mathcomp.ssreflect.fintype <> :::'''I_'_x not
+R7702:7706 mathcomp.algebra.vector <> ::nat_scope:'\dim'_x not
+binder 7696:7696 <> i:121
+R7720:7722 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7710:7711 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R7716:7717 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R7719:7719 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R7713:7714 mathcomp.algebra.ssralg <> ::ring_scope:x_'`_'_x not
+R7715:7715 Polyhedra.inner_product <> i:121 var
+binder 7738:7738 <> y:122
+R7748:7751 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R7742:7746 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R7741:7741 Polyhedra.inner_product <> y:122 var
+R7758:7760 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R7752:7753 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R7755:7755 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R7757:7757 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R7754:7754 Polyhedra.inner_product <> y:122 var
+R7798:7809 mathcomp.algebra.vector <> coord_vbasis thm
+R7827:7836 Polyhedra.inner_product <> vdot_sumDl thm
+R7845:7848 mathcomp.ssreflect.bigop <> big1 thm
+R7866:7871 Polyhedra.inner_product <> vdotZl thm
+R7827:7836 Polyhedra.inner_product <> vdot_sumDl thm
+R7827:7836 Polyhedra.inner_product <> vdot_sumDl thm
+R7845:7848 mathcomp.ssreflect.bigop <> big1 thm
+R7866:7871 Polyhedra.inner_product <> vdotZl thm
+R7866:7871 Polyhedra.inner_product <> vdotZl thm
+R7907:7911 mathcomp.algebra.ssralg GRing.Theory mulr0 def
+R7907:7911 mathcomp.algebra.ssralg GRing.Theory mulr0 def
+R7907:7911 mathcomp.algebra.ssralg GRing.Theory mulr0 def
+R7926:7935 mathcomp.algebra.vector <> vbasis_mem thm
+R7937:7943 mathcomp.ssreflect.seq <> mem_nth thm
+R7926:7935 mathcomp.algebra.vector <> vbasis_mem thm
+R7937:7943 mathcomp.ssreflect.seq <> mem_nth thm
+R7961:7970 mathcomp.ssreflect.tuple <> size_tuple thm
+R7961:7970 mathcomp.ssreflect.tuple <> size_tuple thm
+R7961:7970 mathcomp.ssreflect.tuple <> size_tuple thm
+R7980:7985 Coq.ssr.ssrbool <> equivP thm
+R7997:8000 Coq.ssr.ssrbool <> iffP thm
+R8002:8004 Coq.ssr.ssrbool <> idP thm
+R7980:7985 Coq.ssr.ssrbool <> equivP thm
+R7997:8000 Coq.ssr.ssrbool <> iffP thm
+R8002:8004 Coq.ssr.ssrbool <> idP thm
+R8039:8046 mathcomp.algebra.vector <> memv_ker thm
+R8048:8052 mathcomp.algebra.vector <> lfunE thm
+R8064:8066 mathcomp.ssreflect.eqtype <> eqP thm
+R8039:8046 mathcomp.algebra.vector <> memv_ker thm
+R8039:8046 mathcomp.algebra.vector <> memv_ker thm
+R8048:8052 mathcomp.algebra.vector <> lfunE thm
+R8048:8052 mathcomp.algebra.vector <> lfunE thm
+R8064:8066 mathcomp.ssreflect.eqtype <> eqP thm
+R8080:8083 mathcomp.ssreflect.bigop <> big1 thm
+R8119:8125 mathcomp.algebra.ssralg GRing.Theory scale0r def
+R8080:8083 mathcomp.ssreflect.bigop <> big1 thm
+R8119:8125 mathcomp.algebra.ssralg GRing.Theory scale0r def
+R8119:8125 mathcomp.algebra.ssralg GRing.Theory scale0r def
+R8138:8145 mathcomp.algebra.vector <> memv_ker thm
+R8147:8151 mathcomp.algebra.vector <> lfunE thm
+R8138:8145 mathcomp.algebra.vector <> memv_ker thm
+R8138:8145 mathcomp.algebra.vector <> memv_ker thm
+R8147:8151 mathcomp.algebra.vector <> lfunE thm
+R8147:8151 mathcomp.algebra.vector <> lfunE thm
+R8160:8162 mathcomp.ssreflect.eqtype <> eqP thm
+R8219:8225 mathcomp.algebra.vector <> vbasisP thm
+R8219:8225 mathcomp.algebra.vector <> vbasisP thm
+R8219:8225 mathcomp.algebra.vector <> vbasisP thm
+R8175:8184 mathcomp.algebra.vector <> basis_free thm
+R8186:8190 mathcomp.algebra.vector <> freeP thm
+binder 8200:8200 <> i:123
+R8205:8206 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R8211:8211 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R8213:8213 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R8208:8209 mathcomp.algebra.ssralg <> ::ring_scope:x_'`_'_x not
+R8210:8210 Polyhedra.inner_product <> i:123 var
+prf 8243:8255 <> direct_orthvP
+binder 8257:8257 <> V:124
+R8274:8276 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R8265:8269 mathcomp.algebra.vector <> ::vspace_scope:x_':&:'_x not
+R8264:8264 Polyhedra.inner_product <> V:124 var
+R8271:8273 Polyhedra.inner_product Orthogonal ::vspace_scope:x_'^OC' not
+R8270:8270 Polyhedra.inner_product <> V:124 var
+R8297:8299 mathcomp.ssreflect.eqtype <> eqP thm
+R8311:8315 mathcomp.algebra.vector <> subv0 thm
+R8324:8328 mathcomp.algebra.vector <> subvP thm
+R8297:8299 mathcomp.ssreflect.eqtype <> eqP thm
+R8311:8315 mathcomp.algebra.vector <> subv0 thm
+R8311:8315 mathcomp.algebra.vector <> subv0 thm
+R8324:8328 mathcomp.algebra.vector <> subvP thm
+R8344:8351 mathcomp.algebra.vector <> memv_cap thm
+R8353:8357 mathcomp.algebra.vector <> memv0 thm
+R8344:8351 mathcomp.algebra.vector <> memv_cap thm
+R8344:8351 mathcomp.algebra.vector <> memv_cap thm
+R8353:8357 mathcomp.algebra.vector <> memv0 thm
+R8353:8357 mathcomp.algebra.vector <> memv0 thm
+R8363:8366 Coq.ssr.ssrbool <> andP thm
+R8377:8382 Polyhedra.inner_product <> orthvP thm
+R8398:8400 mathcomp.ssreflect.eqtype <> eqP thm
+R8414:8422 Polyhedra.inner_product <> vnorm_eq0 thm
+R8414:8422 Polyhedra.inner_product <> vnorm_eq0 thm
+R8414:8422 Polyhedra.inner_product <> vnorm_eq0 thm
+prf 8437:8450 <> limg_orthv_fun
+binder 8452:8452 <> V:125
+R8473:8475 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R8456:8459 mathcomp.algebra.vector <> limg abbrev
+R8462:8469 Polyhedra.inner_product <> orth_fun def
+R8471:8471 Polyhedra.inner_product <> V:125 var
+R8476:8476 Polyhedra.inner_product <> V:125 var
+R8510:8512 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R8505:8508 mathcomp.algebra.vector <> ::vspace_scope:x_'@:'_x not
+R8495:8502 Polyhedra.inner_product <> orth_fun def
+R8528:8530 mathcomp.ssreflect.eqtype <> eqP thm
+R8543:8551 mathcomp.ssreflect.ssrnat <> geq_leqif thm
+R8554:8566 mathcomp.algebra.vector <> dimv_leqif_eq thm
+R8528:8530 mathcomp.ssreflect.eqtype <> eqP thm
+R8543:8551 mathcomp.ssreflect.ssrnat <> geq_leqif thm
+R8554:8566 mathcomp.algebra.vector <> dimv_leqif_eq thm
+R8543:8551 mathcomp.ssreflect.ssrnat <> geq_leqif thm
+R8554:8566 mathcomp.algebra.vector <> dimv_leqif_eq thm
+R8589:8599 mathcomp.algebra.vector <> limg_dim_eq thm
+R8602:8614 Polyhedra.inner_product <> direct_orthvP thm
+R8589:8599 mathcomp.algebra.vector <> limg_dim_eq thm
+R8602:8614 Polyhedra.inner_product <> direct_orthvP thm
+R8589:8599 mathcomp.algebra.vector <> limg_dim_eq thm
+R8602:8614 Polyhedra.inner_product <> direct_orthvP thm
+R8631:8635 mathcomp.algebra.vector <> subvP thm
+R8631:8635 mathcomp.algebra.vector <> subvP thm
+R8643:8651 mathcomp.algebra.vector <> memv_imgP thm
+R8675:8679 mathcomp.algebra.vector <> lfunE thm
+R8691:8699 mathcomp.algebra.vector <> memv_suml thm
+R8675:8679 mathcomp.algebra.vector <> lfunE thm
+R8675:8679 mathcomp.algebra.vector <> lfunE thm
+R8691:8699 mathcomp.algebra.vector <> memv_suml thm
+R8719:8723 mathcomp.algebra.vector <> memvZ thm
+R8725:8734 mathcomp.algebra.vector <> vbasis_mem thm
+R8736:8742 mathcomp.ssreflect.seq <> mem_nth thm
+R8756:8765 mathcomp.ssreflect.tuple <> size_tuple thm
+R8719:8723 mathcomp.algebra.vector <> memvZ thm
+R8725:8734 mathcomp.algebra.vector <> vbasis_mem thm
+R8736:8742 mathcomp.ssreflect.seq <> mem_nth thm
+R8756:8765 mathcomp.ssreflect.tuple <> size_tuple thm
+R8756:8765 mathcomp.ssreflect.tuple <> size_tuple thm
+R8776:8784 mathcomp.algebra.vector <> subv_anti thm
+R8793:8796 Coq.ssr.ssrbool <> andP thm
+R8776:8784 mathcomp.algebra.vector <> subv_anti thm
+R8793:8796 Coq.ssr.ssrbool <> andP thm
+R8816:8820 mathcomp.algebra.vector <> subvP thm
+R8816:8820 mathcomp.algebra.vector <> subvP thm
+R8828:8836 mathcomp.algebra.vector <> memv_imgP thm
+R8860:8864 mathcomp.algebra.vector <> lfunE thm
+R8876:8884 mathcomp.algebra.vector <> memv_suml thm
+R8860:8864 mathcomp.algebra.vector <> lfunE thm
+R8860:8864 mathcomp.algebra.vector <> lfunE thm
+R8876:8884 mathcomp.algebra.vector <> memv_suml thm
+R8904:8908 mathcomp.algebra.vector <> memvZ thm
+R8910:8919 mathcomp.algebra.vector <> vbasis_mem thm
+R8921:8927 mathcomp.ssreflect.seq <> mem_nth thm
+R8941:8950 mathcomp.ssreflect.tuple <> size_tuple thm
+R8904:8908 mathcomp.algebra.vector <> memvZ thm
+R8910:8919 mathcomp.algebra.vector <> vbasis_mem thm
+R8921:8927 mathcomp.ssreflect.seq <> mem_nth thm
+R8941:8950 mathcomp.ssreflect.tuple <> size_tuple thm
+R8941:8950 mathcomp.ssreflect.tuple <> size_tuple thm
+R8974:8978 mathcomp.algebra.vector <> limgS thm
+R8981:8985 mathcomp.algebra.vector <> subvf thm
+R8974:8978 mathcomp.algebra.vector <> limgS thm
+R8974:8978 mathcomp.algebra.vector <> limgS thm
+R8981:8985 mathcomp.algebra.vector <> subvf thm
+R8981:8985 mathcomp.algebra.vector <> subvf thm
+R8981:8985 mathcomp.algebra.vector <> subvf thm
+R8981:8985 mathcomp.algebra.vector <> subvf thm
+R8981:8985 mathcomp.algebra.vector <> subvf thm
+prf 9000:9008 <> dim_orthv
+binder 9010:9010 <> V:126
+R9024:9026 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R9015:9019 mathcomp.algebra.vector <> ::nat_scope:'\dim'_x not
+R9021:9023 Polyhedra.inner_product Orthogonal ::vspace_scope:x_'^OC' not
+R9020:9020 Polyhedra.inner_product <> V:126 var
+R9028:9030 mathcomp.ssreflect.ssrnat <> ::nat_scope:x_'-'_x not
+R9027:9027 Polyhedra.inner_product <> Orthogonal.n var
+R9031:9035 mathcomp.algebra.vector <> ::nat_scope:'\dim'_x not
+R9036:9036 Polyhedra.inner_product <> V:126 var
+R9056:9067 mathcomp.algebra.vector <> limg_ker_dim thm
+R9083:9087 mathcomp.algebra.vector <> fullv def
+R9070:9077 Polyhedra.inner_product <> orth_fun def
+R9056:9067 mathcomp.algebra.vector <> limg_ker_dim thm
+R9083:9087 mathcomp.algebra.vector <> fullv def
+R9070:9077 Polyhedra.inner_product <> orth_fun def
+R9056:9067 mathcomp.algebra.vector <> limg_ker_dim thm
+R9083:9087 mathcomp.algebra.vector <> fullv def
+R9070:9077 Polyhedra.inner_product <> orth_fun def
+R9100:9104 mathcomp.algebra.vector <> capfv thm
+R9106:9110 mathcomp.algebra.vector <> dimvf thm
+R9113:9122 mathcomp.algebra.vector Vector dim def
+R9127:9131 mathcomp.ssreflect.ssrnat <> muln1 thm
+R9133:9146 Polyhedra.inner_product <> limg_orthv_fun thm
+R9100:9104 mathcomp.algebra.vector <> capfv thm
+R9100:9104 mathcomp.algebra.vector <> capfv thm
+R9106:9110 mathcomp.algebra.vector <> dimvf thm
+R9106:9110 mathcomp.algebra.vector <> dimvf thm
+R9113:9122 mathcomp.algebra.vector Vector dim def
+R9113:9122 mathcomp.algebra.vector Vector dim def
+R9127:9131 mathcomp.ssreflect.ssrnat <> muln1 thm
+R9127:9131 mathcomp.ssreflect.ssrnat <> muln1 thm
+R9133:9146 Polyhedra.inner_product <> limg_orthv_fun thm
+R9133:9146 Polyhedra.inner_product <> limg_orthv_fun thm
+R9169:9173 mathcomp.ssreflect.ssrnat <> addnK thm
+R9169:9173 mathcomp.ssreflect.ssrnat <> addnK thm
+R9169:9173 mathcomp.ssreflect.ssrnat <> addnK thm
+prf 9188:9198 <> orthv_spanP
+R9205:9207 Coq.Init.Datatypes <> nat ind
+binder 9201:9201 <> p:127
+R9216:9231 mathcomp.ssreflect.tuple <> ::type_scope:x_'.-tuple' not
+R9215:9215 Polyhedra.inner_product <> p:127 var
+R9224:9227 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R9229:9230 mathcomp.algebra.matrix <> ::type_scope:'''cV['_x_']_'_x not
+R9228:9228 Polyhedra.inner_product <> Orthogonal.R var
+R9231:9231 Polyhedra.inner_product <> Orthogonal.n var
+binder 9211:9211 <> Y:128
+binder 9234:9234 <> x:129
+R9240:9246 Coq.ssr.ssrbool <> reflect abbrev
+binder 9256:9256 <> y:130
+R9266:9269 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9260:9264 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R9259:9259 Polyhedra.inner_product <> y:130 var
+R9265:9265 Polyhedra.inner_product <> Y:128 var
+R9276:9278 Coq.Init.Logic <> ::type_scope:x_'='_x not
+R9270:9271 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R9273:9273 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R9275:9275 Polyhedra.inner_product <> ::ring_scope:'''['_x_','_x_']' not
+R9272:9272 Polyhedra.inner_product <> y:130 var
+R9274:9274 Polyhedra.inner_product <> x:129 var
+R9284:9288 Coq.ssr.ssrbool <> ::bool_scope:x_'\in'_x not
+R9283:9283 Polyhedra.inner_product <> x:129 var
+R9289:9289 Polyhedra.inner_product Orthogonal ::vspace_scope:x_'^OC' not
+R9296:9299 Polyhedra.inner_product Orthogonal ::vspace_scope:x_'^OC' not
+R9290:9293 mathcomp.algebra.vector <> span def
+R9295:9295 Polyhedra.inner_product <> Y:128 var
+R9320:9323 Coq.ssr.ssrbool <> iffP thm
+R9325:9330 Polyhedra.inner_product <> orthvP thm
+R9320:9323 Coq.ssr.ssrbool <> iffP thm
+R9325:9330 Polyhedra.inner_product <> orthvP thm
+R9356:9364 mathcomp.algebra.vector <> memv_span thm
+R9407:9416 Polyhedra.inner_product <> vdot_sumDl thm
+R9425:9428 mathcomp.ssreflect.bigop <> big1 thm
+R9446:9451 Polyhedra.inner_product <> vdotZl thm
+R9384:9393 mathcomp.algebra.vector <> coord_span thm
+R9407:9416 Polyhedra.inner_product <> vdot_sumDl thm
+R9407:9416 Polyhedra.inner_product <> vdot_sumDl thm
+R9425:9428 mathcomp.ssreflect.bigop <> big1 thm
+R9446:9451 Polyhedra.inner_product <> vdotZl thm
+R9446:9451 Polyhedra.inner_product <> vdotZl thm
+R9489:9493 mathcomp.algebra.ssralg GRing.Theory mulr0 def
+R9498:9504 mathcomp.ssreflect.seq <> mem_nth thm
+R9507:9516 mathcomp.ssreflect.tuple <> size_tuple thm
+R9468:9469 mathcomp.algebra.ssralg <> ::ring_scope:x_'`_'_x not
+R9489:9493 mathcomp.algebra.ssralg GRing.Theory mulr0 def
+R9489:9493 mathcomp.algebra.ssralg GRing.Theory mulr0 def
+R9489:9493 mathcomp.algebra.ssralg GRing.Theory mulr0 def
+R9489:9493 mathcomp.algebra.ssralg GRing.Theory mulr0 def
+R9489:9493 mathcomp.algebra.ssralg GRing.Theory mulr0 def
+R9498:9504 mathcomp.ssreflect.seq <> mem_nth thm
+R9498:9504 mathcomp.ssreflect.seq <> mem_nth thm
+R9507:9516 mathcomp.ssreflect.tuple <> size_tuple thm
+R9507:9516 mathcomp.ssreflect.tuple <> size_tuple thm
+R9507:9516 mathcomp.ssreflect.tuple <> size_tuple thm
+R9507:9516 mathcomp.ssreflect.tuple <> size_tuple thm
+R9507:9516 mathcomp.ssreflect.tuple <> size_tuple thm
+prf 9531:9535 <> orthK
+R9539:9548 Coq.ssr.ssrfun <> involutive def
+R9550:9554 Polyhedra.inner_product <> orthv def
+R9591:9593 mathcomp.ssreflect.eqtype <> eqP thm
+R9606:9614 mathcomp.ssreflect.ssrnat <> geq_leqif thm
+R9617:9629 mathcomp.algebra.vector <> dimv_leqif_eq thm
+R9591:9593 mathcomp.ssreflect.eqtype <> eqP thm
+R9606:9614 mathcomp.ssreflect.ssrnat <> geq_leqif thm
+R9617:9629 mathcomp.algebra.vector <> dimv_leqif_eq thm
+R9606:9614 mathcomp.ssreflect.ssrnat <> geq_leqif thm
+R9617:9629 mathcomp.algebra.vector <> dimv_leqif_eq thm
+R9648:9656 Polyhedra.inner_product <> dim_orthv thm
+R9658:9662 mathcomp.ssreflect.ssrnat <> subKn thm
+R9648:9656 Polyhedra.inner_product <> dim_orthv thm
+R9648:9656 Polyhedra.inner_product <> dim_orthv thm
+R9648:9656 Polyhedra.inner_product <> dim_orthv thm
+R9658:9662 mathcomp.ssreflect.ssrnat <> subKn thm
+R9658:9662 mathcomp.ssreflect.ssrnat <> subKn thm
+R9680:9684 mathcomp.algebra.vector <> dimvS thm
+R9687:9691 mathcomp.algebra.vector <> subvf thm
+R9706:9710 mathcomp.algebra.vector <> dimvf thm
+R9713:9722 mathcomp.algebra.vector Vector dim def
+R9727:9731 mathcomp.ssreflect.ssrnat <> muln1 thm
+R9680:9684 mathcomp.algebra.vector <> dimvS thm
+R9687:9691 mathcomp.algebra.vector <> subvf thm
+R9680:9684 mathcomp.algebra.vector <> dimvS thm
+R9687:9691 mathcomp.algebra.vector <> subvf thm
+R9706:9710 mathcomp.algebra.vector <> dimvf thm
+R9706:9710 mathcomp.algebra.vector <> dimvf thm
+R9713:9722 mathcomp.algebra.vector Vector dim def
+R9713:9722 mathcomp.algebra.vector Vector dim def
+R9727:9731 mathcomp.ssreflect.ssrnat <> muln1 thm
+R9727:9731 mathcomp.ssreflect.ssrnat <> muln1 thm
+R9742:9746 mathcomp.algebra.vector <> subvP thm
+R9767:9772 Polyhedra.inner_product <> orthvP thm
+R9742:9746 mathcomp.algebra.vector <> subvP thm
+R9767:9772 Polyhedra.inner_product <> orthvP thm
+R9780:9785 Polyhedra.inner_product <> orthvP thm
+R9814:9818 Polyhedra.inner_product <> vdotC thm
+R9814:9818 Polyhedra.inner_product <> vdotC thm
+R9814:9818 Polyhedra.inner_product <> vdotC thm
+prf 9833:9837 <> orthS
+R9841:9846 Coq.ssr.ssrfun <> ::type_scope:'{'_'mono'_x_':'_x_x_'/~'_x_'}' not
+R9852:9854 Coq.ssr.ssrfun <> ::type_scope:'{'_'mono'_x_':'_x_x_'/~'_x_'}' not
+R9856:9856 Coq.ssr.ssrfun <> ::type_scope:'{'_'mono'_x_':'_x_x_'/~'_x_'}' not
+R9858:9861 Coq.ssr.ssrfun <> ::type_scope:'{'_'mono'_x_':'_x_x_'/~'_x_'}' not
+R9873:9874 Coq.ssr.ssrfun <> ::type_scope:'{'_'mono'_x_':'_x_x_'/~'_x_'}' not
+R9847:9851 Polyhedra.inner_product <> orthv def
+binder 9857:9857 <> W:131
+binder 9855:9855 <> V:132
+R9864:9867 mathcomp.algebra.vector <> ::vspace_scope:x_'<='_x not
+R9863:9863 Polyhedra.inner_product <> V:132 var
+R9868:9868 Polyhedra.inner_product <> W:131 var
+binder 9855:9855 <> V:133
+binder 9857:9857 <> W:134
+R9864:9867 mathcomp.algebra.vector <> ::vspace_scope:x_'<='_x not
+R9863:9863 Polyhedra.inner_product <> V:133 var
+R9868:9868 Polyhedra.inner_product <> W:134 var
+binder 9899:9899 <> V:135
+binder 9901:9901 <> W:136
+R9915:9918 Coq.Init.Logic <> ::type_scope:x_'->'_x not
+R9906:9909 mathcomp.algebra.vector <> ::vspace_scope:x_'<='_x not
+R9905:9905 Polyhedra.inner_product <> V:135 var
+R9910:9910 Polyhedra.inner_product <> W:136 var
+R9924:9927 mathcomp.algebra.vector <> ::vspace_scope:x_'<='_x not
+R9921:9923 Polyhedra.inner_product Orthogonal ::vspace_scope:x_'^OC' not
+R9920:9920 Polyhedra.inner_product <> W:136 var
+R9929:9931 Polyhedra.inner_product Orthogonal ::vspace_scope:x_'^OC' not
+R9928:9928 Polyhedra.inner_product <> V:135 var
+R9959:9961 Coq.ssr.ssrbool <> idP thm
+R9963:9965 Coq.ssr.ssrbool <> idP thm
+R9991:9995 Polyhedra.inner_product <> orthK thm
+R10004:10008 Polyhedra.inner_product <> orthK thm
+R9959:9961 Coq.ssr.ssrbool <> idP thm
+R9963:9965 Coq.ssr.ssrbool <> idP thm
+R9991:9995 Polyhedra.inner_product <> orthK thm
+R9991:9995 Polyhedra.inner_product <> orthK thm
+R10004:10008 Polyhedra.inner_product <> orthK thm
+R10004:10008 Polyhedra.inner_product <> orthK thm
+R10036:10040 mathcomp.algebra.vector <> subvP thm
+R10059:10063 mathcomp.algebra.vector <> subvP thm
+R10059:10063 mathcomp.algebra.vector <> subvP thm
+R10071:10076 Polyhedra.inner_product <> orthvP thm
+R10090:10095 Polyhedra.inner_product <> orthvP thm
+R10090:10095 Polyhedra.inner_product <> orthvP thm
+R10133:10142 Polyhedra.inner_product Orthogonal <> sec
+R10168:10172 Polyhedra.inner_product <> orthv def
+not 10155:10155 <> ::vspace_scope:x_'^OC'

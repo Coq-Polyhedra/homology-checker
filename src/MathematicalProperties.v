@@ -1,6 +1,14 @@
-From mathcomp Require Import finmap all_ssreflect.
+From mathcomp Require Import finmap all_ssreflect all_algebra.
+From Polyhedra Require Import polyhedron row_submx.
 
-Section AbstractSimplicialComplexes.
+Section Matrix.
+
+Definition rowsfSet_of_M (R : realFieldType) (m d : nat) (M : 'M[R]_(m,d)) : seq 'cV_d :=
+    seq_fset tt [seq trmx (row i M) | i <- enum 'I_m].
+
+End Matrix.
+
+Section RelaxationTheorem.
 
 Context (m : nat).
 
@@ -41,31 +49,46 @@ Definition isPure (K : asc) : Prop :=
 Definition isDPure (K : asc) (d : nat) : Prop :=
     forall F : simplex, (isMaximal K F) -> dimSimpl F = d+2.
 
+Context (d : nat).
+
 (*We define (d-1)-Pure Abstract Simplicial Complexes. *)
-Record pasc (d : nat) := {
+Record pasc := {
     complex : asc;
     isComplexDPure : isDPure complex (d-1)
 }.
 
 (* Because of the previous convention, a facet is a d+1 simplex. *)
-Record facet (d : nat) := {
+Record facet := {
     facetValue : simplex;
     isFacet : dimSimpl (facetValue) = d+1
 }.
 
 (* Because of the previous convention, a ridge is a d simplex. *)
-Record ridge (d : nat) := {
+Record ridge := {
     ridgeValue : simplex;
     isRidge : dimSimpl (ridgeValue) = d
 }.
 
-Definition ridgeHasEvenIncidence (d : nat) (K : asc) (tau : ridge d) :=
-    negb (odd #|[set F in simplices K | (dimSimpl F == d+1) && ((ridgeValue d) tau \subset F)]|).
+Definition ridgeHasEvenIncidence (K : asc) (tau : ridge) :=
+    negb (odd #|[set F in simplices K | (dimSimpl F == d+1) && (ridgeValue tau \subset F)]|).
 
-Definition allRidgesHaveEvenIncidence (d : nat) (K : asc) :=
-    forall tau : ridge d, ridgeHasEvenIncidence d K tau.
+Definition allRidgesHaveEvenIncidence (K : asc) :=
+    forall tau : ridge, ridgeHasEvenIncidence K tau.
 
-End AbstractSimplicialComplexes.
+Context (R : realFieldType) (vectors : 'M[R]_(m,d)).
 
+Definition generatorsOfFacet (sig : facet) :=
+    row_submx vectors (facetValue sig).
+
+Definition coneOfFacet (sig : facet) :=
+    cone (rowsfSet_of_M R (#|facetValue sig|) d (generatorsOfFacet sig)).
+
+Definition isFacetPointed (sig : facet) :=
+    pointed (coneOfFacet sig).
+
+Definition areFacetsPointed (K : asc) :=
+    forall sig : facet, (facetValue sig \in simplices K) -> (isFacetPointed sig).
+
+End RelaxationTheorem.
 
 
