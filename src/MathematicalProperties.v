@@ -1,10 +1,16 @@
 From mathcomp Require Import finmap all_ssreflect all_algebra.
 From Polyhedra Require Import polyhedron row_submx.
 
+Section Arithmetics.
+
+Definition even (n : nat) := negb (odd n).
+
+End Arithmetics.
+
 Section Matrix.
 
-Definition rowsfSet_of_M (R : realFieldType) (m d : nat) (M : 'M[R]_(m,d)) : seq 'cV_d :=
-    seq_fset tt [seq trmx (row i M) | i <- enum 'I_m].
+Definition rowsfSet_of_M (R : realFieldType) (m d : nat) (M : 'M[R]_(m,d)) :=
+    seq_fset tt (map (fun i => trmx (row i M)) (enum 'I_m)).
 
 End Matrix.
 
@@ -53,7 +59,7 @@ Record ridge := {
 }.
 
 Definition ridgeHasEvenIncidence (K : asc) (tau : ridge) :=
-    negb (odd #|[set F in simplices K | (dimSimpl F == d+1) && (ridgeValue tau \subset F)]|).
+    even (size (filter (fun F => (dimSimpl F == d+1) && (ridgeValue tau \subset F)) (enum (simplices K)))).
 
 Definition allRidgesHaveEvenIncidence (K : asc) :=
     forall tau : ridge, ridgeHasEvenIncidence K tau.
@@ -73,7 +79,3 @@ Definition areFacetsPointed (K : asc) :=
     forall sig : facet, (facetValue sig \in simplices K) -> (isFacetPointed sig).
 
 End RelaxationTheorem.
-
-
-
-
