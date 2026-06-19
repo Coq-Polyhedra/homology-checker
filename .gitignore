@@ -1,5 +1,5 @@
-src/*.aux
-src/*.glob
-src/*.vo
-src/*.vok
-src/*.vos
+*.aux
+*.glob
+*.vo
+*.vok
+*.vos
