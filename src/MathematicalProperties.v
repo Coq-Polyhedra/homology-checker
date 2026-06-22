@@ -1,18 +1,11 @@
 From mathcomp Require Import finmap all_ssreflect all_algebra.
-From Polyhedra Require Import polyhedron row_submx.
+From Polyhedra Require Import polyhedron row_submx poly_base affine.
 
 Section Arithmetics.
 
-Definition even (n : nat) := negb (odd n).
+Definition even (n : nat) := ~~ (odd n).
 
 End Arithmetics.
-
-Section Matrix.
-
-Definition rowsfSet_of_M (R : realFieldType) (m d : nat) (M : 'M[R]_(m,d)) :=
-    seq_fset tt (map (fun i => trmx (row i M)) (enum 'I_m)).
-
-End Matrix.
 
 Section RelaxationTheorem.
 
@@ -30,52 +23,72 @@ Record asc := {
 
 Definition simplex := {set 'I_m}.
 
-Definition dimSimpl (F : simplex) := #|F| - 1.
+Definition dim (F : simplex) := #|F|.
 
 Definition isMaximal (K: asc) (F : simplex) : Prop :=
     (F \in simplices K) /\
     (forall G : simplex, (G \in simplices K) -> (F \subset G) -> (F = G)).
 
-Definition isPure (K : asc) : Prop := 
-    forall F G : simplex, (isMaximal K F) -> (isMaximal K G) -> (dimSimpl F = dimSimpl G).
-
 (* Since natural numbers do not include -1, all dimensions are shifted by an offset of 1. *)
-(* Faut-il l'existence d'un simplexe de dimension d+2 ? *)
-Definition isDPure (K : asc) (d : nat) : Prop :=
-    forall F : simplex, (isMaximal K F) -> dimSimpl F = d+2.
+Definition isDPure (d : nat) (K : asc) : Prop :=
+    forall F : simplex, isMaximal K F -> dim F = d.+1.
 
-Context (d : nat).
+Context (p : nat).
+Local Notation d := p.+1.
 
 (* Because of the previous convention, a facet is a d+1 simplex. *)
-Record facet := {
-    facetValue : simplex;
-    isFacet : dimSimpl (facetValue) = d+1
-}.
+Definition isFacet (sig : simplex) :=
+    dim sig == d.+1.
+
+Definition isFacetP (sig : simplex) :=
+    dim sig = d.+1.
 
 (* Because of the previous convention, a ridge is a d simplex. *)
-Record ridge := {
-    ridgeValue : simplex;
-    isRidge : dimSimpl (ridgeValue) = d
-}.
+Definition isRidge (sig : simplex) :=
+    dim sig == d.
 
-Definition ridgeHasEvenIncidence (K : asc) (tau : ridge) :=
-    even (size (filter (fun F => (dimSimpl F == d+1) && (ridgeValue tau \subset F)) (enum (simplices K)))).
+Definition isRidgeP (sig : simplex) :=
+    dim sig = d.
 
 Definition allRidgesHaveEvenIncidence (K : asc) :=
-    forall tau : ridge, ridgeHasEvenIncidence K tau.
+    forall tau : simplex, tau \in (simplices K) -> isRidge tau -> 
+    even #|[set F : simplex | [&& isFacet F, F \in (simplices K) & tau \subset F]]|.
 
-Context (R : realFieldType) (vectors : 'M[R]_(m,d)).
+Context (R : realFieldType) (normals : 'I_m -> 'cV[R]_d).
 
-Definition generatorsOfFacet (sig : facet) :=
-    row_submx vectors (facetValue sig).
-
-Definition coneOfFacet (sig : facet) :=
-    cone (rowsfSet_of_M R (#|facetValue sig|) d (generatorsOfFacet sig)).
-
-Definition isFacetPointed (sig : facet) :=
-    pointed (coneOfFacet sig).
+Definition coneOfSimplex (K : asc) (sig : simplex) :=
+    cone [fset (normals i) | i : 'I_m & i \in sig]%fset.
 
 Definition areFacetsPointed (K : asc) :=
-    forall sig : facet, (facetValue sig \in simplices K) -> (isFacetPointed sig).
+    forall sig : simplex, sig \in (simplices K) -> isFacet sig ->
+    pointed (coneOfSimplex K sig).
+
+Local Notation "\pdim P" := (adim (hull P)).
+
+Notation "[ 'forallf' x 'in' A , P ]" :=
+  (all (fun x => P) (enum_fset A))
+  (at level 0, x ident, A at level 99, P at level 99).
+
+Definition isInInt (P : 'poly_d) (z : 'cV[R]_d) :=
+    (z \in P) && [forallf F in face_set P, ~~(\pdim F < d) || ~~(z \in F)].
+
+Definition existsSpecialPoint (K : asc) :=
+    exists z : 'cV[R]_d, odd #|[set F : simplex | [&& isFacet F, F \in simplices K, 
+    ~~(z \in (coneOfSimplex K F)) & isInInt (coneOfSimplex K F) z]]|.
+
+Definition conesCoverSpace (K : asc) :=
+    forall x : 'cV[R]_d, exists sig : simplex, (sig \in simplices K) -> (isFacet sig)
+    -> (x \in coneOfSimplex K sig).
+
+Theorem relaxationTheorem (K : asc) :
+    (isDPure d K) -> (allRidgesHaveEvenIncidence K) -> (areFacetsPointed K) -> (existsSpecialPoint K)
+    -> (conesCoverSpace K).
+Admitted.
 
 End RelaxationTheorem.
+
+
+
+
+
+
