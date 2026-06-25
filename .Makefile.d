@@ -43,9 +43,12 @@ theories/xfinmap.vos theories/xfinmap.vok theories/xfinmap.required_vos: theorie
 theories/xorder.vo theories/xorder.glob theories/xorder.v.beautified theories/xorder.required_vo: theories/xorder.v theories/extra_misc.vo
 theories/xorder.vio: theories/xorder.v theories/extra_misc.vio
 theories/xorder.vos theories/xorder.vok theories/xorder.required_vos: theories/xorder.v theories/extra_misc.vos
-src/MathematicalProperties.vo src/MathematicalProperties.glob src/MathematicalProperties.v.beautified src/MathematicalProperties.required_vo: src/MathematicalProperties.v 
-src/MathematicalProperties.vio: src/MathematicalProperties.v 
-src/MathematicalProperties.vos src/MathematicalProperties.vok src/MathematicalProperties.required_vos: src/MathematicalProperties.v 
+depot/high_graph.vo depot/high_graph.glob depot/high_graph.v.beautified depot/high_graph.required_vo: depot/high_graph.v theories/fsetmin.vo theories/extra_misc.vo
+depot/high_graph.vio: depot/high_graph.v theories/fsetmin.vio theories/extra_misc.vio
+depot/high_graph.vos depot/high_graph.vok depot/high_graph.required_vos: depot/high_graph.v theories/fsetmin.vos theories/extra_misc.vos
+src/MathematicalProperties.vo src/MathematicalProperties.glob src/MathematicalProperties.v.beautified src/MathematicalProperties.required_vo: src/MathematicalProperties.v theories/polyhedron.vo theories/row_submx.vo theories/poly_base.vo theories/affine.vo depot/high_graph.vo
+src/MathematicalProperties.vio: src/MathematicalProperties.v theories/polyhedron.vio theories/row_submx.vio theories/poly_base.vio theories/affine.vio depot/high_graph.vio
+src/MathematicalProperties.vos src/MathematicalProperties.vok src/MathematicalProperties.required_vos: src/MathematicalProperties.v theories/polyhedron.vos theories/row_submx.vos theories/poly_base.vos theories/affine.vos depot/high_graph.vos
 src/FirstPart.vo src/FirstPart.glob src/FirstPart.v.beautified src/FirstPart.required_vo: src/FirstPart.v 
 src/FirstPart.vio: src/FirstPart.v 
 src/FirstPart.vos src/FirstPart.vok src/FirstPart.required_vos: src/FirstPart.v 
