@@ -1,5 +1,8 @@
 From mathcomp Require Import finmap all_ssreflect all_algebra.
-From Polyhedra Require Import polyhedron row_submx poly_base affine.
+Import GRing.Theory Num.Theory Order.Theory.
+From Polyhedra Require Import polyhedron row_submx poly_base affine barycenter inner_product vector_order lrel.
+From Polyhedra Require Import hpolyhedron.
+Import HPolyhedron. 
 From DepotThese Require Import high_graph.
 
 Section Arithmetics.
@@ -139,6 +142,22 @@ Proof.
     apply H2. exact H1. unfold isFacet in H3. apply/eqP. exact H3.
 Qed.
 
+Lemma simplices_of_dim_d_are_facets (K : simplicialComplex m) : isDRegular K -> 
+forall sig : simplex m, isFacet m d sig -> sig \in simplices m (set_to_asc K) -> sig \in K.
+Proof.
+    intros HDreg sig HsigFac HsiginS. rewrite/set_to_asc in HsiginS.
+    simpl in HsiginS. rewrite/unionPS in HsiginS. rewrite/map_cup in HsiginS.
+    rewrite inE in HsiginS. move/existsP in HsiginS. case: HsiginS => x Hx.
+    move/andP in Hx. case:Hx => HxInK HsigInX. rewrite/powerSet in HsigInX.
+    rewrite inE in HsigInX. rewrite/isDRegular in HDreg. 
+    have HxFac : isFacet m d x. exact: (HDreg x) HxInK. rewrite/isFacet in HxFac.
+    rewrite/isFacet in HsigFac. rewrite/dim in HxFac. rewrite/dim in HsigFac.
+    move/eqP in HxFac. rewrite -HxFac in HsigFac. have HsigEx : sig =i x.
+    have Href : reflect (sig =i x) (sig \subset x). apply/subset_cardP.
+    move/eqP in HsigFac. exact HsigFac. move/Href in HsigInX. exact HsigInX.
+    move/setP in HsigEx. rewrite -HsigEx in HxInK. exact HxInK.
+Qed.
+
 End DPurity.
 
 Section RidgesEvenIncidence.
@@ -174,12 +193,6 @@ Proof.
     have Hundirxy := Hundir x y. move/orP in HxRRy. rewrite Hundirxy in HxRRy. 
     move/orP in HxRRy. exact HxRRy.
 Qed.
-
-Definition equivalence_rel_on {T : finType} (R : rel T) (A : {set T}) :=
-    equivalence_rel (fun x y => (~~(x \in A) && ~~(y \in A)) || ((x \in A) && 
-    (y \in A) && (R x y))).
-
-Check proper.
 
 Lemma ridge_is_facet_minus_vertex (tau sig : simplex m) : (tau \subset sig) ->
 (#|tau| = d) -> (#|sig| = d.+1) -> (exists i, (i \in sig) /\ (tau = sig :\ i)).
@@ -482,3 +495,297 @@ Proof.
 Qed.
 
 End RidgesEvenIncidence.
+
+Section NormalCones.
+
+Context (d : nat) (R : realFieldType).
+Local Notation "'[ u , v ]" := (vdot u v).
+
+Definition normalCone (hP : 'hpoly[R]_d) (x : 'cV[R]_d) :=
+  let normal i := trmx (row i hP.`A) in
+  let offset i := hP.`b i ord0 in
+  cone [fset normal i | i : 'I_(hP.`c) & '[normal i , x] == offset i]%fset.
+
+Definition normalCone_spec (hP : 'hpoly[R]_d) (x c : 'cV[R]_d) :=
+    (x \in hP) -> (x \in argmin '[hP] (-c)).
+
+Lemma normalConeP (hP : 'hpoly[R]_d) (x c : 'cV[R]_d) :
+    reflect (c \in (normalCone hP x)) ((x \in hP) ==> (x \in argmin '[hP] (-c))).
+Admitted. 
+
+End NormalCones.
+
+Section PointedCones.
+
+Context (d : nat) (R : realFieldType).
+Local Notation "'[ u , v ]" := (vdot u v).
+Local Notation "'[' 'hp' e  ']'" := [affine <[e]> ].
+Local Notation "[ 'affine' I ]"    := (@Core.affine_of _ _ (Phant _) I%VS).
+Local Notation "''[' P ]" := (@mk_poly2 _ _ P).
+Local Notation "[< A , b >]" := (BaseElt (pair A b)).
+Local Notation "A ^T" := (trmx A).
+
+Arguments normalCone {d R}.
+Local Notation "\pdim P" := (@adim R d (hull P)).
+
+Definition isFullDimensional (hP : 'hpoly[R]_d) :=
+    \pdim '[hP] = d.+1.
+
+(*
+Lemma pointedForCones (P : 'poly[R]_d) :
+    (exists W : {fset 'cV[R]_d}, P = cone W) -> 
+    ((pointed P) <-> (forall x : 'cV[R]_d, ((x \in P) && ((-x)%R \in P)) -> (x = 0%R))).
+Proof.
+    intro Hcone. split.
+    - intro Hpointed.
+*)
+
+Lemma normal_cones_are_pointed (hP : 'hpoly[R]_d) :
+    (isFullDimensional hP) -> (forall x : 'cV[R]_d, (x \in hP) -> pointed (normalCone hP x)).
+Proof.
+    intros HfullD x HxInP. destruct (pointed (normalCone hP x)) eqn:Hpointed.
+        - trivial.
+        - move/eqP in Hpointed. rewrite eqbF_neg in Hpointed.
+          move/pointedPn in Hpointed. case: Hpointed => x0 Hpointed.
+          case: Hpointed => d0 Hd0null Hd0InP.
+          have Hmin : forall z : 'cV[R]_d, forall t : R, (z \in hP)
+          -> ('[x0 + t*:d0, z] >= '[x0 + t*:d0, x])%R.
+            - intros z t HzInP. have Hd0InPt := Hd0InP t.
+              rewrite/normalCone in Hd0InPt. simpl in Hd0InPt.
+              move/in_coneP in Hd0InPt. case: Hd0InPt => w HwInPt Hcomb.
+              (* rewrite (combinewE HwInPt) in Hcomb. *)
+              rewrite combineE in Hcomb. rewrite Hcomb.
+              rewrite vdot_sumDl. rewrite vdot_sumDl. 
+              apply: ler_sum. intros i Huseless. destruct Huseless.
+              rewrite vdotZl. rewrite vdotZl. case: i => ai Hai. simpl. 
+              rewrite ler_pmul2l.
+              move/fsubsetP in HwInPt.
+              move/HwInPt in Hai. move/imfsetP in Hai. simpl in Hai.
+              case: Hai => i Hi Hai. rewrite inE in Hi. move/eqP in Hi.
+              rewrite Hai. rewrite Hi.
+              rewrite in_hpolyE in HzInP. rewrite/lev in HzInP.
+              move/forallP in HzInP. have HzInPi := HzInP i.
+              rewrite row_vdot. exact HzInPi.
+              have Hwcon : conic w. exact (valP w).
+              have Hwaipos : ai \in finsupp w = (0 < w ai)%R.
+              apply: conic_finsuppE. exact Hwcon.
+              rewrite Hwaipos in Hai. exact Hai.
+          have Hnull : forall z, (z \in hP) -> '[d0, z - x] == 0%R.
+            intros z HzInP.
+            have Hminz := Hmin z. 
+            destruct ('[d0, z - x] == 0%R) eqn:HzDd0.
+            - trivial.
+            - have Hminzt :=  Hminz (('[x0,z-x] + 1)/'[d0,x - z])%R HzInP.
+              rewrite vdotDl in Hminzt. rewrite vdotDl in Hminzt. 
+              rewrite <- ler_subl_addr in Hminzt.
+              rewrite vdotZl in Hminzt. rewrite vdotZl in Hminzt.
+              rewrite <- addrA in Hminzt. rewrite -mulrBr in Hminzt.
+              rewrite -vdotBr in Hminzt. rewrite divrK in Hminzt.
+              rewrite -ler_subr_addl in Hminzt. rewrite -vdotBr in Hminzt.
+              rewrite ger_addl in Hminzt. have H01 : (0 <= 1 :>R)%R.
+              exact ler01. have H00 : (1 == 0 :> R)%R. rewrite eq_le. 
+              apply/andP. split. exact Hminzt. exact H01. rewrite oner_eq0 in H00.
+              exact H00. rewrite unitfE. move/eqP in HzDd0. apply/eqP.
+              rewrite -opprB. rewrite vdotNr. apply/eqP. rewrite oppr_eq0.
+              apply/eqP. exact HzDd0.
+              have HpInHP : ('[hP] `<=` [ hp [<d0, '[ d0, x]>] ]%:PH)%PH.
+              - apply/poly_leP. move=> z HzInP. rewrite (polyhedron.in_hp.1.2).
+                simpl. rewrite mem_mk_poly in HzInP. have Hnullz := (Hnull z) HzInP. rewrite vdotBr in Hnullz.
+                rewrite subr_eq0 in Hnullz. exact Hnullz.
+              have HdimHP : adim [hp [<d0, '[d0, x]>]] = d.
+              - have HadimHP := (@adim_hp R d [<d0, '[d0, x]>]).
+                simpl in HadimHP. rewrite -eqbF_neg in Hd0null.
+                move/eqP in Hd0null. rewrite Hd0null in HadimHP. simpl in HadimHP.
+                have Haff0 : ([ affine0 ] `<` [ hp [<d0, '[ d0, x]>] ])%PH.
+                - apply/affine_proper0P. exists x. rewrite (snd in_hp).
+                  apply/eqP. reflexivity.
+                have HadimH := HadimHP Haff0. rewrite add0n in HadimH. exact HadimH.
+              have HaffS : (adim (hull '[hP]) <= adim [hp [<d0, '[d0, x]>]])%N.
+              - have HhullP := (hullP '[hP] [ hp [<d0, '[ d0, x]>] ]).
+                rewrite HhullP in HpInHP. apply/adimS. exact HpInHP.
+              rewrite HdimHP in HaffS. rewrite/isFullDimensional in HfullD.
+              rewrite HfullD in HaffS. rewrite ltnn in HaffS. exact HaffS.
+Qed.
+
+Context (m : nat).
+              
+Definition activeSets (normals : 'I_m -> 'cV[R]_d) (b : 'cV[R]_m) (x : 'cV[R]_d) : pred 'I_m :=
+    [pred i | '[normals i, x] == b i ord0].
+
+Definition normals_mx (normals : 'I_m -> 'cV[R]_d) : 'M[R]_(m, d) :=
+  (\matrix_i (fun (i : 'I_m) => trmx (normals i)) i).
+
+Definition normalsToPoly (normals : 'I_m -> 'cV[R]_d) (b : 'cV[R]_m) :=
+  hpoly_from_matrix (existT (fun k : nat => ('M[R]_(k, d) * 'cV[R]_k)%type)
+  m (normals_mx normals, b)).
+    
+Definition facetsInActiveSets (normals : 'I_m -> 'cV[R]_d) (b : 'cV[R]_m) (K : simplicialComplex m) := 
+    let P := normalsToPoly normals b in
+    exists S : {fset 'cV[R]_d}, {subset S <= P} /\
+    forall sig : simplex m, sig \in K -> exists x : 'cV[R]_d,
+    (x \in S) && (sig \subset activeSets normals b x).
+
+Lemma facets_are_pointed (normals : 'I_m -> 'cV[R]_d) (K : simplicialComplex m) :
+    (isDRegular m d K) -> (exists b : 'cV[R]_m, (isFullDimensional (normalsToPoly normals b)) /\ facetsInActiveSets normals b K) -> 
+    areFacetsPointed m d R normals (set_to_asc m K).
+Proof.
+    intros HDreg Hb. case: Hb => b Hb. case: Hb => Hfull Has. rewrite/areFacetsPointed. 
+    intros sig HsigInS Hfacet.
+    rewrite/coneOfSimplex. rewrite/facetsInActiveSets in Has. case: Has => S HS.
+    case:HS => HS Has. have Hsig := Has sig.
+    have HsigInK : sig \in K. apply/simplices_of_dim_d_are_facets. exact HDreg.
+    exact Hfacet. exact HsigInS. have Hx := Hsig HsigInK. case: Hx => x Hx.
+    move/andP in Hx. case: Hx => HxInS HsigX.
+    have HconSub : (cone [fset normals i | i in 'I_m & i \in sig] `<=` 
+    cone [fset normals i | i in 'I_m & i \in activeSets normals b x])%PH.
+    - apply/poly_leP. move=> y Hy. move/in_coneP in Hy. case: Hy => w Hw Hcomb.
+    have Hfin : finsupp w `<=` [fset normals i | i in 'I_m & i \in activeSets normals b x].
+    - apply/fsubsetP. move=> z Hz. apply/imfsetP. move/fsubsetP in Hw.
+        have Hwz := (Hw z) Hz. move/imfsetP in Hwz. case:Hwz => r Hr HrN. 
+        exists r. simpl. simpl in Hr. rewrite inE in Hr. rewrite inE.
+        move/subsetP in HsigX. exact ((HsigX r) Hr). exact HrN. apply/in_coneP.
+        exists w. exact Hfin. exact Hcomb.
+    have Himp := pointedS HconSub. simpl in Himp.
+    have HpoinNorm : polyhedron.pointed (cone [fset normals i | i in [pred i | i \in activeSets normals b x]]).
+    have HisNorm : cone [fset normals i | i in [pred i | i \in activeSets normals b x]] = 
+    normalCone (normalsToPoly normals b) x.
+    - rewrite/normalCone. simpl.
+      have Hrew : [fset normals i | i in [pred i | i \in activeSets normals b x]] =
+      [fset ((row i (normals_mx normals))^T)%R | i in [pred i | '[ (row i 
+      (normals_mx normals))^T, x] == b i ord0]].
+      - apply/fsetP => y. apply/imfsetP. simpl.
+        case HyF: (y \in [fset ((row i (normals_mx normals))^T)%R | i in [pred i |
+        '[ (row i (normals_mx normals))^T, x] == b i ord0]]).
+        - move/imfsetP in HyF. simpl in HyF. case: HyF => i Hi. intro Hy.
+          exists i. unfold normals_mx in Hi. move/eqP in Hi. 
+          have Hmat : ((row i (\matrix_i0 (normals i0)^T))^T = normals i).
+          - apply/colP. move=>j. rewrite rowK. rewrite trmxK. reflexivity.
+          rewrite Hmat in Hi. rewrite/activeSets.
+          change (i \in [pred i1 | '[ normals i1, x] == b i1 ord0]).
+          change ('[ normals i, x] == b i ord0). apply/eqP. exact Hi.
+          have Hmat : ((row i (\matrix_i0 (normals i0)^T))^T = normals i).
+          - apply/colP. move=>j. rewrite rowK. rewrite trmxK. reflexivity.
+          rewrite Hmat in Hy. exact Hy.
+        - destruct [exists x0 : 'I_m, (x0 \in activeSets normals b x) && (y == normals x0)]
+          eqn: Hdes.
+          - move/existsP in Hdes. case:Hdes => i Hi. move/andP in Hi.
+            case:Hi => HiAct HyNi. 
+            have Habs : ((y \in [fset (row i (normals_mx normals))^T | i in 
+            [pred i | '[ (row i (normals_mx normals))^T, x] == b i ord0]]) = true).
+            - apply/imfsetP. exists i. simpl. apply/eqP. rewrite/normals_mx.
+              have Hmat : ((row i (\matrix_i0 (normals i0)^T))^T = normals i).
+              - apply/colP. move=>j. rewrite rowK. rewrite trmxK. reflexivity.
+              rewrite Hmat. rewrite/activeSets in HiAct. move/eqP in HiAct. exact HiAct.
+              have Hmat : ((row i (\matrix_i0 (normals i0)^T))^T = normals i).
+              - apply/colP. move=>j. rewrite rowK. rewrite trmxK. reflexivity.
+              rewrite Hmat. move/eqP in HyNi. exact HyNi.
+            rewrite Habs in HyF. discriminate HyF.
+            intro Habs. case:Habs => x0 Hx0Act HyNx0.
+            have Habs2 : [exists x0, (x0 \in activeSets normals b x) && 
+            (y == normals x0)] = true.
+            - apply/existsP. exists x0. apply/andP. split.
+              exact Hx0Act. apply/eqP. exact HyNx0.
+              rewrite Hdes in Habs2. discriminate Habs2.
+      congr cone. rewrite Hrew. apply/fsetP. intro.
+      apply/idP/idP. intro Hx0.
+      - apply/imfsetP. simpl. move/imfsetP in Hx0. case: Hx0 => i Hi1 Hi2.
+        simpl in Hi1. exists i. change ('[ (row i (normals_mx normals))^T, x] == b i ord0).
+        rewrite/in_mem in Hi1. simpl in Hi1. exact Hi1. exact Hi2.
+      - intro Hx0. apply/imfsetP. simpl. move/imfsetP in Hx0. case: Hx0 => i Hi1 Hi2.
+        simpl in Hi1. exists i. change ('[ (row i (normals_mx normals))^T, x] == b i ord0).
+        rewrite/in_mem in Hi1. simpl in Hi1. exact Hi1. exact Hi2.
+    rewrite HisNorm. apply/normal_cones_are_pointed. exact Hfull.
+    exact: (HS x) HxInS. apply Himp. Set Printing All.
+    have Hhorrible :
+    is_true
+    (@polyhedron.pointed R d
+     (@cone R d
+        (@Imfset.imfset imfset_key (ordinal_choiceType m)
+           (matrix_choiceType (Num.RealField.choiceType R) d
+              (Datatypes.S O))
+           (fun i : ordinal m => normals i)
+           (@mem_fin (Choice.eqType (ordinal_choiceType m))
+              (simplPredType (ordinal m))
+              (@subfinset_finpred (ordinal_choiceType m)
+                 (@mem_fin
+                    (Choice.eqType (ordinal_choiceType m))
+                    (predPredType (ordinal m))
+                    (@fin_finpred
+                       (Choice.eqType (ordinal_choiceType m))
+                       (pred_finpredType (ordinal_finType m))
+                       (@PredOfSimpl.coerce 
+                          (ordinal m)
+                          (pred_of_argType (ordinal m)))))
+                 (fun i : ordinal m =>
+                  @in_mem (ordinal m) i
+                    (@mem (ordinal m)
+                       (predPredType (ordinal m))
+                       (activeSets normals b x)))))
+           (Phantom (mem_pred (ordinal m))
+              (@mem (ordinal m) (simplPredType (ordinal m))
+                 (@SimplPred (ordinal m)
+                    (fun i : ordinal m =>
+                     @in_mem (ordinal m) i
+                       (@mem (ordinal m)
+                          (predPredType (ordinal m))
+                          (activeSets normals b x)))))))))
+    =
+    is_true
+              (@polyhedron.pointed R d
+                 (@cone R d
+                    (@Imfset.imfset imfset_key
+                       (ordinal_choiceType m)
+                       (matrix_choiceType
+                          (Num.RealField.choiceType R) d
+                          (Datatypes.S O))
+                       (fun
+                          i : Choice.sort
+                                (ordinal_choiceType m) =>
+                        normals i)
+                       (@mem_fin
+                          (Choice.eqType
+                             (ordinal_choiceType m))
+                          (simplPredType (ordinal m))
+                          (@fin_finpred
+                             (Choice.eqType
+                                (ordinal_choiceType m))
+                             (simpl_pred_finpredType
+                                (ordinal_finType m))
+                             (@SimplFun 
+                                (ordinal m) bool
+                                (fun i : ordinal m =>
+                                 @in_mem 
+                                   (ordinal m) i
+                                   (@mem 
+                                      (ordinal m)
+                                      (predPredType
+                                       (ordinal m))
+                                      (activeSets normals b
+                                       x))))))
+                       (Phantom (mem_pred (ordinal m))
+                          (@mem (ordinal m)
+                             (simplPredType (ordinal m))
+                             (@SimplPred 
+                                (ordinal m)
+                                (fun i : ordinal m =>
+                                 @in_mem 
+                                   (ordinal m) i
+                                   (@mem 
+                                      (ordinal m)
+                                      (predPredType
+                                       (ordinal m))
+                                      (activeSets normals b
+                                       x))))))))).
+    - simpl. congr (polyhedron.pointed). congr cone.
+      apply/fsetP. intro.
+      apply/idP/idP.
+      - intro Hx0. apply/imfsetP. simpl. move/imfsetP in Hx0. case: Hx0 => i Hi1 Hi2.
+        simpl in Hi1. exists i. change (i \in activeSets normals b x).
+        rewrite/in_mem in Hi1. simpl in Hi1. exact Hi1. exact Hi2.
+      - intro Hx0. apply/imfsetP. simpl. move/imfsetP in Hx0. case: Hx0 => i Hi1 Hi2.
+        simpl in Hi1. exists i. change (i \in activeSets normals b x).
+        rewrite/in_mem in Hi1. simpl in Hi1. exact Hi1. exact Hi2.
+    rewrite Hhorrible. exact HpoinNorm.
+Qed.
+
+End PointedCones.
