@@ -461,7 +461,6 @@ Definition forAlliFacetLabels (f : int -> FacetLabel -> bool) (cert : Certificat
 
 End FacetLabels.
 
-
 Definition areActiveSetsWellConstructed (cert : Certificate) :=
   let m := length (inequalities cert) in
   let vertices := vertices cert in

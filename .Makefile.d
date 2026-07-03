@@ -46,9 +46,9 @@ theories/xorder.vos theories/xorder.vok theories/xorder.required_vos: theories/x
 depot/high_graph.vo depot/high_graph.glob depot/high_graph.v.beautified depot/high_graph.required_vo: depot/high_graph.v theories/fsetmin.vo theories/extra_misc.vo
 depot/high_graph.vio: depot/high_graph.v theories/fsetmin.vio theories/extra_misc.vio
 depot/high_graph.vos depot/high_graph.vok depot/high_graph.required_vos: depot/high_graph.v theories/fsetmin.vos theories/extra_misc.vos
-src/MathematicalProperties.vo src/MathematicalProperties.glob src/MathematicalProperties.v.beautified src/MathematicalProperties.required_vo: src/MathematicalProperties.v theories/polyhedron.vo theories/row_submx.vo theories/poly_base.vo theories/affine.vo depot/high_graph.vo
-src/MathematicalProperties.vio: src/MathematicalProperties.v theories/polyhedron.vio theories/row_submx.vio theories/poly_base.vio theories/affine.vio depot/high_graph.vio
-src/MathematicalProperties.vos src/MathematicalProperties.vok src/MathematicalProperties.required_vos: src/MathematicalProperties.v theories/polyhedron.vos theories/row_submx.vos theories/poly_base.vos theories/affine.vos depot/high_graph.vos
+src/MathematicalProperties.vo src/MathematicalProperties.glob src/MathematicalProperties.v.beautified src/MathematicalProperties.required_vo: src/MathematicalProperties.v theories/polyhedron.vo theories/row_submx.vo theories/poly_base.vo theories/affine.vo theories/barycenter.vo theories/inner_product.vo theories/vector_order.vo theories/lrel.vo theories/hpolyhedron.vo depot/high_graph.vo
+src/MathematicalProperties.vio: src/MathematicalProperties.v theories/polyhedron.vio theories/row_submx.vio theories/poly_base.vio theories/affine.vio theories/barycenter.vio theories/inner_product.vio theories/vector_order.vio theories/lrel.vio theories/hpolyhedron.vio depot/high_graph.vio
+src/MathematicalProperties.vos src/MathematicalProperties.vok src/MathematicalProperties.required_vos: src/MathematicalProperties.v theories/polyhedron.vos theories/row_submx.vos theories/poly_base.vos theories/affine.vos theories/barycenter.vos theories/inner_product.vos theories/vector_order.vos theories/lrel.vos theories/hpolyhedron.vos depot/high_graph.vos
 src/FirstPart.vo src/FirstPart.glob src/FirstPart.v.beautified src/FirstPart.required_vo: src/FirstPart.v 
 src/FirstPart.vio: src/FirstPart.v 
 src/FirstPart.vos src/FirstPart.vok src/FirstPart.required_vos: src/FirstPart.v 

@@ -501,6 +501,8 @@ Section NormalCones.
 Context (d : nat) (R : realFieldType).
 Local Notation "'[ u , v ]" := (vdot u v).
 
+Locate vdot.
+
 Definition normalCone (hP : 'hpoly[R]_d) (x : 'cV[R]_d) :=
   let normal i := trmx (row i hP.`A) in
   let offset i := hP.`b i ord0 in
@@ -789,3 +791,17 @@ Proof.
 Qed.
 
 End PointedCones.
+
+Section CoveringCriterion.
+
+Context (d : nat) (R : realFieldType).
+
+Arguments normalCone {d R}.
+
+Theorem covering_criterion (P : 'poly[R]_d) (S : {fset 'cV[R]_d}) :
+    {subset S <= P} -> ((vertex_set P) `<=` S <-> forall z : 'cV[R]_d, exists x : 'cV[R]_d, 
+    (x \in S)/\ (z \in normalCone (hrepr P) x )).
+Admitted.
+
+End CoveringCriterion.
+
