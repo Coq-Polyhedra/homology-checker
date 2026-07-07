@@ -93,7 +93,7 @@ Definition existi {T : Type} (f : int -> T -> bool) (a : array T) :=
   foldi (fun i x acc => acc || f i x) a false.
 
 Definition exist {T : Type} (f : T -> bool) (a : array T) :=
-  fold (fun x acc => acc || f x) a false.
+  fold_from_until (fun x acc => acc || f x) a 0 (fun _ acc => acc) false.
 
 Definition mem {T : Type} (eqT : T -> T -> bool) (a : array T) (x : T) : bool :=
   exist (fun y => eqT x y) a.
@@ -618,8 +618,32 @@ Definition commodity_checks (cert : Certificate) :=
 Section Benchmark.
 
 Let cert := build_cert cert.
+(*Time Eval vm_compute in 
+  commodity_checks cert.*)
 Time Eval vm_compute in 
-  commodity_checks cert.
+  areActiveSetsWellConstructed cert.
+Time Eval vm_compute in 
+  areLocalFacetSetsWellConstructed cert.
+Time Eval vm_compute in 
+  isLocalFacetIndexingWellConstructed cert.
+Time Eval vm_compute in 
+  isFacetLabelingWellConstructed cert.
+Time Eval vm_compute in 
+  isGraphWellConstructed cert.
+Time Eval vm_compute in 
+  areActiveSetsUnique cert.
+Time Eval vm_compute in 
+  areFacetsUnique cert.
+Time Eval vm_compute in 
+  isUndirectedSimpleGraph cert.
+Time Eval vm_compute in 
+  allFacetsHaveCardinality cert.
+Time Eval vm_compute in 
+  isGraphDRegular cert.
+Time Eval vm_compute in 
+  isFacetLabelingBijective cert.
+Time Eval vm_compute in 
+  isFacetIndexingBijective cert.
 Time Eval vm_compute in
   feasibility_check cert.
 Time Eval vm_compute in
