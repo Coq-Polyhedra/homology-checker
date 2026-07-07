@@ -32,6 +32,9 @@ Record Certificate := {
     indices : simplex (polytope.`c) -> 'I_d
 }.
 
+Definition normalVector (polytope : 'hpoly[R]_d) (i : 'I_(polytope.`c)) :=
+  trmx (row i polytope.`A).
+
 (* General hypothesis *)
 Definition polytopeIsFullDimensional (cert : Certificate) :=
   \pdim '[polytope cert] = d.+1.
@@ -62,10 +65,8 @@ Definition specialSimplexInSpecialCone(cert : Certificate) :=
 (* Condition T1 *)
 Definition feasibility_check (cert : Certificate) :=
   let hP := polytope cert in
-  let normal i := trmx (row i hP.`A) in
-  let offset i := hP.`b i ord0 in
   {subset (points cert) <= hP} /\ forall x : 'cV[R]_d, (x \in points cert) ->
-  activeSets cert x = [set i | i : 'I_(hP.`c) & '[normal i , x] == offset i].
+  activeSets cert x = [set i | i : 'I_(hP.`c) & '[normalVector hP i , x] == hP.`b i ord0].
 
 (* Condition T2 *)
 Definition triangulationsAreDisjoint (cert : Certificate) :=
@@ -84,8 +85,9 @@ Definition inversibility_check (cert : Certificate) :=
 (* Condition T5 *)
 Definition separation_check (cert : Certificate) :=
   forall f : simplex (polytope cert).`c, f \in triangulations cert (specialVertex cert)
-  -> f != (specialSimplex cert @: 'I_d) -> exists j : 'I_(polytope cert).`c, j \in f /\
-  ('[col (indices cert f) (witnesses cert), trmx (row j (polytope cert).`A)] <= 0)%R.
+  -> f != (specialSimplex cert @: 'I_d) 
+  -> exists j : 'I_(polytope cert).`c, j \in f /\
+  ('[col (indices cert f) (witnesses cert), normalVector (polytope cert) j] <= 0)%R.
 
 End HighLevelChecks.
 
