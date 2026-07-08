@@ -37,6 +37,7 @@ Definition isMaximal (K: asc) (F : simplex) :=
     [forall G : simplex, (G \in simplices K) ==> (F \subset G) ==> (F == G)].
 
 (* Since natural numbers do not include -1, all dimensions are shifted by an offset of 1. *)
+(* Attention : il faut l'existence d'un élément maximal. *)
 Definition isDPure (d : nat) (K : asc) : Prop :=
     forall F : simplex, isMaximal K F -> dim F = d.+1.
 
@@ -501,20 +502,39 @@ Section NormalCones.
 Context (d : nat) (R : realFieldType).
 Local Notation "'[ u , v ]" := (vdot u v).
 
-Locate vdot.
-
 Definition normalCone (hP : 'hpoly[R]_d) (x : 'cV[R]_d) :=
   let normal i := trmx (row i hP.`A) in
   let offset i := hP.`b i ord0 in
   cone [fset normal i | i : 'I_(hP.`c) & '[normal i , x] == offset i]%fset.
 
-Definition normalCone_spec (hP : 'hpoly[R]_d) (x c : 'cV[R]_d) :=
-    (x \in hP) -> (x \in argmin '[hP] (-c)).
-
 Lemma normalConeP (hP : 'hpoly[R]_d) (x c : 'cV[R]_d) :
-    reflect (c \in (normalCone hP x)) ((x \in hP) ==> (x \in argmin '[hP] (-c))).
-Admitted. 
-
+    reflect ((x \in hP) ==> (x \in argmin '[hP] c)) (c \in (normalCone hP x)).
+Proof.
+    apply: (iffP idP). 
+    - intro HcInC. apply/implyP. intro HxInP. rewrite in_argmin. 
+      apply/andP. split.
+      - rewrite mem_mk_poly. exact HxInP.
+      - rewrite poly_subset_mono. apply/poly_subsetP.
+        move=> y Hy. rewrite in_hs. simpl. rewrite/normalCone in HcInC.
+        move/in_coneP in HcInC. case: HcInC => w HwInPt Hcomb.
+        rewrite combineE in Hcomb. rewrite Hcomb.
+        rewrite vdot_sumDl. rewrite vdot_sumDl. 
+        apply: ler_sum. intros i Huseless. destruct Huseless.
+        rewrite vdotZl. rewrite vdotZl. case: i => ai Hai. simpl. 
+        rewrite ler_pmul2l.
+        move/fsubsetP in HwInPt.
+        move/HwInPt in Hai. move/imfsetP in Hai. simpl in Hai.
+        case: Hai => i Hi Hai. rewrite inE in Hi. move/eqP in Hi.
+        rewrite Hai. rewrite Hi.
+        rewrite in_hpolyE in Hy. rewrite/lev in Hy.
+        move/forallP in Hy. have HyInPi := Hy i.
+        rewrite row_vdot. exact HyInPi.
+        have Hwcon : conic w. exact (valP w).
+        have Hwaipos : ai \in finsupp w = (0 < w ai)%R.
+        apply: conic_finsuppE. exact Hwcon.
+        rewrite Hwaipos in Hai. exact Hai.
+    - Admitted.
+ 
 End NormalCones.
 
 Section PointedCones.

@@ -26,7 +26,6 @@ Record Certificate := {
     triangulations : 'cV[R]_d -> simplicialComplex (polytope.`c);
     graph : simplex_graph (polytope.`c);
     specialVertex : 'cV[R]_d;
-    (* specialSimplex : simplex (polytope.`c); *)
     specialSimplex : 'I_d -> 'I_(polytope.`c);
     witnesses : 'M[R]_(d,d);
     indices : simplex (polytope.`c) -> 'I_d
