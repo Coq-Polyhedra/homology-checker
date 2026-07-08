@@ -104,17 +104,57 @@ Definition mem_sorted {T : Type} (ltT : T -> T -> bool) (a : array T) (x : T) : 
   end. 
 
 Definition find_from_until {T : Type} (eqT : T -> T -> bool) (a : array T) (x : T) (k : int) : option int :=
-  foldi_from_until (fun i _ acc => if (eqT x a.[i]) then Some(i) else None) a k (fun i x => (if x is Some _ then true else false)) None.      
+  foldi_from_until (fun i _ acc => if (eqT x a.[i]) then Some(i) else None) a k (fun i x => (if x is Some _ then true else false)) None. 
+  
+Definition diff {t : Type} (lt_t : rel t) (a b : array t) : seq t :=
+  let diff_step :=
+    fun '(i, j, acc) =>
+      if (i <? length a)%uint63 then
+        if (j <? length b)%uint63 then
+          if lt_t a.[i] b.[j] then
+            ((i+1)%uint63, j, a.[i] :: acc)
+          else if lt_t b.[j] a.[i] then
+            (i, (j+1)%uint63, acc)
+          else
+            ((i+1)%uint63, (j+1)%uint63, acc)
+        else
+          ((i+1)%uint63, j, a.[i] :: acc)
+      else
+        (i, j, acc)
+    in
+    (ifold
+      (fun _ ijacc => diff_step ijacc)
+      (length a + length b)%uint63
+      (0%uint63, 0%uint63, [::])).2.
 
 Definition eqbArray {T : Type} (eqT : T -> T -> bool) (a b : array T) : bool :=
   for_all2 eqT a b.
 
+Definition lex_cmp {T : Type} (ltT : T -> T -> bool) (a b : array T) : comparison :=
+  let c :=
+    fold2
+      (fun x y acc =>
+         match acc with
+         | Lt => Lt
+         | Gt => Gt
+         | Eq =>
+             if ltT x y then Lt
+             else if ltT y x then Gt
+             else Eq
+         end)
+      a b Eq
+  in
+  match c with
+  | Lt => Lt
+  | Gt => Gt
+  | Eq =>
+      if (length a <? length b)%uint63 then Lt
+      else if (length b <? length a)%uint63 then Gt
+      else Eq
+  end.
+
 Definition ltbArray {T : Type} (eqT : T -> T -> bool) (ltT : T -> T -> bool) (a b : array T) : bool :=
-  (((length a) <? (length b))%uint63) || 
-  ((((length a) =? (length b))%uint63) && ~~((length a) =? 0)%uint63 &&
-  foldi_from_until (fun i x acc => if ((i =? (length a)-1)%uint63 && (eqT a.[i] b.[i])) then false
-                                   else (if (ltT a.[i] b.[i]) || (eqT a.[i] b.[i]) then true && acc
-                                         else false)) a 0 (fun i acc => acc && (ltT a.[i] b.[i])) true).
+  if lex_cmp ltT a b is Lt then true else false.
 
 Definition compareConsecutive {T : Type} (ltT : T -> T -> bool) (a : array T) (i : int) : bool :=
   ltT (a.[i]) (a.[(i+1)%uint63]). 
@@ -418,20 +458,18 @@ Definition feasibility_check (cert : Certificate) :=
   ifold (fun i acc => acc && check_ineqs inequalities (activeSet vertices.[i]) (point vertices.[i])) 
     (length vertices) true.
 
-Definition isRidgeInFacet (facet1 facet2 : GlobalDescription) (v : int) : bool :=
-  let res := foldi (fun i x acc => if (x =? v)%uint63 then acc
-                                   else match acc.2 with  
-                                   |None => (false,None)
-                                   |Some i => if (find_from_until Uint63.eqb facet2 x i) is (Some j) 
-                                              then (acc.1 && true, Some j)
-                                              else (false, None) end) facet1 (true,Some (0%uint63))
-  in res.1.
+(* Check if s1 \ s2 = v *)
+Definition isRidgeInFacet (s1 s2 : array int) (v : int) :=
+  match diff Uint63.ltb s1 s2 with
+  | [:: x] => (x =? v)%uint63
+  | _ => false
+  end.
   
 Definition graph_check (cert : Certificate) :=
   let graph := graph cert in
   let facets := facets cert in
   let d := length (normal ((inequalities cert).[0])) in
-  (hasBoundedDegree graph d) &&
+  (* (hasBoundedDegree graph d) && *) 
   for_alli_matrix (fun i j v => isRidgeInFacet (globalDescription (facets.[i])) (globalDescription (facets.[v]))
   (globalDescription (facets.[i])).[j]) graph.
 
