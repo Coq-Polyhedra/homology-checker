@@ -20,9 +20,6 @@ Fixpoint ifold_ {T : Type} (n : nat) (f : int -> T -> T) (i M : int) (stopCondit
 Definition ifold {T : Type} (f : int -> T -> T) (i : int) (x : T) :=
   (ifold_ Uint63.size f 0 i (fun _ _ => false) x).2.
 
-Definition ifold_from {T : Type} (f : int -> T -> T) (k : int) (i : int) (x : T) :=
-  (ifold_ Uint63.size f k i (fun _ _ => false) x).2.
-
 Definition ifold_from_until {T : Type} (f : int -> T -> T) (k : int) (i : int) (stopCondition: int -> T -> bool) (x : T) :=
   (ifold_ Uint63.size f k i stopCondition x).2.
 
@@ -35,12 +32,6 @@ Definition fold {T A : Type} (f : T -> A -> A) (a : array T) (x0 : A) :=
 
 Definition foldi {T A : Type} (f : int -> T -> A -> A) (a : array T) (x0 : A) :=
   ifold (fun i acc => f i a.[i] acc) (length a) x0.
-
-Definition fold_from {T A : Type} (f : T -> A -> A) (a : array T) (k : int) (x0 : A) :=
-  ifold_from (fun i acc => f a.[i] acc) k (length a) x0.
-
-Definition foldi_from {T A : Type} (f : int -> T -> A -> A) (a : array T) (k : int) (x0 : A) :=
-  ifold_from (fun i acc => f i a.[i] acc) k (length a) x0.
 
 Definition fold_from_until {T A : Type} (f : T -> A -> A) (a : array T) (k : int) (stopCondition : int -> A -> bool) (x0 : A) :=
   ifold_from_until (fun i acc => f a.[i] acc) k (length a) stopCondition x0.
@@ -65,23 +56,14 @@ Definition fold_alt {T A : Type} (f_in f_notin : T -> A -> A) (s : array T) (not
     ) s (x, 0%uint63) in
     res.1.
 
-Definition for_alli {T : Type} (f : int -> T -> bool) (a : array T) :=
-  foldi (fun i x acc => acc && f i x) a true.
-
-Definition for_all_compose {A B : Type} (f : B -> bool) (g : A -> B) (a : array A) :=
-  fold_compose (fun x acc => acc && f x) g a true.
-
-Definition for_alli_compose {A B : Type} (f : int -> B -> bool) (g : A -> B) (a : array A) :=
-  foldi_compose (fun i x acc => acc && (f i x)) g a true.
-
-Definition for_all2 {T1 T2 : Type} (f : T1 -> T2 -> bool) (a : array T1) (b : array T2) :=
-  fold2 (fun x y acc => acc && f x y) a b true.
-
 Definition for_all {T : Type} (f : T -> bool) (a : array T) :=
   fold (fun x acc => acc && f x) a true.
 
-Definition for_all_alt {T : Type} (f_in f_notin : T -> bool) (s : array T) (notin : array int) :=
-  fold_alt (fun x acc => f_in x && acc) (fun x acc => f_notin x && acc) s notin true.
+Definition for_alli {T : Type} (f : int -> T -> bool) (a : array T) :=
+  foldi (fun i x acc => acc && f i x) a true.
+
+Definition for_all2 {T1 T2 : Type} (f : T1 -> T2 -> bool) (a : array T1) (b : array T2) :=
+  fold2 (fun x y acc => acc && f x y) a b true.
 
 Definition for_all_matrix {T : Type} (f : T -> bool) (a : array (array T)) : bool :=
   for_all (for_all f) a.
@@ -89,11 +71,20 @@ Definition for_all_matrix {T : Type} (f : T -> bool) (a : array (array T)) : boo
 Definition for_alli_matrix {T : Type} (f : int -> int -> T -> bool) (a : array (array T)) : bool :=
   for_alli (fun i _ => for_alli (f i) a.[i]) a.
 
-Definition existi {T : Type} (f : int -> T -> bool) (a : array T) :=
-  foldi (fun i x acc => acc || f i x) a false.
+Definition for_all_compose {A B : Type} (f : B -> bool) (g : A -> B) (a : array A) :=
+  fold_compose (fun x acc => acc && f x) g a true.
+
+Definition for_alli_compose {A B : Type} (f : int -> B -> bool) (g : A -> B) (a : array A) :=
+  foldi_compose (fun i x acc => acc && (f i x)) g a true.
+
+Definition for_all_alt {T : Type} (f_in f_notin : T -> bool) (s : array T) (notin : array int) :=
+  fold_alt (fun x acc => f_in x && acc) (fun x acc => f_notin x && acc) s notin true.
 
 Definition exist {T : Type} (f : T -> bool) (a : array T) :=
   fold_from_until (fun x acc => acc || f x) a 0 (fun _ acc => acc) false.
+
+Definition existi {T : Type} (f : int -> T -> bool) (a : array T) :=
+  foldi_from_until (fun i x acc => acc || f i x) a 0 (fun _ acc => acc) false.
 
 Definition mem {T : Type} (eqT : T -> T -> bool) (a : array T) (x : T) : bool :=
   exist (fun y => eqT x y) a.
@@ -112,35 +103,18 @@ Definition mem_sorted {T : Type} (ltT : T -> T -> bool) (a : array T) (x : T) : 
   | Some b => b
   end. 
 
-Definition find_from {T : Type} (eqT : T -> T -> bool) (a : array T) (x : T) (k : int) : option int :=
-  foldi_from (fun i _ acc => if acc is Some _ then acc
-                         else (if (eqT x a.[i]) then Some(i) else None)) a k None.
-
 Definition find_from_until {T : Type} (eqT : T -> T -> bool) (a : array T) (x : T) (k : int) : option int :=
   foldi_from_until (fun i _ acc => if (eqT x a.[i]) then Some(i) else None) a k (fun i x => (if x is Some _ then true else false)) None.      
 
 Definition eqbArray {T : Type} (eqT : T -> T -> bool) (a b : array T) : bool :=
   for_all2 eqT a b.
 
-(* We define a strict lexicographic order on arrays. *)
-Definition isLtWitness {T : Type} (eqT : T -> T -> bool) (ltT : T -> T -> bool) (a b : array T) (i : int) : bool :=
-  (for_alli (fun j y => (i <=? j)%uint63 || eqT y b.[j]) a) && ltT a.[i] b.[i].
-
 Definition ltbArray {T : Type} (eqT : T -> T -> bool) (ltT : T -> T -> bool) (a b : array T) : bool :=
   (((length a) <? (length b))%uint63) || 
-  ((((length a) =? (length b))%uint63) && existi (fun i _ => isLtWitness eqT ltT a b i) a).
-
-Definition countOccurences {T: Type} (eqT : T -> T -> bool) (a : array T) (x : T) : int :=
-  fold (fun y acc => if eqT x y then (acc + 1)%uint63 else acc) a 0%uint63.
-
-Definition isUnique {T : Type} (eqT : T -> T -> bool) (a : array T) (x : T) : bool := 
-  ((countOccurences eqT a x) <=? 1)%uint63.
-
-(* For more efficiency, we could iterate through a, count and store the number of occurences of
-each element in a dictionary. *)
-
-Definition isDuplicateFree {T : Type} (eqT : T -> T -> bool) (a : array T) : bool :=
-  for_all (isUnique eqT a) a.
+  ((((length a) =? (length b))%uint63) && ~~((length a) =? 0)%uint63 &&
+  foldi_from_until (fun i x acc => if ((i =? (length a)-1)%uint63 && (eqT a.[i] b.[i])) then false
+                                   else (if (ltT a.[i] b.[i]) || (eqT a.[i] b.[i]) then true && acc
+                                         else false)) a 0 (fun i acc => acc && (ltT a.[i] b.[i])) true).
 
 Definition compareConsecutive {T : Type} (ltT : T -> T -> bool) (a : array T) (i : int) : bool :=
   ltT (a.[i]) (a.[(i+1)%uint63]). 
@@ -157,44 +131,8 @@ Definition allInRange {T : Type} (leT : T -> T -> bool) (m M : T) (a : array T) 
 Definition hasLength {T : Type} (k : int) (a : array T) : bool :=
   (length a =? k)%uint63.
 
-Definition isEmpty {T : Type} (a : array T) : bool :=
-  hasLength 0%uint63 a.
-
 Definition isValidIndex {T : Type} (a : array T) (x : int) : bool :=
   inRange Uint63.leb 0%uint63 (length a - 1)%uint63 x.
-
-Definition areComposableSimpleArray {T : Type} (a : array int) (b : array T) : bool :=
-  for_all (isValidIndex b) a.
-
-Definition isValidPairIndex {T : Type} (a : array (array T)) (c : int*int) : bool :=
-  (isValidIndex a (c.1)) && (isValidIndex a.[c.1] (c.2)).
-
-Definition areComposablePairArray {T : Type} (a : array (int*int)) (b : array (array T)) : bool :=
-  for_all (isValidPairIndex b) a.
-
-Definition areComposableMatrix {T : Type} (a : array (array int)) (b : array T) : bool :=
-  for_all_matrix (isValidIndex b) a.
-
-Definition isInverseSimpleArrayAtIndex (a : array int) (b : array int) (i : int) : bool :=
-  (b.[a.[i]] =? i)%uint63.
-
-(* The function is not defined for all a and b and must be used together with areComposableSimpleArray *) 
-Definition isInverseSimpleArray (a : array int) (b: array int) :=
-  for_alli (fun i _ => isInverseSimpleArrayAtIndex a b i) a.
-
-Definition isInversePairArrayAtIndex (a : array (int*int)) (b : array (array int)) (i : int) : bool :=
-  (b.[a.[i].1].[a.[i].2] =? i)%uint63.
-
-(* The function is not defined for all a and b and must be used together with areComposablePairArray *) 
-Definition isInversePairArray (a : array (int*int)) (b : array (array int)) : bool :=
-  for_alli (fun i _ => isInversePairArrayAtIndex a b i) a.
-
-Definition isInverseMatrixAtIndex (a : array (array int)) (b: array (int*int)) (i j : int) : bool :=
-  ((b.[a.[i].[j]]).1 =? i)%uint63 && ((b.[a.[i].[j]]).2 =? j)%uint63.
-
-(* The function is not defined for all a and b and must be used together with areComposableMatrix *) 
-Definition isInverseMatrix (a : array (array int)) (b : array (int*int)) : bool :=
-  for_alli_matrix (fun i j _ => isInverseMatrixAtIndex a b i j) a.
 
 End Array.
 
@@ -213,7 +151,7 @@ Definition isUndirected (g : Graph) :=
   for_alli (fun i _ => isLocallyUndirected g i) g. 
 
 Definition hasSimpleEdges (g : Graph) := 
-  for_all (isDuplicateFree Uint63.eqb) g.
+  for_all (isStrictlySorted Uint63.ltb) g.
 
 Definition hasLocallyNoLoop (g : Graph) (x : int) :=
   negb (mem (Uint63.eqb) g.[x] x).
@@ -224,8 +162,8 @@ Definition hasNoLoops (g : Graph) :=
 Definition isSimpleGraph (g : Graph) :=
   (hasSimpleEdges g) && (hasNoLoops g).
 
-Definition isRegular (g : Graph) (k : int) := 
-  for_all (hasLength k) g.
+Definition hasBoundedDegree (g : Graph) (k : int) := 
+  for_all (fun x => ((length x) <=? k)%uint63) g.
 
 End Graph.
 
@@ -408,8 +346,6 @@ Definition areLocalFacetSetsWellConstructed (cert : Certificate) :=
   (forAllLocalFacets (isStrictlySorted Uint63.ltb) cert)
   && (forAlliLocalFacets (fun i j facet => (allInRange Uint63.leb (0%uint63) (length (activeSet vertices.[i])-1)%uint63) facet) cert).
 
-(* We should use the areComposable_functions. *)
-
 Definition isLocalFacetIndexingWellConstructed (cert : Certificate) :=
   let nbFacets := length (facets cert) in
   forAllFacetIndices (inRange Uint63.leb 0%uint63 (nbFacets-1)%uint63) cert.
@@ -428,7 +364,8 @@ Definition isFacetLabelingWellConstructed (cert : Certificate) :=
 Definition isGraphWellConstructed (cert : Certificate) :=
   let graph := graph cert in
   let nbFacets := length (facets cert) in
-  (length graph =? nbFacets)%uint63 && (for_all_matrix (isVertex graph) graph).
+  (length graph =? nbFacets)%uint63 && (for_all_matrix (isVertex graph) graph) &&
+  (hasNoLoops graph).
   
 Definition areActiveSetsUnique (cert : Certificate) :=
   let vertices := vertices cert in
@@ -438,18 +375,12 @@ Definition areFacetsUnique (cert : Certificate) :=
   let facets := facets cert in
   isStrictlySorted (fun f1 f2 => (ltbArray Uint63.eqb Uint63.ltb) (globalDescription f1) (globalDescription f2)) facets.
 
-Definition isUndirectedSimpleGraph (cert : Certificate) :=
-  let graph := graph cert in
-  (isUndirected graph) && (hasNoLoops graph).
+Definition graphIsUndirected (cert : Certificate) :=
+  let graph := graph cert in (isUndirected graph).
 
-Definition allFacetsHaveCardinality (cert : Certificate) :=
-  let d := length (normal ((inequalities cert).[0])) in
+Definition facetsAreDSimplices (cert : Certificate) :=
+  let d := length (normal ((inequalities cert).[0])) in 
   forAllGlobalFacets (hasLength d) cert.
-
-Definition isGraphDRegular (cert : Certificate) :=
-  let graph := graph cert in
-  let d := length (normal ((inequalities cert).[0])) in
-  isRegular graph d.
 
 Definition isFacetLabelingBijective (cert : Certificate) :=
   let vertices := vertices cert in
@@ -491,33 +422,18 @@ Definition isRidgeInFacet (facet1 facet2 : GlobalDescription) (v : int) : bool :
   let res := foldi (fun i x acc => if (x =? v)%uint63 then acc
                                    else match acc.2 with  
                                    |None => (false,None)
-                                   |Some i => if (find_from Uint63.eqb facet2 x i) is (Some j) 
-                                              then (acc.1 && true, Some j)
-                                              else (false, None) end) facet1 (true,Some (0%uint63))
-  in res.1.
-
-Definition isRidgeInFacetFaster (facet1 facet2 : GlobalDescription) (v : int) : bool :=
-  let res := foldi (fun i x acc => if (x =? v)%uint63 then acc
-                                   else match acc.2 with  
-                                   |None => (false,None)
                                    |Some i => if (find_from_until Uint63.eqb facet2 x i) is (Some j) 
                                               then (acc.1 && true, Some j)
                                               else (false, None) end) facet1 (true,Some (0%uint63))
   in res.1.
   
-Definition adjacency_check (cert : Certificate) :=
+Definition graph_check (cert : Certificate) :=
   let graph := graph cert in
   let facets := facets cert in
-  for_alli_matrix (fun i j v => isRidgeInFacetFaster (globalDescription (facets.[i])) (globalDescription (facets.[v]))
+  let d := length (normal ((inequalities cert).[0])) in
+  (hasBoundedDegree graph d) &&
+  for_alli_matrix (fun i j v => isRidgeInFacet (globalDescription (facets.[i])) (globalDescription (facets.[v]))
   (globalDescription (facets.[i])).[j]) graph.
-
-(*
-Definition adjacency_check (cert : Certificate) :=
-  let graph := graph cert in
-  let facets := facets cert in
-  for_alli_matrix (fun i j v => for_all (fun x => (x =? (globalDescription (facets.[i])).[j])%uint63
-  || (mem_sorted Uint63.eqb (globalDescription facets.[v]) x)) (globalDescription (facets.[i]))) graph.
-*)
 
 Definition check_certificate (cert : Certificate) :=
   (areActiveSetsWellConstructed cert)
@@ -527,13 +443,12 @@ Definition check_certificate (cert : Certificate) :=
   && (isGraphWellConstructed cert)
   && (areActiveSetsUnique cert)
   && (areFacetsUnique cert)
-  && (isUndirectedSimpleGraph cert)
-  && (allFacetsHaveCardinality cert)
-  && (isGraphDRegular cert)
+  && (graphIsUndirected cert)
+  && (facetsAreDSimplices cert)
   && (isFacetLabelingBijective cert)
   && (isFacetIndexingBijective cert)
   && (feasibility_check cert)
-  && (adjacency_check cert). 
+  && (graph_check cert). 
 
 Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
 
@@ -545,17 +460,14 @@ Definition commodity_checks (cert : Certificate) :=
   && (isGraphWellConstructed cert)
   && (areActiveSetsUnique cert)
   && (areFacetsUnique cert)
-  && (isUndirectedSimpleGraph cert)
-  && (allFacetsHaveCardinality cert)
-  && (isGraphDRegular cert)
+  && (graphIsUndirected cert)
+  && (facetsAreDSimplices cert)
   && (isFacetLabelingBijective cert)
   && (isFacetIndexingBijective cert).
 
 Section Benchmark.
 
 Let cert := build_cert cert.
-(*Time Eval vm_compute in 
-  commodity_checks cert.*)
 Time Eval vm_compute in 
   areActiveSetsWellConstructed cert.
 Time Eval vm_compute in 
@@ -571,11 +483,9 @@ Time Eval vm_compute in
 Time Eval vm_compute in 
   areFacetsUnique cert.
 Time Eval vm_compute in 
-  isUndirectedSimpleGraph cert.
+  graphIsUndirected cert.
 Time Eval vm_compute in 
-  allFacetsHaveCardinality cert.
-Time Eval vm_compute in 
-  isGraphDRegular cert.
+  facetsAreDSimplices cert.
 Time Eval vm_compute in 
   isFacetLabelingBijective cert.
 Time Eval vm_compute in 
@@ -583,7 +493,7 @@ Time Eval vm_compute in
 Time Eval vm_compute in
   feasibility_check cert.
 Time Eval vm_compute in
-  adjacency_check cert.
+  graph_check cert.
 
 
 End Benchmark.
