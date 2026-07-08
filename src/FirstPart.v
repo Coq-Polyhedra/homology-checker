@@ -469,7 +469,7 @@ Definition graph_check (cert : Certificate) :=
   let graph := graph cert in
   let facets := facets cert in
   let d := length (normal ((inequalities cert).[0])) in
-  (* (hasBoundedDegree graph d) && *) 
+  (hasBoundedDegree graph d) &&  
   for_alli_matrix (fun i j v => isRidgeInFacet (globalDescription (facets.[i])) (globalDescription (facets.[v]))
   (globalDescription (facets.[i])).[j]) graph.
 
