@@ -497,6 +497,35 @@ Qed.
 
 End RidgesEvenIncidence.
 
+Section HPolyBase.
+
+Context (d : nat) (R : realFieldType).
+
+Definition base_hpoly (hp : 'hpoly[R]_d) : base_t[R,d] :=
+  [fset BaseElt (trmx (row i hp.`A), hp.`b i ord0) | i : 'I_(hp.`c)]%fset.
+
+Lemma base_hpolyP (hP : 'hpoly[R]_d) : '[hP] = 'P(base_hpoly hP)%PH.
+Proof.
+    apply/poly_eqP => x. apply/idP/idP.
+    - intro HxInHP. rewrite/base_hpoly. rewrite in_poly_of_base.
+    apply/forallP. intro x0. rewrite polyhedron.in_hs.
+    have Hx0 := valP x0. move/imfsetP in Hx0. case:Hx0 => i Hi Hx0.
+    simpl in Hi. rewrite Hx0. simpl. rewrite mem_mk_poly in HxInHP.
+    rewrite in_hpolyE in HxInHP. rewrite/lev in HxInHP.
+    move/forallP in HxInHP. have HxInHPi := HxInHP i.
+    rewrite row_vdot. exact HxInHPi.
+    - intro HxInPb. rewrite/base_hpoly in HxInPb. rewrite in_poly_of_base 
+    in HxInPb. move/forallP in HxInPb. rewrite mem_mk_poly. rewrite in_hpolyE.
+    rewrite/lev. apply/forallP. intro i. 
+    have Hi : [< ((row i hP.`A)^T)%R, hP.`b i ord0 >] \in [fset [< ((row j hP.`A)^T)%R, 
+    hP.`b j ord0 >] | j in 'I_hP.`c].
+    apply/imfsetP. exists i. simpl. rewrite inE. trivial. reflexivity.
+    have Hhs := HxInPb (Sub [< ((row i hP.`A)^T)%R, hP.`b i ord0 >] Hi).
+    rewrite polyhedron.in_hs in Hhs. simpl in Hhs. rewrite -row_vdot. exact Hhs.
+Qed.
+
+End HPolyBase.
+
 Section NormalCones.
 
 Context (d : nat) (R : realFieldType).
@@ -508,10 +537,10 @@ Definition normalCone (hP : 'hpoly[R]_d) (x : 'cV[R]_d) :=
   cone [fset normal i | i : 'I_(hP.`c) & '[normal i , x] == offset i]%fset.
 
 Lemma normalConeP (hP : 'hpoly[R]_d) (x c : 'cV[R]_d) :
-    reflect ((x \in hP) ==> (x \in argmin '[hP] c)) (c \in (normalCone hP x)).
+    (x \in hP) -> reflect (x \in argmin '[hP] c) (c \in (normalCone hP x)).
 Proof.
-    apply: (iffP idP). 
-    - intro HcInC. apply/implyP. intro HxInP. rewrite in_argmin. 
+    intro HxInP. apply: (iffP idP).
+    - intro HcInC. rewrite in_argmin. 
       apply/andP. split.
       - rewrite mem_mk_poly. exact HxInP.
       - rewrite poly_subset_mono. apply/poly_subsetP.
@@ -533,8 +562,90 @@ Proof.
         have Hwaipos : ai \in finsupp w = (0 < w ai)%R.
         apply: conic_finsuppE. exact Hwcon.
         rewrite Hwaipos in Hai. exact Hai.
-    - Admitted.
- 
+    - intro HxInMin. rewrite/normalCone. simpl. 
+      apply/in_coneP. 
+      have Hbound : polyhedron.bounded 'P(base_hpoly d R hP)%PH c.
+      - rewrite -base_hpolyP. apply/boundedP. exists x. rewrite mem_mk_poly.
+        exact HxInP. apply/poly_subsetP. rewrite in_argmin in HxInMin. move/andP in HxInMin.
+        case:HxInMin => _ HPSubHs. move=> y Hy. rewrite -mem_polyE in Hy.
+        rewrite in_hs. simpl. move/poly_subsetP in HPSubHs. have HyInHS := 
+        (HPSubHs y) Hy. rewrite -mem_polyE in HyInHS. rewrite (snd (polyhedron.in_hs)) in 
+        HyInHS. exact HyInHS.
+      have Hdual := dual_opt_sol Hbound. case:Hdual => w HwSubBase HCombine.
+      have HNonEmpt : ([ poly0 ] `<` 'P^=(base_hpoly d R hP; finsupp w))%PH.
+      have HxInPEq : (x \in 'P^=(base_hpoly d R hP; finsupp w))%PH.
+      - rewrite -mem_mk_poly in HxInP. rewrite base_hpolyP in HxInP.
+        apply/(compl_slack_cond HwSubBase HxInP). 
+        have HArgSub := argmin_opt_value Hbound. move/poly_subsetP in HArgSub.
+        rewrite -HCombine in HArgSub. rewrite base_hpolyP in HxInMin.
+        rewrite mem_polyE in HxInMin. have HxInComb := (HArgSub x HxInMin).
+        rewrite -mem_polyE in HxInComb. rewrite (affE x) in HxInComb. exact HxInComb.
+      apply/proper0P. exists x. exact HxInPEq.
+      have HArgEq := (dual_sol_argmin HwSubBase HNonEmpt).
+      rewrite base_hpolyP in HxInMin. rewrite HCombine in HArgEq.
+      simpl in HArgEq. rewrite HArgEq in HxInMin. Locate "lrel". Locate "base_t". 
+      pose p : lrel -> 'cV[R]_d := 
+        fun e => let: BaseElt y := e in y.1.
+      pose S0 : {fset 'cV[R]_d} :=
+        [fset p e | e in finsupp w].
+      pose w0_fun : {fsfun 'cV[R]_d ~> R} :=
+        [fsfun a in S0 => \big[+%R/0%R]_(e <- enum_fset (finsupp w) 
+        | p e == a) (val w e)].
+      have Hw0con : conic w0_fun.
+      - apply/conicP. intros x0 Hx0Inw0. rewrite /w0_fun in Hx0Inw0.
+        have HfinSub : finsupp [fsfun a in S0 => (\sum_(e <- finsupp w | 
+        p e == a) val w e)%R] `<=`S0.
+        - intro useless. apply/finsupp_sub.
+        have HfinSubb := HfinSub 0%R. move/fsubsetP in HfinSubb. 
+        have Hx0InS0 := (HfinSubb x0 Hx0Inw0). rewrite/w0_fun. simpl. 
+        rewrite fsfunE. rewrite Hx0InS0. rewrite big_seq_cond. 
+        rewrite sumr_ge0. trivial. intros i Hi. move/andP in Hi.
+        case: Hi => HiInFs _. have Hwconic := valP w. simpl in Hwconic.
+        move/conicP in Hwconic. have HiInCon := (Hwconic i HiInFs). exact HiInCon.
+      pose w0 : {conic 'cV[R]_d ~> R} := Sub w0_fun Hw0con. exists w0.
+      rewrite /w0. simpl. rewrite /w0_fun. apply/fsubsetP. move=> x0 Hx0Inw0.
+      apply/imfsetP. have HfinSub : finsupp [fsfun a in S0 => (\sum_(e <- finsupp w | 
+      p e == a) val w e)%R] `<=`S0.
+      - intro useless. apply/finsupp_sub.
+      have HfinSubb := HfinSub 0%R. move/fsubsetP in HfinSubb. have Hx0InS0 := (HfinSubb 
+      x0 Hx0Inw0). simpl. rewrite /S0 in Hx0InS0. move/imfsetP in Hx0InS0.
+      case: Hx0InS0 => y Hy Hx0y. simpl in Hy. move/fsubsetP in HwSubBase.
+      have HyInBase := (HwSubBase y Hy). rewrite/base_hpoly in HyInBase.
+      move/imfsetP in HyInBase. case: HyInBase => i Hi Hyi. exists i.
+      rewrite inE. simpl in Hi. rewrite in_polyEq in HxInMin. move/andP in HxInMin.
+      case: HxInMin => HxInHp HxInBase. move/forallP in HxInHp. 
+      have Hxy := HxInHp (Sub y Hy). simpl in Hxy. rewrite Hyi in Hxy.
+      rewrite (snd in_hp) in Hxy. exact Hxy.
+      rewrite Hyi in Hx0y. rewrite /p in Hx0y. simpl in Hx0y. exact Hx0y.
+      rewrite /w0. rewrite /w0_fun. simpl. simpl in HCombine. 
+      have HcComb : c = (combine w).1. rewrite HCombine. simpl. reflexivity.
+      rewrite HcComb. rewrite combineE. rewrite combineE.
+      have Hproj : (\sum_x0 w (fsval x0) *: fsval x0)%R.1 = (\sum_x0 w (fsval x0) *: (fsval x0).1)%R.
+      - intros f f0. Admitted.
+        
+
+Locate "[ fsfun _ => _ with _ ]".
+Locate "[ fsfun _ => _ with support _ ]".
+Locate "[ fsfun _ in _ => _ ]".
+Locate "fsfun".
+
+pose w0_fun : {fsfun 'cV[R]_d ~> R} :=
+  [fsfun a has S0 =>
+     \sum_(e <- enum_fset (finsupp w) | lfst e == a) (val w) e].
+
+
+
+      pose base_fst (e : base_elt_type d) : 'cV[R]_d :=
+         let: BaseElt p := e in p.1.
+      pose S0 : {fset 'cV[R]_d} :=
+        [fset base_fst e | e in finsupp w].
+      pose w0_fun : {fsfun 'cV[R]_d ~> R} :=
+        [fsfun a in S0 => \sum_(e : be_choiceType R d |
+        (e \in finsupp w) && (base_fst e == a)) (val w) e].
+
+      exists (w.1).
+
+
 End NormalCones.
 
 Section PointedCones.
