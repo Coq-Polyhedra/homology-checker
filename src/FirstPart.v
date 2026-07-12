@@ -304,12 +304,6 @@ Definition activeSet : Vertex -> ActiveSet := fst.
 Definition point : Vertex -> Point := snd.
 Definition description : Facet -> Description := fst.
 Definition mapping : Facet -> Mapping := snd.
-(*
-Definition simplexIndex : Root -> SimplexIndex := compose (compose fst fst) fst.
-Definition witnesses : Root -> Witnesses := compose (compose snd fst) fst.
-Definition scalarProducts : Root -> ScalarProducts := compose snd fst.
-Definition weights : Root -> Weights := snd. 
-*)
 Definition simplexIndex : Root -> SimplexIndex := fst.
 Definition witnesses : Root -> Witnesses := compose fst snd.
 Definition scalarProducts : Root -> ScalarProducts := compose (compose fst snd) snd.
