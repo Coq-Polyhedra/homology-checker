@@ -105,6 +105,38 @@ Definition mem_sorted {T : Type} (ltT : T -> T -> bool) (a : array T) (x : T) : 
 
 Definition find_from_until {T : Type} (eqT : T -> T -> bool) (a : array T) (x : T) (k : int) : option int :=
   foldi_from_until (fun i _ acc => if (eqT x a.[i]) then Some(i) else None) a k (fun i x => (if x is Some _ then true else false)) None. 
+
+Definition subset {t : Type} (lt_t : rel t) (a b : array t) : bool :=
+  let subset_step :=
+    fun _ '(i, j, ok) =>
+      if (i <? length a)%uint63 then
+        if (j <? length b)%uint63 then
+          if lt_t a.[i] b.[j] then
+            (* a[i] < b[j], so a[i] is missing from b *)
+            (i, j, false)
+          else if lt_t b.[j] a.[i] then
+            (* b[j] < a[i], advance in b *)
+            (i, (j + 1)%uint63, true)
+          else
+            (* a[i] = b[j] *)
+            ((i + 1)%uint63, (j + 1)%uint63, true)
+        else
+          (* b exhausted while a still has elements *)
+          (i, j, false)
+      else
+        (* all elements of a have been matched *)
+        (i, j, true)
+  in
+  let res :=
+    ifold (*_until
+      (length a + length b)%uint63
+      (fun _ '(i, _, ok) =>
+         ~~ ok || ~~ (i <? length a)%uint63)*)
+      subset_step
+      (length a + length b)%uint63
+      (0%uint63, 0%uint63, true)
+  in
+  res.2.
   
 Definition diff {t : Type} (lt_t : rel t) (a b : array t) : seq t :=
   let diff_step :=
@@ -126,6 +158,12 @@ Definition diff {t : Type} (lt_t : rel t) (a b : array t) : seq t :=
       (fun _ ijacc => diff_step ijacc)
       (length a + length b)%uint63
       (0%uint63, 0%uint63, [::])).2.
+
+Definition count {T : Type} (P : T -> bool) (a : array T) :=
+  fold (fun x acc => if P x then (acc + 1)%uint63 else acc) a 0%uint63.
+
+Definition counti {T : Type} (P : int -> T -> bool) (a : array T) :=
+  foldi (fun i x acc => if P i x then (acc + 1)%uint63 else acc) a 0%uint63.
 
 Definition eqbArray {T : Type} (eqT : T -> T -> bool) (a b : array T) : bool :=
   for_all2 eqT a b.
@@ -212,6 +250,9 @@ Section BigZ.
 Definition array_bigZ_dot (x y : array bigZ) : bigZ :=
   fold2 (fun x y res=> BigZ.add res (BigZ.mul x y)) x y 0%bigZ.
 
+Definition sparse_array_bigZ_dot (a : array (int * bigZ)) (b : array bigZ) : bigZ :=
+  fold (fun x acc => BigZ.add acc (BigZ.mul b.[x.1] x.2)) a 0%bigZ.
+
 End BigZ.
 
 Section Types.
@@ -221,28 +262,34 @@ Definition Normal := array bigZ.
 Definition Inequality := (Normal * Bound)%type.
 Definition Inequalities := array Inequality.
 
-Definition FacetIndex := int.
-Definition LocalDescription := array int. 
-Definition LocalFacet := (LocalDescription * FacetIndex)%type.
-Definition LocalFacets := array LocalFacet.
 Definition CommonDenominator := bigN. 
 Definition Numerators := array bigZ. 
 Definition Point := (Numerators * CommonDenominator)%type.
 Definition ActiveSet := array int.
-Definition Vertex := (ActiveSet * (Point * LocalFacets))%type.
+Definition Vertex := (ActiveSet * Point)%type.
 Definition Vertices := array Vertex.
 
-Definition FacetLabel := (int * int)%type.
-Definition GlobalDescription := array int.
-Definition GlobalFacet := (GlobalDescription * FacetLabel)%type.
-Definition GlobalFacets := array GlobalFacet.
+Definition Mapping := int.
+Definition Description := array int. 
+Definition Facet := (Description * Mapping)%type.
+Definition Facets := array Facet.
+
+Definition SimplexIndex := int.
+Definition Witness := array bigZ.
+Definition Witnesses := array Witness.
+Definition ScalarProducts := array (array bigZ).
+Definition Weight := array (int * bigZ). (* sparse representation *)
+Definition Weights := array Weight.
+Definition Root := (SimplexIndex * (Witnesses * (ScalarProducts * Weights)))%type. 
+
 
 Record Certificate := {
   inequalities : Inequalities;
   vertices : Vertices;
   graph : Graph;
-  facets : GlobalFacets;
-  root : int * (array int * (array (array bigQ) * array int))
+  facets : Facets;
+  geomGraph : Graph;
+  root : Root
 }.
 
 End Types.
@@ -251,161 +298,79 @@ Section Projectors.
 
 Definition normal : Inequality -> Normal := fst.
 Definition bound : Inequality -> Bound := snd.
-Definition localDescription : LocalFacet -> LocalDescription := fst.
-Definition facetIndex : LocalFacet -> FacetIndex := snd.
 Definition numerators : Point -> Numerators := fst.
 Definition commonDenominator : Point -> CommonDenominator := snd.
 Definition activeSet : Vertex -> ActiveSet := fst.
-Definition point : Vertex -> Point := compose fst snd.
-Definition localFacets : Vertex -> LocalFacets := compose snd snd.
-Definition globalDescription : GlobalFacet -> GlobalDescription := fst.
-Definition facetLabel : GlobalFacet -> FacetLabel := snd.
+Definition point : Vertex -> Point := snd.
+Definition description : Facet -> Description := fst.
+Definition mapping : Facet -> Mapping := snd.
+(*
+Definition simplexIndex : Root -> SimplexIndex := compose (compose fst fst) fst.
+Definition witnesses : Root -> Witnesses := compose (compose snd fst) fst.
+Definition scalarProducts : Root -> ScalarProducts := compose snd fst.
+Definition weights : Root -> Weights := snd. 
+*)
+Definition simplexIndex : Root -> SimplexIndex := fst.
+Definition witnesses : Root -> Witnesses := compose fst snd.
+Definition scalarProducts : Root -> ScalarProducts := compose (compose fst snd) snd.
+Definition weights : Root -> Weights := compose (compose snd snd) snd.
 
 End Projectors.
 
-Definition build_cert cert := 
-  let inequalities := cert.1 in 
-  let vertices := cert.2.1 in
-  let graph := cert.2.2.1.1 in
-  let facets := cert.2.2.1.2 in
-  let root := cert.2.2.2 in
-  {| inequalities := inequalities; vertices := vertices; graph := graph; facets := facets; root := root |}.
-
-Section ActiveSets.
-
-Definition foldActiveSets {T : Type} (f : ActiveSet -> T -> T) (cert : Certificate) (x0 : T) :=
-  let vertices := vertices cert in
-  fold_compose f activeSet vertices x0.
-
-Definition foldiActiveSets {T : Type} (f : int -> ActiveSet -> T -> T) (cert : Certificate) (x0 : T) :=
-  let vertices := vertices cert in
-  foldi_compose f activeSet vertices x0.
-
-Definition forAllActiveSets (f : ActiveSet -> bool) (cert : Certificate) :=
-  foldActiveSets (fun x acc => acc && f x) cert true.
-
-Definition forAlliActiveSets (f : int -> ActiveSet -> bool) (cert : Certificate) :=
-  foldiActiveSets (fun i x acc => acc && f i x) cert true.
-
-End ActiveSets.
-
-Section LocalFacetsSets.
-
-Definition foldLocalFacetsSets {T : Type} (f : LocalFacets -> T -> T) (cert : Certificate) (x0 : T) :=
-  let vertices := vertices cert in
-  fold_compose f localFacets vertices x0.
-
-Definition foldiLocalFacetsSets {T : Type} (f : int -> LocalFacets -> T -> T) (cert : Certificate) (x0 : T) :=
-  let vertices := vertices cert in
-  foldi_compose f localFacets vertices x0.
-
-Definition forAllLocalFacetsSets (f : LocalFacets -> bool) (cert : Certificate) :=
-  foldLocalFacetsSets (fun x acc => acc && f x) cert true.
-
-Definition forAlliLocalFacetsSets (f : int -> LocalFacets -> bool) (cert : Certificate) :=
-  foldiLocalFacetsSets (fun i x acc => acc && f i x) cert true.
-
-End LocalFacetsSets.
-
-Section LocalFacets.
-
-Definition foldLocalFacets {T : Type} (f : LocalDescription -> T -> T) (cert : Certificate) (x0 : T) :=
-  foldLocalFacetsSets (fun lcl_facets acc => fold_compose f localDescription lcl_facets acc) cert x0.
-
-Definition foldiLocalFacets {T : Type} (f : int -> int -> LocalDescription -> T -> T) (cert : Certificate) (x0 : T) :=
-  foldiLocalFacetsSets (fun i lcl_facets acc => foldi_compose (f i) localDescription lcl_facets acc) cert x0.
-
-Definition forAllLocalFacets (f : LocalDescription -> bool) (cert : Certificate) :=
-  foldLocalFacets (fun x acc => acc && f x) cert true.
-
-Definition forAlliLocalFacets (f : int -> int -> LocalDescription -> bool) (cert : Certificate) :=
-  foldiLocalFacets (fun i j x acc => acc && f i j x) cert true.
-
-End LocalFacets.
-
-Section FacetIndices.
-
-Definition foldFacetIndices {T : Type} (f : FacetIndex -> T -> T) (cert : Certificate) (x0 : T) :=
-  foldLocalFacetsSets (fun lcl_facets acc => fold_compose f facetIndex lcl_facets acc) cert x0.
-
-Definition foldiFacetIndices {T : Type} (f : int -> int -> FacetIndex -> T -> T) (cert : Certificate) (x0 : T) :=
-  foldiLocalFacetsSets (fun i lcl_facets acc => foldi_compose (f i) facetIndex lcl_facets acc) cert x0.
-
-Definition forAllFacetIndices (f : FacetIndex -> bool) (cert : Certificate) :=
-  foldFacetIndices (fun x acc => acc && f x) cert true.
-
-Definition forAlliFacetIndices (f : int -> int -> FacetIndex -> bool) (cert : Certificate) :=
-  foldiFacetIndices (fun i j x acc => acc && f i j x) cert true.
-
-End FacetIndices.
-
-Section GlobalFacets.
-
-Definition foldGlobalFacets {T : Type} (f : GlobalDescription -> T -> T) (cert : Certificate) (x0 : T) :=
-  let facets := facets cert in
-  fold_compose f globalDescription facets x0.
-
-Definition foldiGlobalFacets {T : Type} (f : int -> GlobalDescription -> T -> T) (cert : Certificate) (x0 : T) :=
-  let facets := facets cert in
-  foldi_compose f globalDescription facets x0.
-
-Definition forAllGlobalFacets (f : GlobalDescription -> bool) (cert : Certificate) :=
-  foldGlobalFacets (fun x acc => acc && f x) cert true.
-
-Definition forAlliGlobalFacets (f : int -> GlobalDescription -> bool) (cert : Certificate) :=
-  foldiGlobalFacets (fun i x acc => acc && f i x) cert true.
-
-End GlobalFacets.
-
-Section FacetLabels.
-
-Definition foldFacetLabels {T : Type} (f : FacetLabel -> T -> T) (cert : Certificate) (x0 : T) :=
-  let facets := facets cert in
-  fold_compose f facetLabel facets x0.
-
-Definition foldiFacetLabels {T : Type} (f : int -> FacetLabel -> T -> T) (cert : Certificate) (x0 : T) :=
-  let facets := facets cert in
-  foldi_compose f facetLabel facets x0.
-
-Definition forAllFacetLabels (f : FacetLabel -> bool) (cert : Certificate) :=
-  foldFacetLabels (fun x acc => acc && f x) cert true.
-
-Definition forAlliFacetLabels (f : int -> FacetLabel -> bool) (cert : Certificate) :=
-  foldiFacetLabels (fun i x acc => acc && f i x) cert true.
-
-End FacetLabels.
-
-Definition areActiveSetsWellConstructed (cert : Certificate) :=
+Definition areActiveSetsWellFormed (cert : Certificate) :=
   let m := length (inequalities cert) in
   let vertices := vertices cert in
-  (forAllActiveSets (isStrictlySorted Uint63.ltb) cert)
-  && (forAllActiveSets (allInRange Uint63.leb (0%uint63) (m-1)%uint63) cert). 
-
-Definition areLocalFacetSetsWellConstructed (cert : Certificate) :=
-  let vertices := vertices cert in
-  (forAllLocalFacets (isStrictlySorted Uint63.ltb) cert)
-  && (forAlliLocalFacets (fun i j facet => (allInRange Uint63.leb (0%uint63) (length (activeSet vertices.[i])-1)%uint63) facet) cert).
-
-Definition isLocalFacetIndexingWellConstructed (cert : Certificate) :=
-  let nbFacets := length (facets cert) in
-  forAllFacetIndices (inRange Uint63.leb 0%uint63 (nbFacets-1)%uint63) cert.
-
-(* The bijection between the facets appearing in the abstract triangulations of the normal cones
-   and the set of facets represented by lbl ensures that the facets appearing in both structures
-   are exactly the same, up to a local renumbering induced by the activation sets.
-   The previous functions are sufficient to verify that the facets appearing in the labels
-   are well-constructed (no duplicates and in the right range). *)
-
-Definition isFacetLabelingWellConstructed (cert : Certificate) :=
-  let vertices := vertices cert in 
-  forAllFacetLabels (fun label => (inRange (Uint63.leb) 0%uint63 (length (vertices)-1)%uint63 label.1)
-  && (inRange (Uint63.leb) 0%uint63 (length (localFacets vertices.[label.1])-1)%uint63 label.2)) cert.
-
-Definition isGraphWellConstructed (cert : Certificate) :=
+  (for_all_compose (isStrictlySorted Uint63.ltb) activeSet vertices)
+  && (for_all_compose (allInRange Uint63.leb (0%uint63) (m-1)%uint63) activeSet vertices).
+  
+Definition isGraphWellFormed (cert : Certificate) :=
   let graph := graph cert in
   let nbFacets := length (facets cert) in
   (length graph =? nbFacets)%uint63 && (for_all_matrix (isVertex graph) graph) &&
-  (hasNoLoops graph).
+  (hasNoLoops graph) && (isUndirected graph).
+
+Definition areFacetsWellFormed (cert : Certificate) :=
+  let m := length (inequalities cert) in
+  let d := length (normal ((inequalities cert).[0])) in 
+  let facets := facets cert in
+  (for_all_compose (isStrictlySorted Uint63.ltb) description facets)
+  && (for_all_compose (allInRange Uint63.leb (0%uint63) (m-1)%uint63) description facets)
+  && (for_all_compose (hasLength d) description facets).
+
+Definition isMappingWellFormed (cert : Certificate) :=
+  let nbVertices := length (vertices cert) in
+  let facets := facets cert in
+  for_all_compose (inRange Uint63.leb (0%uint63) (nbVertices-1)%uint63) mapping facets.
+
+Definition isSimplexIndexWellFormed (cert : Certificate) :=
+  let root := root cert in
+  let nbFacets := length (facets cert) in
+  inRange Uint63.leb (0%uint63) (nbFacets-1)%uint63 (simplexIndex root).
+
+Definition areWitnessesWellFormed (cert : Certificate) :=
+  let d := length (normal ((inequalities cert).[0])) in 
+  let witnesses := (witnesses (root cert)) in
+  (length witnesses =? d)%uint63 && (for_all (hasLength d) witnesses).
+
+Definition areScalarProductsWellFormed (cert : Certificate) :=
+  let d := length (normal ((inequalities cert).[0])) in 
+  let scalarProducts := (scalarProducts (root cert)) in
+  let simplexIndex := (simplexIndex (root cert)) in
+  let vertices := vertices cert in
+  (length scalarProducts =? length (activeSet vertices.[simplexIndex]))%uint63
+  && (for_all (hasLength d) scalarProducts).
+
+Definition areWeightsWellFormed (cert : Certificate) :=
+  let d := length (normal ((inequalities cert).[0])) in 
+  let weights := weights (root cert) in
+  let simplexIndex := simplexIndex (root cert) in
+  let facets := facets cert in
+  let n := counti (fun i x => ~~(i =? simplexIndex)%uint63 && (mapping x =? 
+  mapping facets.[simplexIndex])%uint63) facets in
+  (length weights =? n)%uint63 
+  && for_all_matrix (fun w => inRange Uint63.leb (0%uint63) (d-1)%uint63 w.1 && (0 <=? w.2)%bigZ) weights 
+  && for_all (exist (fun w => (0 <? w.2)%bigZ)) weights 
+  && for_all (isStrictlySorted (fun w w' => (w.1 <? w'.1)%uint63)) weights.
   
 Definition areActiveSetsUnique (cert : Certificate) :=
   let vertices := vertices cert in
@@ -413,27 +378,7 @@ Definition areActiveSetsUnique (cert : Certificate) :=
 
 Definition areFacetsUnique (cert : Certificate) :=
   let facets := facets cert in
-  isStrictlySorted (fun f1 f2 => (ltbArray Uint63.eqb Uint63.ltb) (globalDescription f1) (globalDescription f2)) facets.
-
-Definition graphIsUndirected (cert : Certificate) :=
-  let graph := graph cert in (isUndirected graph).
-
-Definition facetsAreDSimplices (cert : Certificate) :=
-  let d := length (normal ((inequalities cert).[0])) in 
-  forAllGlobalFacets (hasLength d) cert.
-
-Definition isFacetLabelingBijective (cert : Certificate) :=
-  let vertices := vertices cert in
-  let facets := facets cert in
-  (forAlliFacetLabels (fun i label => (facetIndex (localFacets vertices.[label.1]).[label.2] =? i)%uint63) cert)
-  && (forAlliFacetIndices (fun i j index => ((facetLabel (facets.[index])).1 =? i)%uint63 && 
-  ((facetLabel (facets.[index])).2 =? j)%uint63) cert).
-
-Definition isFacetIndexingBijective (cert : Certificate) :=
-  let vertices := vertices cert in
-  let facets := facets cert in
-  forAlliFacetLabels (fun i label => eqbArray (fun x y => (x =? (activeSet vertices.[label.1]).[y])%uint63) 
-  (globalDescription facets.[i]) (localDescription (localFacets  vertices.[label.1]).[label.2])) cert.
+  isStrictlySorted (fun f1 f2 => (ltbArray Uint63.eqb Uint63.ltb) (description f1) (description f2)) facets.
 
 Definition check_ineqs (ineqs : Inequalities) (active_set : ActiveSet) (x : Point) :=
   for_all_alt 
@@ -470,68 +415,105 @@ Definition graph_check (cert : Certificate) :=
   let facets := facets cert in
   let d := length (normal ((inequalities cert).[0])) in
   (hasBoundedDegree graph d) &&  
-  for_alli_matrix (fun i j v => isRidgeInFacet (globalDescription (facets.[i])) (globalDescription (facets.[v]))
-  (globalDescription (facets.[i])).[j]) graph.
+  for_alli_matrix (fun i j v => isRidgeInFacet (description (facets.[i])) (description (facets.[v]))
+  (description (facets.[i])).[j]) graph.
+
+Definition mapping_check (cert : Certificate) :=
+  let facets := facets cert in
+  let vertices := vertices cert in
+  for_all (fun f => subset Uint63.ltb f.1 (activeSet vertices.[f.2])) facets.
+
+Definition scalarProducts_check (cert : Certificate) :=
+  let inequalities := inequalities cert in
+  let vertices := vertices cert in
+  let witnesses := witnesses (root cert) in
+  let scalarProducts := scalarProducts (root cert) in
+  let vstar := mapping (facets cert).[simplexIndex (root cert)] in 
+  for_alli_matrix (fun i j x => (x =? array_bigZ_dot (normal 
+  (inequalities.[(activeSet vertices.[vstar]).[i]])) witnesses.[j])%bigZ) scalarProducts.
+
+Definition inversibility_check (cert : Certificate) :=
+  let d := length (normal ((inequalities cert).[0])) in
+  let scalarProducts := scalarProducts (root cert) in 
+  let vstar := description (facets cert).[simplexIndex (root cert)] in 
+  ifold (fun i acc => acc && (ifold (fun j acc => acc && (if (i=?j)%uint63 then 
+  (0 <? scalarProducts.[vstar.[i]].[j])%bigZ else 
+  (0 =? scalarProducts.[vstar.[i]].[j])%bigZ)) d%uint63 true)) d%uint63 true.
+
+Definition separability_check (cert : Certificate) :=
+  let facets := facets cert in
+  let scalarProducts := scalarProducts (root cert) in
+  let weights := weights (root cert) in
+  let vstar := mapping (facets).[simplexIndex (root cert)] in 
+  let res := foldi (fun k f acc => if ~~(k =? vstar)%uint63 && (f.2 =? vstar)%uint63 then
+  (acc.1 && for_all (fun i => (sparse_array_bigZ_dot weights.[acc.2] scalarProducts.[i] <=? 0)%bigZ) f.1,
+  (acc.2 + 1)%uint63) else acc) facets (true, 0%uint63) in res.1.
 
 Definition check_certificate (cert : Certificate) :=
-  (areActiveSetsWellConstructed cert)
-  && (areLocalFacetSetsWellConstructed cert)
-  && (isLocalFacetIndexingWellConstructed cert)
-  && (isFacetLabelingWellConstructed cert)
-  && (isGraphWellConstructed cert)
+  (areActiveSetsWellFormed cert)
+  && (isGraphWellFormed cert)
+  && (areFacetsWellFormed cert)
+  && (isMappingWellFormed cert)
+  && (isSimplexIndexWellFormed cert)
+  && (areWitnessesWellFormed cert)
+  && (areScalarProductsWellFormed cert)
+  && (areWeightsWellFormed cert)
   && (areActiveSetsUnique cert)
   && (areFacetsUnique cert)
-  && (graphIsUndirected cert)
-  && (facetsAreDSimplices cert)
-  && (isFacetLabelingBijective cert)
-  && (isFacetIndexingBijective cert)
   && (feasibility_check cert)
-  && (graph_check cert). 
-
-Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
-
-Definition commodity_checks (cert : Certificate) :=
-  (areActiveSetsWellConstructed cert)
-  && (areLocalFacetSetsWellConstructed cert)
-  && (isLocalFacetIndexingWellConstructed cert)
-  && (isFacetLabelingWellConstructed cert)
-  && (isGraphWellConstructed cert)
-  && (areActiveSetsUnique cert)
-  && (areFacetsUnique cert)
-  && (graphIsUndirected cert)
-  && (facetsAreDSimplices cert)
-  && (isFacetLabelingBijective cert)
-  && (isFacetIndexingBijective cert).
+  && (graph_check cert)
+  && (mapping_check cert)
+  && (scalarProducts_check cert)
+  && (inversibility_check cert)
+  && (separability_check cert).
 
 Section Benchmark.
 
+Definition build_cert c : Certificate :=
+  let '(ineqs, (verts, ((gr,facs), (geom_gr, rt)))) := c in
+  {|
+    inequalities := ineqs;
+    vertices := verts;
+    graph := gr;
+    facets := facs;
+    geomGraph := geom_gr;
+    root := rt
+  |}.
+
+Time LoadData "../lrs-postprocess/data/cross8-cert.bin" As cert.
+
 Let cert := build_cert cert.
 Time Eval vm_compute in 
-  areActiveSetsWellConstructed cert.
+  areActiveSetsWellFormed cert.
 Time Eval vm_compute in 
-  areLocalFacetSetsWellConstructed cert.
+  isGraphWellFormed cert.
 Time Eval vm_compute in 
-  isLocalFacetIndexingWellConstructed cert.
+  areFacetsWellFormed cert.
 Time Eval vm_compute in 
-  isFacetLabelingWellConstructed cert.
+  isMappingWellFormed cert.
 Time Eval vm_compute in 
-  isGraphWellConstructed cert.
+  isSimplexIndexWellFormed cert.
+Time Eval vm_compute in 
+  areWitnessesWellFormed cert.
+Time Eval vm_compute in 
+  areScalarProductsWellFormed cert.
+Time Eval vm_compute in 
+  areWeightsWellFormed cert.
 Time Eval vm_compute in 
   areActiveSetsUnique cert.
 Time Eval vm_compute in 
   areFacetsUnique cert.
 Time Eval vm_compute in 
-  graphIsUndirected cert.
-Time Eval vm_compute in 
-  facetsAreDSimplices cert.
-Time Eval vm_compute in 
-  isFacetLabelingBijective cert.
-Time Eval vm_compute in 
-  isFacetIndexingBijective cert.
-Time Eval vm_compute in
   feasibility_check cert.
 Time Eval vm_compute in
   graph_check cert.
-
+Time Eval vm_compute in
+  mapping_check cert.
+Time Eval vm_compute in
+  scalarProducts_check cert.
+Time Eval vm_compute in
+  inversibility_check cert.
+Time Eval vm_compute in
+  separability_check cert.
 
 End Benchmark.

@@ -620,30 +620,7 @@ Proof.
       rewrite /w0. rewrite /w0_fun. simpl. simpl in HCombine. 
       have HcComb : c = (combine w).1. rewrite HCombine. simpl. reflexivity.
       rewrite HcComb. rewrite combineE. rewrite combineE.
-      have Hproj : (\sum_x0 w (fsval x0) *: fsval x0)%R.1 = (\sum_x0 w (fsval x0) *: (fsval x0).1)%R.
-      - intros f f0. Admitted.
-        
-
-Locate "[ fsfun _ => _ with _ ]".
-Locate "[ fsfun _ => _ with support _ ]".
-Locate "[ fsfun _ in _ => _ ]".
-Locate "fsfun".
-
-pose w0_fun : {fsfun 'cV[R]_d ~> R} :=
-  [fsfun a has S0 =>
-     \sum_(e <- enum_fset (finsupp w) | lfst e == a) (val w) e].
-
-
-
-      pose base_fst (e : base_elt_type d) : 'cV[R]_d :=
-         let: BaseElt p := e in p.1.
-      pose S0 : {fset 'cV[R]_d} :=
-        [fset base_fst e | e in finsupp w].
-      pose w0_fun : {fsfun 'cV[R]_d ~> R} :=
-        [fsfun a in S0 => \sum_(e : be_choiceType R d |
-        (e \in finsupp w) && (base_fst e == a)) (val w) e].
-
-      exists (w.1).
+      rewrite sum_lrel_fst_gen. simpl. Admitted.
 
 
 End NormalCones.
