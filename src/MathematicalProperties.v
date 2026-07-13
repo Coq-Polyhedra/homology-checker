@@ -619,9 +619,25 @@ Proof.
       rewrite Hyi in Hx0y. rewrite /p in Hx0y. simpl in Hx0y. exact Hx0y.
       rewrite /w0. rewrite /w0_fun. simpl. simpl in HCombine. 
       have HcComb : c = (combine w).1. rewrite HCombine. simpl. reflexivity.
-      rewrite HcComb. rewrite combineE. rewrite combineE.
-      rewrite sum_lrel_fst_gen. simpl. Admitted.
-
+      rewrite HcComb. rewrite (combineb1E HwSubBase). rewrite /combine.
+      rewrite -(@big_seq_fsetE _ _ _ _ (base_hpoly d R hP) predT (fun e => (w e *: e.1)%R)).
+      simpl. change ((\sum_(i <- base_hpoly d R hP) w i *: i.1)%R = 
+      (\sum_(x0 : finsupp w0) w0 (val x0) *: val x0)%R).
+      rewrite -(@big_seq_fsetE _ _ _ _ (finsupp w0) predT (fun a => (w0 a *: a)%R)).
+      simpl. have Hleft : (\sum_(i <- base_hpoly d R hP) w i *: i.1)%R =
+      (\sum_(i <- finsupp w) w i *: i.1)%R. symmetry. apply/big_fset_incl.
+      exact HwSubBase. intros x0 Hx0InBase Hx0NotInSupp. rewrite fsfun_dflt.
+      rewrite scale0r. reflexivity. exact Hx0NotInSupp. rewrite Hleft.
+      have Hw0Sub : finsupp w0_fun `<=` S0. apply finsupp_sub.
+      have Hw0Sum : (\sum_(i <- finsupp w0_fun) w0_fun i *: i)%R =
+      (\sum_(i <- S0) w0_fun i *: i)%R. apply big_fset_incl. exact Hw0Sub.
+      intros x0 Hx0InS0 Hx0NotInSupp. rewrite fsfun_dflt. rewrite scale0r. reflexivity.
+      exact Hx0NotInSupp. rewrite Hw0Sum. rewrite /w0_fun.
+      rewrite (@partition_big_imfset _ _ _ _ _ p _ _). simpl.
+      rewrite -/S0. apply: eq_fbigr => a Ha. intro useless. 
+      rewrite fsfunE Ha. rewrite scaler_suml. apply: eq_fbigr => i Hi /eqP Hpi.
+      rewrite -Hpi. rewrite /p. case i. intro p0. simpl. reflexivity.
+Qed.
 
 End NormalCones.
 

@@ -57,6 +57,7 @@ Definition graphIsUndirected (cert : Certificate) :=
 
 (* Well-formedness condition on the special simplex *)
 Definition specialSimplexInSpecialCone(cert : Certificate) :=
+  specialSimplex cert @: 'I_d \in facets cert /\
   mapping cert (specialSimplex cert @: 'I_d) = (specialVertex cert).
 
 (* Well-formedness condition on the weights *)
