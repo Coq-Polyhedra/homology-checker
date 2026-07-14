@@ -445,8 +445,8 @@ Definition separability_check (cert : Certificate) :=
   (acc.1 && for_all (fun i => (sparse_array_bigZ_dot weights.[acc.2] scalarProducts.[i] <=? 0)%bigZ) f.1,
   (acc.2 + 1)%uint63) else acc) facets (true, 0%uint63) in res.1.
 
-Definition check_certificate (cert : Certificate) :=
-  (areActiveSetsWellFormed cert)
+Definition well_formedness_check (cert : Certificate) :=
+     (areActiveSetsWellFormed cert)
   && (isGraphWellFormed cert)
   && (areFacetsWellFormed cert)
   && (isMappingWellFormed cert)
@@ -455,13 +455,19 @@ Definition check_certificate (cert : Certificate) :=
   && (areScalarProductsWellFormed cert)
   && (areWeightsWellFormed cert)
   && (areActiveSetsUnique cert)
-  && (areFacetsUnique cert)
+  && (areFacetsUnique cert).
+
+Definition root_check (cert : Certificate) :=
+     (scalarProducts_check cert)
+  && (inversibility_check cert)
+  && (separability_check cert).
+
+Definition check_certificate (cert : Certificate) :=
+     (well_formedness_check cert)
   && (feasibility_check cert)
   && (graph_check cert)
   && (mapping_check cert)
-  && (scalarProducts_check cert)
-  && (inversibility_check cert)
-  && (separability_check cert).
+  && (root_check cert).
 
 Section Benchmark.
 
@@ -476,11 +482,22 @@ Definition build_cert c : Certificate :=
     root := rt
   |}.
 
-Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
+Ltac2 Eval printf "".
+Ltac2 Eval printf "Loading certificate".
+
+(* Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert. *)
+(* Time LoadData "../lrs-postprocess/data/cross8-cert.bin" As cert. *)
+(* Time LoadData "../lrs-postprocess/data/birkhoff6-cert.bin" As cert. *)
+(* Time LoadData "../lrs-postprocess/data/dual_cyclic_d13_n26-cert.bin" As cert. *)
+(* Time LoadData "../lrs-postprocess/data/dual_cyclic_d14_n28-cert.bin" As cert. *)
+(* Time LoadData "../lrs-postprocess/data/permutohedron7-cert.bin" As cert. *)
+(* Time LoadData "../lrs-postprocess/data/permutohedron8-cert.bin" As cert. *)
+(* Time LoadData "../lrs-postprocess/data/hypersimplex15-cert.bin" As cert. *)
+Time LoadData "../lrs-postprocess/data/hypersimplex16-cert.bin" As cert. 
 
 Let cert := build_cert cert.
 
-Ltac2 Eval printf "".
+(*Ltac2 Eval printf "".
 Ltac2 Eval printf "Well-formedness for active sets".
 Time Eval vm_compute in 
   areActiveSetsWellFormed cert.
@@ -528,7 +545,12 @@ Time Eval vm_compute in
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Uniqueness for facets".
 Time Eval vm_compute in 
-  areFacetsUnique cert.
+  areFacetsUnique cert.*)
+
+Ltac2 Eval printf "".
+Ltac2 Eval printf "Well-formedness check".
+Time Eval vm_compute in 
+  well_formedness_check cert.
 
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Feasibility check".
@@ -546,6 +568,12 @@ Time Eval vm_compute in
   mapping_check cert.
 
 Ltac2 Eval printf "".
+Ltac2 Eval printf "Root check".
+Time Eval vm_compute in
+  root_check cert.
+
+(*
+Ltac2 Eval printf "".
 Ltac2 Eval printf "Scalar products check".
 Time Eval vm_compute in
   scalarProducts_check cert.
@@ -559,5 +587,6 @@ Ltac2 Eval printf "".
 Ltac2 Eval printf "Separability check".
 Time Eval vm_compute in
   separability_check cert.
+*)
 
 End Benchmark.
