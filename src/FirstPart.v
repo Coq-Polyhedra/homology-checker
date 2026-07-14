@@ -353,11 +353,12 @@ Definition areWitnessesWellFormed (cert : Certificate) :=
   (length witnesses =? d)%uint63 && (for_all (hasLength d) witnesses).
 
 Definition areScalarProductsWellFormed (cert : Certificate) :=
-  let d := length (normal ((inequalities cert).[0])) in 
+  let d := length (normal ((inequalities cert).[0])) in
+  let facets := facets cert in
   let scalarProducts := (scalarProducts (root cert)) in
   let simplexIndex := (simplexIndex (root cert)) in
   let vertices := vertices cert in
-  (length scalarProducts =? length (activeSet vertices.[simplexIndex]))%uint63
+  (length scalarProducts =? length (activeSet vertices.[mapping facets.[simplexIndex]]))%uint63
   && (for_all (hasLength d) scalarProducts).
 
 Definition areWeightsWellFormed (cert : Certificate) :=
