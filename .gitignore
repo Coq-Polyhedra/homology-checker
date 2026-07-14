@@ -3,4 +3,4 @@
 *.vo
 *.vok
 *.vos
-*.file.d
+*file.d
