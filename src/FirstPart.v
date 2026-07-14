@@ -216,6 +216,48 @@ Definition isValidIndex {T : Type} (a : array T) (x : int) : bool :=
 
 End Array.
 
+Section IntList.
+
+(* in this section, lists are supposed to be sorted decreasingly *)
+Fixpoint not_subset (a b : seq int) : bool :=
+  match a, b with
+  | [::], _ => false
+  | _, [::] => true
+  | x :: a', y :: b' =>
+      if (x =? y)%uint63 then
+        not_subset a' b'
+      else if (x <? y)%uint63 then
+        (* [y > x], so advance in [b]. *)
+        not_subset a b'
+      else
+        (* [x > y], hence x is absent from [b]. *)
+        true
+  end.
+
+Definition incomparable (a b : seq int) : bool :=
+  not_subset a b && not_subset b a.
+
+Fixpoint incomparable_with_all
+  (d : seq int)
+  (ds : seq (seq int)) : bool :=
+  match ds with
+  | [::] => true
+  | e :: ds' =>
+      incomparable d e
+      && incomparable_with_all d ds'
+  end.
+
+Fixpoint pairwise_incomparable
+  (ds : seq (seq int)) : bool :=
+  match ds with
+  | [::] => true
+  | d :: ds' =>
+      incomparable_with_all d ds'
+      && pairwise_incomparable ds'
+  end.
+
+End IntList.
+
 Definition Graph := array (array int).
 
 Section Graph.
@@ -285,7 +327,6 @@ Definition Weight := array (int * bigZ). (* sparse representation *)
 Definition Weights := array Weight.
 Definition Root := (SimplexIndex * (ActiveInverse * (Witnesses * (ScalarProducts * Weights))))%type. 
 
-
 Record Certificate := {
   nb_inequalities : int;
   dimension : int;
@@ -294,6 +335,8 @@ Record Certificate := {
   graph : Graph;
   facets : Facets;
   geomGraph : Graph;
+  geom_edge_sources : array (array int);
+  geom_edge_local_targets : array (array int);
   root : Root
 }.
 
@@ -424,6 +467,40 @@ Definition mapping_check (cert : Certificate) :=
   let vertices := vertices cert in
   for_all (fun f => subset Uint63.ltb f.1 (activeSet vertices.[f.2])) facets.
 
+Definition graph_image_check (cert : Certificate) :=
+  let facets := facets cert in
+  let graph := graph cert in
+  let geomGraph := geomGraph cert in
+  let geom_edge_sources := geom_edge_sources cert in
+  let geom_edge_local_targets := geom_edge_local_targets cert in
+
+  (* check graph edges are mapped to geom_graph edges *)
+  for_alli_matrix (fun i _ j => 
+    let src := mapping facets.[i] in
+    let tgt := mapping facets.[j] in
+    (src =? tgt)%uint63 || mem_sorted Uint63.ltb (geomGraph.[src]) tgt) graph
+  && 
+  (* check geom_graph edges are images of graph edges *)
+  for_alli_matrix (fun i j v =>
+    let src := geom_edge_sources.[i].[j] in
+    let tgt := graph.[src].[geom_edge_local_targets.[i].[j]] in
+    (i =? mapping facets.[src])%uint63 && (v =? mapping facets.[tgt])%uint63) geomGraph. 
+
+Definition geom_edge_pairwise_check (cert : Certificate) :=
+  let geomGraph := geomGraph cert in
+  let vertices := vertices cert in
+  for_alli (fun i v =>
+    let neighbors := geomGraph.[i] in
+    let ds :=
+      fold
+        (fun w acc =>
+           diff Uint63.ltb (activeSet v) (activeSet vertices.[w]) :: acc)
+        neighbors
+        [::]
+    in
+    pairwise_incomparable ds)
+  vertices.
+
 Definition scalarProducts_check (cert : Certificate) :=
   let inequalities := inequalities cert in
   let vertices := vertices cert in
@@ -479,7 +556,7 @@ Definition check_certificate (cert : Certificate) :=
 Section Benchmark.
 
 Definition build_cert c : Certificate :=
-  let '(nb_ineq, (dim, (ineqs, (verts, ((gr,facs), (geom_gr, rt)))))) := c in
+  let '(nb_ineq, (dim, (ineqs, (verts, ((gr,facs), (geom_gr, (src, (tgt, rt)))))))) := c in
   {|
     nb_inequalities := nb_ineq;
     dimension := dim;
@@ -488,22 +565,24 @@ Definition build_cert c : Certificate :=
     graph := gr;
     facets := facs;
     geomGraph := geom_gr;
+    geom_edge_sources := src;
+    geom_edge_local_targets := tgt;
     root := rt
   |}.
 
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Loading certificate".
 
-(* Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.*)
+(* Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/cross8-cert.bin" As cert.  *)
-Time LoadData "../lrs-postprocess/data/birkhoff3-cert.bin" As cert. 
+(* Time LoadData "../lrs-postprocess/data/birkhoff3-cert.bin" As cert.  *)
 (* Time LoadData "../lrs-postprocess/data/birkhoff6-cert.bin" As cert.  *)
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d13_n26-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d14_n28-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/permutohedron3-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/permutohedron7-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/permutohedron8-cert.bin" As cert. *)
+Time LoadData "../lrs-postprocess/data/permutohedron8-cert.bin" As cert.
 (* Time LoadData "../lrs-postprocess/data/hypersimplex15-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/hypersimplex16-cert.bin" As cert.  *)
 
@@ -530,10 +609,21 @@ Time Eval vm_compute in
   mapping_check cert.
 
 Ltac2 Eval printf "".
+Ltac2 Eval printf "Graph image check".
+Time Eval vm_compute in
+  graph_image_check cert.
+
+Ltac2 Eval printf "".
+Ltac2 Eval printf "Geometric graph check".
+Time Eval vm_compute in
+  geom_edge_pairwise_check cert.
+
+Ltac2 Eval printf "".
 Ltac2 Eval printf "Root check".
 Time Eval vm_compute in
   root_check cert.
 
+(*
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Scalar products check".
 Time Eval vm_compute in
@@ -547,6 +637,6 @@ Time Eval vm_compute in
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Separability check".
 Time Eval vm_compute in
-  separability_check cert.
+  separability_check cert.*)
 
 End Benchmark.
