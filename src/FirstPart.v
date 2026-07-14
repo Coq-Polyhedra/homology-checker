@@ -485,67 +485,20 @@ Definition build_cert c : Certificate :=
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Loading certificate".
 
-(* Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/cross8-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/birkhoff6-cert.bin" As cert. *)
+(* Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.*)
+(* Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert. *)
+(* Time LoadData "../lrs-postprocess/data/cross8-cert.bin" As cert.  *)
+Time LoadData "../lrs-postprocess/data/birkhoff3-cert.bin" As cert. 
+(* Time LoadData "../lrs-postprocess/data/birkhoff6-cert.bin" As cert.  *)
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d13_n26-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d14_n28-cert.bin" As cert. *)
+(* Time LoadData "../lrs-postprocess/data/permutohedron3-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/permutohedron7-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/permutohedron8-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/hypersimplex15-cert.bin" As cert. *)
-Time LoadData "../lrs-postprocess/data/hypersimplex16-cert.bin" As cert. 
+(* Time LoadData "../lrs-postprocess/data/hypersimplex16-cert.bin" As cert.  *)
 
 Let cert := build_cert cert.
-
-(*Ltac2 Eval printf "".
-Ltac2 Eval printf "Well-formedness for active sets".
-Time Eval vm_compute in 
-  areActiveSetsWellFormed cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Well-formedness for graph".
-Time Eval vm_compute in 
-  isGraphWellFormed cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Well-formedness for facets".
-Time Eval vm_compute in 
-  areFacetsWellFormed cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Well-formedness for mapping".
-Time Eval vm_compute in 
-  isMappingWellFormed cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Well-formedness for simplex index".
-Time Eval vm_compute in 
-  isSimplexIndexWellFormed cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Well-formedness for witnesses".
-Time Eval vm_compute in 
-  areWitnessesWellFormed cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Well-formedness for scalar products".
-Time Eval vm_compute in 
-  areScalarProductsWellFormed cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Well-formedness for weights".
-Time Eval vm_compute in 
-  areWeightsWellFormed cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Uniqueness for active sets".
-Time Eval vm_compute in 
-  areActiveSetsUnique cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Uniqueness for facets".
-Time Eval vm_compute in 
-  areFacetsUnique cert.*)
 
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Well-formedness check".
@@ -572,7 +525,6 @@ Ltac2 Eval printf "Root check".
 Time Eval vm_compute in
   root_check cert.
 
-(*
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Scalar products check".
 Time Eval vm_compute in
@@ -587,6 +539,5 @@ Ltac2 Eval printf "".
 Ltac2 Eval printf "Separability check".
 Time Eval vm_compute in
   separability_check cert.
-*)
 
 End Benchmark.
