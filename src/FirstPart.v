@@ -277,15 +277,18 @@ Definition Facet := (Description * Mapping)%type.
 Definition Facets := array Facet.
 
 Definition SimplexIndex := int.
+Definition ActiveInverse := array int.
 Definition Witness := array bigZ.
 Definition Witnesses := array Witness.
 Definition ScalarProducts := array (array bigZ).
 Definition Weight := array (int * bigZ). (* sparse representation *)
 Definition Weights := array Weight.
-Definition Root := (SimplexIndex * (Witnesses * (ScalarProducts * Weights)))%type. 
+Definition Root := (SimplexIndex * (ActiveInverse * (Witnesses * (ScalarProducts * Weights))))%type. 
 
 
 Record Certificate := {
+  nb_inequalities : int;
+  dimension : int;
   inequalities : Inequalities;
   vertices : Vertices;
   graph : Graph;
@@ -307,9 +310,10 @@ Definition point : Vertex -> Point := snd.
 Definition description : Facet -> Description := fst.
 Definition mapping : Facet -> Mapping := snd.
 Definition simplexIndex : Root -> SimplexIndex := fst.
-Definition witnesses : Root -> Witnesses := compose fst snd.
-Definition scalarProducts : Root -> ScalarProducts := compose (compose fst snd) snd.
-Definition weights : Root -> Weights := compose (compose snd snd) snd.
+Definition activeInverse : Root -> ActiveInverse := compose fst snd.
+Definition witnesses : Root -> Witnesses := compose (compose fst snd) snd.
+Definition scalarProducts : Root -> ScalarProducts := compose (compose (compose fst snd) snd) snd.
+Definition weights : Root -> Weights := compose (compose (compose snd snd) snd) snd.
 
 End Projectors.
 
@@ -430,14 +434,16 @@ Definition scalarProducts_check (cert : Certificate) :=
 
 Definition inversibility_check (cert : Certificate) :=
   let d := length (normal ((inequalities cert).[0])) in
+  let activeInverse := activeInverse (root cert) in
   let scalarProducts := scalarProducts (root cert) in 
   let vstar := description (facets cert).[simplexIndex (root cert)] in 
-  ifold (fun i acc => acc && (ifold (fun j acc => acc && (if (i=?j)%uint63 then 
+  ifold (fun i acc => acc && (ifold (fun j acc => acc && (if (activeInverse.[vstar.[i]] =? j)%uint63 then 
   (0 <? scalarProducts.[vstar.[i]].[j])%bigZ else 
   (0 =? scalarProducts.[vstar.[i]].[j])%bigZ)) d%uint63 true)) d%uint63 true.
 
 Definition separability_check (cert : Certificate) :=
   let facets := facets cert in
+  let activeInverse := activeInverse (root cert) in
   let scalarProducts := scalarProducts (root cert) in
   let weights := weights (root cert) in
   let vstar := mapping (facets).[simplexIndex (root cert)] in 
@@ -472,8 +478,10 @@ Definition check_certificate (cert : Certificate) :=
 Section Benchmark.
 
 Definition build_cert c : Certificate :=
-  let '(ineqs, (verts, ((gr,facs), (geom_gr, rt)))) := c in
+  let '(nb_ineq, (dim, (ineqs, (verts, ((gr,facs), (geom_gr, rt)))))) := c in
   {|
+    nb_inequalities := nb_ineq;
+    dimension := dim;
     inequalities := ineqs;
     vertices := verts;
     graph := gr;
