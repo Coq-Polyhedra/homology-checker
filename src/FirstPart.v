@@ -334,7 +334,7 @@ Record Certificate := {
   vertices : Vertices;
   graph : Graph;
   facets : Facets;
-  geomGraph : Graph;
+  geom_graph : Graph;
   geom_edge_sources : array (array int);
   geom_edge_local_targets : array (array int);
   root : Root
@@ -369,8 +369,10 @@ Definition areActiveSetsWellFormed (cert : Certificate) :=
 Definition isGraphWellFormed (cert : Certificate) :=
   let graph := graph cert in
   let nbFacets := length (facets cert) in
-  (length graph =? nbFacets)%uint63 && (for_all_matrix (isVertex graph) graph) &&
-  (hasNoLoops graph) && (isUndirected graph).
+  (length graph =? nbFacets)%uint63 
+  && (for_all_matrix (isVertex graph) graph) 
+  && (hasNoLoops graph) 
+  && (isUndirected graph).
 
 Definition areFacetsWellFormed (cert : Certificate) :=
   let m := nb_inequalities cert in
@@ -379,6 +381,34 @@ Definition areFacetsWellFormed (cert : Certificate) :=
   (for_all_compose (isStrictlySorted Uint63.ltb) description facets)
   && (for_all_compose (allInRange Uint63.leb (0%uint63) (m-1)%uint63) description facets)
   && (for_all_compose (hasLength d) description facets).
+
+Definition isGeomGraphWellFormed (cert : Certificate) :=
+  let geom_graph := geom_graph cert in
+  let nbVertices := length (vertices cert) in
+  (length geom_graph =? nbVertices)%uint63 
+  && (for_all_matrix (isVertex geom_graph) geom_graph) 
+  && (hasNoLoops geom_graph) 
+  && (isUndirected geom_graph). 
+
+Definition areGeomEdgeSourcesWellFormed (cert : Certificate) :=
+  let geom_graph := geom_graph cert in
+  let geom_edge_sources := geom_edge_sources cert in
+  let nbVertices := length (vertices cert) in
+  let nbFacets := length (facets cert) in
+  (length geom_edge_sources =? nbVertices)%uint63 
+  && for_alli (fun i l => hasLength (length geom_graph.[i]) l) geom_edge_sources
+  && for_all (allInRange Uint63.leb (0%uint63) (nbFacets-1)%uint63) geom_edge_sources.
+
+Definition areGeomEdgeLocalTargetsWellFormed (cert : Certificate) :=
+  let graph := graph cert in
+  let geom_graph := geom_graph cert in
+  let geom_edge_local_targets := geom_edge_local_targets cert in
+  let geom_edge_sources := geom_edge_sources cert in
+  let nbVertices := length (vertices cert) in
+  (length geom_edge_local_targets =? nbVertices)%uint63
+  && for_alli (fun i l => hasLength (length geom_graph.[i]) l) geom_edge_local_targets
+  && for_alli_matrix (fun i j v => inRange Uint63.leb (0%uint63) 
+  (length(graph.[geom_edge_sources.[i].[j]])-1)%uint63 v) geom_edge_local_targets.
 
 Definition isMappingWellFormed (cert : Certificate) :=
   let nbVertices := length (vertices cert) in
@@ -400,7 +430,8 @@ Definition isActiveInverseWellFormed (cert : Certificate) :=
 Definition areWitnessesWellFormed (cert : Certificate) :=
   let d := dimension cert in 
   let witnesses := (witnesses (root cert)) in
-  (length witnesses =? d)%uint63 && (for_all (hasLength d) witnesses).
+  (length witnesses =? d)%uint63 
+  && (for_all (hasLength d) witnesses).
 
 Definition areScalarProductsWellFormed (cert : Certificate) :=
   let d := dimension cert in
@@ -477,27 +508,27 @@ Definition mapping_check (cert : Certificate) :=
 Definition graph_image_check (cert : Certificate) :=
   let facets := facets cert in
   let graph := graph cert in
-  let geomGraph := geomGraph cert in
+  let geom_graph := geom_graph cert in
   let geom_edge_sources := geom_edge_sources cert in
   let geom_edge_local_targets := geom_edge_local_targets cert in
 
   (* check graph edges are mapped to geom_graph edges *)
-  for_alli_matrix (fun i _ j => 
+  for_alli_matrix (fun i _ j =>
     let src := mapping facets.[i] in
     let tgt := mapping facets.[j] in
-    (src =? tgt)%uint63 || mem_sorted Uint63.ltb (geomGraph.[src]) tgt) graph
+    (src =? tgt)%uint63 || mem_sorted Uint63.ltb (geom_graph.[src]) tgt) graph
   && 
   (* check geom_graph edges are images of graph edges *)
   for_alli_matrix (fun i j v =>
     let src := geom_edge_sources.[i].[j] in
     let tgt := graph.[src].[geom_edge_local_targets.[i].[j]] in
-    (i =? mapping facets.[src])%uint63 && (v =? mapping facets.[tgt])%uint63) geomGraph. 
+    (i =? mapping facets.[src])%uint63 && (v =? mapping facets.[tgt])%uint63) geom_graph. 
 
 Definition geom_edge_pairwise_check (cert : Certificate) :=
-  let geomGraph := geomGraph cert in
+  let geom_graph := geom_graph cert in
   let vertices := vertices cert in
   for_alli (fun i v =>
-    let neighbors := geomGraph.[i] in
+    let neighbors := geom_graph.[i] in
     let diffs :=
       fold
         (fun w acc =>
@@ -542,6 +573,9 @@ Definition well_formedness_check (cert : Certificate) :=
      (areActiveSetsWellFormed cert)
   && (isGraphWellFormed cert)
   && (areFacetsWellFormed cert)
+  && (isGeomGraphWellFormed cert)
+  && (areGeomEdgeSourcesWellFormed cert)
+  && (areGeomEdgeLocalTargetsWellFormed cert)
   && (isMappingWellFormed cert)
   && (isSimplexIndexWellFormed cert)
   && (areWitnessesWellFormed cert)
@@ -573,7 +607,7 @@ Definition build_cert c : Certificate :=
     vertices := verts;
     graph := gr;
     facets := facs;
-    geomGraph := geom_gr;
+    geom_graph := geom_gr;
     geom_edge_sources := src;
     geom_edge_local_targets := tgt;
     root := rt
@@ -582,10 +616,10 @@ Definition build_cert c : Certificate :=
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Loading certificate".
 
-(* Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert. *) 
+Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
 (* Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/cross8-cert.bin" As cert.  *)
-Time LoadData "../lrs-postprocess/data/birkhoff3-cert.bin" As cert.
+(* Time LoadData "../lrs-postprocess/data/birkhoff3-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/birkhoff6-cert.bin" As cert.  *)
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d13_n26-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d14_n28-cert.bin" As cert. *)
