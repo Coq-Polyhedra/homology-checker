@@ -390,6 +390,13 @@ Definition isSimplexIndexWellFormed (cert : Certificate) :=
   let nbFacets := length (facets cert) in
   inRange Uint63.leb (0%uint63) (nbFacets-1)%uint63 (simplexIndex root).
 
+Definition isActiveInverseWellFormed (cert : Certificate) :=
+  let activeInverse := activeInverse (root cert) in
+  let vertices := vertices cert in
+  let vstar := mapping (facets cert).[simplexIndex (root cert)] in
+  (length activeInverse =? nb_inequalities cert)%uint63
+  && for_alli (fun i k => (activeInverse.[k] =? i)%uint63) (activeSet vertices.[vstar]).
+
 Definition areWitnessesWellFormed (cert : Certificate) :=
   let d := length (normal ((inequalities cert).[0])) in 
   let witnesses := (witnesses (root cert)) in
@@ -526,7 +533,7 @@ Definition separability_check (cert : Certificate) :=
   let weights := weights (root cert) in
   let vstar := mapping (facets).[simplexIndex (root cert)] in 
   let res := foldi (fun k f acc => if ~~(k =? vstar)%uint63 && (f.2 =? vstar)%uint63 then
-  (acc.1 && for_all (fun i => (sparse_array_bigZ_dot weights.[acc.2] scalarProducts.[i] <=? 0)%bigZ) f.1,
+  (acc.1 && for_all (fun i => (sparse_array_bigZ_dot weights.[acc.2] scalarProducts.[activeInverse.[i]] <=? 0)%bigZ) f.1,
   (acc.2 + 1)%uint63) else acc) facets (true, 0%uint63) in res.1.
 
 Definition well_formedness_check (cert : Certificate) :=
