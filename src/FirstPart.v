@@ -51,6 +51,16 @@ Definition foldi_compose {A B C : Type} (f : int -> B -> C -> C) (g : A -> B) (a
 Definition fold2 {T1 T2 A : Type} (f : T1 -> T2 -> A -> A) (a1 : array T1) (a2 : array T2) (x0 : A) :=
   ifold (fun i acc => f a1.[i] a2.[i] acc) (if (length a1 <? length a2)%uint63 then length a1 else length a2) x0.
 
+Definition fold3 {T1 T2 T3 A : Type} (f : T1 -> T2 -> T3 -> A -> A) (a1 : array T1) (a2 : array T2) (a3 : array T3) (x0 : A) :=
+  ifold (fun i acc => f a1.[i] a2.[i] a3.[i] acc) 
+  (if (length a1 <? length a3)%uint63 then 
+    if (length a1 <? length a2)%uint63 then length a1 else length a2
+    else 
+      if (length a2 <? length a3)%uint63 then length a2 else
+      length a3
+  )    
+  x0.
+
 Definition fold_alt {T A : Type} (f_in f_notin : T -> A -> A) (s : array T) (notin : array int) (x : A) :=
   let res := foldi (fun i x acc =>
     if (acc.2 <? length notin)%uint63 ==> (i <? notin.[acc.2])%uint63 then 
@@ -383,6 +393,9 @@ Definition array_bigZ_dot (x y : array bigZ) : bigZ :=
 Definition sparse_array_bigZ_dot (a : array (int * bigZ)) (b : array bigZ) : bigZ :=
   fold (fun x acc => BigZ.add acc (BigZ.mul b.[x.1] x.2)) a 0%bigZ.
 
+Definition array_bigZ_add_dot (x y z : array bigZ) : bigZ :=
+  fold3 (fun x y z res=> BigZ.add res (BigZ.mul x (BigZ.add y z))) x y z 0%bigZ.
+
 End BigZ.
 
 Section Types.
@@ -411,6 +424,7 @@ Definition Witnesses := array Witness.
 Definition ScalarProducts := array (array bigZ).
 Definition Weight := array (int * bigZ). (* sparse representation *)
 Definition Weights := array Weight.
+Definition FullDim := (Point * (array (array bigZ) * array (array bigZ)))%type.
 Definition Root := (SimplexIndex * (ActiveInverse * (Witnesses * (ScalarProducts * Weights))))%type. 
 
 Record Certificate := {
@@ -423,6 +437,7 @@ Record Certificate := {
   geom_graph : Graph;
   geom_edge_sources : array (array int);
   geom_edge_local_targets : array (array int);
+  full_dim : FullDim;
   root : Root
 }.
 
@@ -443,6 +458,9 @@ Definition activeInverse : Root -> ActiveInverse := compose fst snd.
 Definition witnesses : Root -> Witnesses := compose (compose fst snd) snd.
 Definition scalarProducts : Root -> ScalarProducts := compose (compose (compose fst snd) snd) snd.
 Definition weights : Root -> Weights := compose (compose (compose snd snd) snd) snd.
+Definition fullDimPoint : FullDim -> Point := fst.
+Definition fullDimDir : FullDim -> array (array bigZ) := compose fst snd.
+Definition fullDimInverse : FullDim -> array (array bigZ) := compose snd snd.
 
 End Projectors.
 
@@ -659,6 +677,33 @@ Definition connectivity_check (cert : Certificate) :=
   let geom_graph := geom_graph cert in
   isConnected geom_graph.
 
+Definition full_dim_feasibility_check (cert : Certificate) :=
+  let ineqs := inequalities cert in
+  let point := fullDimPoint (full_dim cert) in
+  let dirs := fullDimDir (full_dim cert) in
+  for_all (fun dir => 
+    for_all (fun ineq => 
+    (array_bigZ_add_dot (normal ineq) (numerators point) dir <=? (bound ineq) * (BigZ.Pos (commonDenominator point)))%bigZ) 
+    ineqs
+  ) dirs
+  &&
+  for_all 
+    (fun ineq => (array_bigZ_dot (normal ineq) (numerators point) <=? (bound ineq) * (BigZ.Pos (commonDenominator point)))%bigZ) 
+    ineqs.
+
+Definition full_dim_inverse_check (cert : Certificate) :=
+  let dirs := fullDimDir (full_dim cert) in
+  let inv := fullDimInverse (full_dim cert) in
+  for_alli_matrix 
+    (fun i j x => 
+      let x := array_bigZ_dot dirs.[i] inv.[j] in
+      if (i =? j)%uint63 then ~~ (x =? 0)%bigZ else (x =? 0)%bigZ
+    ) inv.
+
+Definition full_dim_check (cert : Certificate) :=
+     full_dim_feasibility_check cert 
+  && full_dim_inverse_check cert.
+
 Definition well_formedness_check (cert : Certificate) :=
      (areActiveSetsWellFormed cert)
   && (isGraphWellFormed cert)
@@ -695,7 +740,7 @@ Definition check_certificate (cert : Certificate) :=
 Section Benchmark.
 
 Definition build_cert c : Certificate :=
-  let '(nb_ineq, (dim, (ineqs, (verts, ((gr,facs), (geom_gr, (src, (tgt, rt)))))))) := c in
+  let '(nb_ineq, (dim, (ineqs, (verts, ((gr,facs), ((geom_gr, (src, tgt)), (full_dim, rt))))))) := c in
   {|
     nb_inequalities := nb_ineq;
     dimension := dim;
@@ -706,6 +751,7 @@ Definition build_cert c : Certificate :=
     geom_graph := geom_gr;
     geom_edge_sources := src;
     geom_edge_local_targets := tgt;
+    full_dim := full_dim;
     root := rt
   |}.
 
@@ -727,7 +773,7 @@ Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
 
 Let cert := build_cert cert.
 
-Ltac2 Eval printf "".
+(*Ltac2 Eval printf "".
 Ltac2 Eval printf "Well-formedness check".
 Time Eval vm_compute in 
   well_formedness_check cert.
@@ -755,6 +801,11 @@ Time Eval vm_compute in
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Geometric graph check".
 Time Eval vm_compute in
-  geom_graph_check cert.
+  geom_graph_check cert.*)
+
+Ltac2 Eval printf "".
+Ltac2 Eval printf "Full dimension check".
+Time Eval vm_compute in
+  full_dim_check cert.
 
 End Benchmark.
