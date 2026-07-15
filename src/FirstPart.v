@@ -6,6 +6,7 @@ From Bignums Require Import BigQ.
 From BinReader Require Import BinReader.
 Require Import PArray.
 Require Import Coq.Program.Basics.
+Require Import NArith.
 Import Order.Theory.
 
 Section Uint63.
@@ -20,7 +21,7 @@ Fixpoint ifold_ {T : Type} (n : nat) (f : int -> T -> T) (i M : int) (stopCondit
     else (i, x).
 
 Definition ifold {T : Type} (f : int -> T -> T) (i : int) (x : T) :=
-  (ifold_ Uint63.size f 0 i (fun _ _ => false) x).2.
+  (ifold_ Uint63.size f 0 i (fun _ _ => false) x).2.  
 
 Definition ifold_from_until {T : Type} (f : int -> T -> T) (k : int) (i : int) (stopCondition: int -> T -> bool) (x : T) :=
   (ifold_ Uint63.size f k i stopCondition x).2.
@@ -258,9 +259,34 @@ Fixpoint pairwise_incomparable
 
 End IntList.
 
-Definition Graph := array (array int).
+Section Queue.
+
+Context {T : Type}.
+
+Record queue := Queue { front : seq T; back : seq T; }.
+
+Implicit Types (q : queue) (x : T) (xs : seq T).
+
+Definition empty := Queue [::] [::].
+
+Definition enqueue q x :=
+  Queue q.(front) (x :: q.(back)).
+
+Definition pull q :=
+  if q is Queue [::] back
+  then Queue (rev back) [::] 
+  else q.
+
+Definition dequeue q :=
+  if pull q is Queue (x :: front) back
+  then Some (x, Queue front back)
+  else None.
+
+End Queue.
 
 Section Graph.
+
+Definition Graph := array (array int).
 
 Definition isVertex (g : Graph) (x : int) :=
   isValidIndex g x. 
@@ -288,6 +314,66 @@ Definition hasBoundedDegree (g : Graph) (k : int) :=
   for_all (fun x => ((length x) <=? k)%uint63) g.
 
 End Graph.
+
+Section BFS.
+
+Arguments queue T : clear implicits.
+Arguments empty T : clear implicits.
+
+Definition bfsqueue := queue (int * N)%type.
+Definition marks := array bool.
+
+Record state := State {
+  nb_visited : int;
+  visited : marks;
+  to_visit : bfsqueue;
+}.
+
+Definition init_state (n : int) (y : int) :=
+  {| nb_visited  := 1%uint63;
+      visited  := (PArray.make n false).[y <- true]; 
+      to_visit    := empty _; |}.
+
+Definition mark_vertex (st : state) (y : int) (k : N) :=
+  if st.(visited).[y] then st else
+    {| nb_visited := (st.(nb_visited)+1)%uint63;
+        visited := st.(visited).[y <- true]; 
+        to_visit := enqueue st.(to_visit) (y, k); |}.
+
+Definition bfs_dequeue (st : state) :=
+  if dequeue st.(to_visit) is Some ((y, k), q) then
+    let st := {|
+      nb_visited := st.(nb_visited);
+      visited := st.(visited);
+      to_visit   := q;
+    |} in Some (st, y, k)
+  else None.
+
+Definition bfs_step (g : Graph) (st : state * int * N) :=
+  let: (st, x, k) := st in
+  let: st :=
+    fold (fun y acc => mark_vertex acc y (N.succ k)) g.[x] st
+  in
+  match bfs_dequeue st with
+  | Some st => inl st
+  | None    => inr st
+  end.
+
+Definition bfs_ (g : Graph) (x : int) :=
+  let out := bfs_step g (init_state (length g) x, x, 0%N) in
+  let out := ifold_from_until (fun _ out => if out is inl s then bfs_step g s else out)
+  0%uint63 (length g)%uint63 (fun _ out => if out is inr _ then true else false) out
+  in if out is inr v then Some v else None.
+
+(* This function returns the number of vertices visited by a BFS starting 
+from vertex 0 in an undirected graph. *)
+Definition bfs (g : Graph) (x : int) :=
+  odflt 0%uint63 (omap (fun x => x.(nb_visited)) (bfs_ g x)).
+
+Definition isConnected (g : Graph) :=
+  if (length g =? 0)%uint63 then true else (bfs g (0%uint63) =? length g)%uint63.
+
+End BFS.
 
 Section BigZ.
 
@@ -505,6 +591,35 @@ Definition mapping_check (cert : Certificate) :=
   let vertices := vertices cert in
   for_all (fun f => subset Uint63.ltb f.1 (activeSet vertices.[f.2])) facets.
 
+Definition scalarProducts_check (cert : Certificate) :=
+  let inequalities := inequalities cert in
+  let vertices := vertices cert in
+  let witnesses := witnesses (root cert) in
+  let scalarProducts := scalarProducts (root cert) in
+  let vstar := mapping (facets cert).[simplexIndex (root cert)] in 
+  for_alli_matrix (fun i j x => (x =? array_bigZ_dot (normal 
+  (inequalities.[(activeSet vertices.[vstar]).[i]])) witnesses.[j])%bigZ) scalarProducts.
+
+Definition inversibility_check (cert : Certificate) :=
+  let d := dimension cert in
+  let activeInverse := activeInverse (root cert) in
+  let scalarProducts := scalarProducts (root cert) in 
+  let vstar := description (facets cert).[simplexIndex (root cert)] in 
+  ifold (fun i acc => acc && (ifold (fun j acc => acc && (if (i =? j)%uint63 then 
+  (0 <? scalarProducts.[activeInverse.[vstar.[i]]].[j])%bigZ else 
+  (0 =? scalarProducts.[activeInverse.[vstar.[i]]].[j])%bigZ)) d%uint63 true)) d%uint63 true.
+
+Definition separability_check (cert : Certificate) :=
+  let facets := facets cert in
+  let activeInverse := activeInverse (root cert) in
+  let simplexIndex := simplexIndex (root cert) in
+  let scalarProducts := scalarProducts (root cert) in
+  let weights := weights (root cert) in
+  let vstar := mapping (facets).[simplexIndex] in 
+  let res := foldi (fun k f acc => if ~~(k =? simplexIndex)%uint63 && (f.2 =? vstar)%uint63 then
+  (acc.1 && for_all (fun i => (sparse_array_bigZ_dot weights.[acc.2] scalarProducts.[activeInverse.[i]] <=? 0)%bigZ) f.1,
+  (acc.2 + 1)%uint63) else acc) facets (true, 0%uint63) in res.1.
+
 Definition graph_image_check (cert : Certificate) :=
   let facets := facets cert in
   let graph := graph cert in
@@ -540,34 +655,9 @@ Definition geom_edge_pairwise_check (cert : Certificate) :=
     && pairwise_incomparable diffs (* T8 *))
   vertices.
 
-Definition scalarProducts_check (cert : Certificate) :=
-  let inequalities := inequalities cert in
-  let vertices := vertices cert in
-  let witnesses := witnesses (root cert) in
-  let scalarProducts := scalarProducts (root cert) in
-  let vstar := mapping (facets cert).[simplexIndex (root cert)] in 
-  for_alli_matrix (fun i j x => (x =? array_bigZ_dot (normal 
-  (inequalities.[(activeSet vertices.[vstar]).[i]])) witnesses.[j])%bigZ) scalarProducts.
-
-Definition inversibility_check (cert : Certificate) :=
-  let d := dimension cert in
-  let activeInverse := activeInverse (root cert) in
-  let scalarProducts := scalarProducts (root cert) in 
-  let vstar := description (facets cert).[simplexIndex (root cert)] in 
-  ifold (fun i acc => acc && (ifold (fun j acc => acc && (if (i =? j)%uint63 then 
-  (0 <? scalarProducts.[activeInverse.[vstar.[i]]].[j])%bigZ else 
-  (0 =? scalarProducts.[activeInverse.[vstar.[i]]].[j])%bigZ)) d%uint63 true)) d%uint63 true.
-
-Definition separability_check (cert : Certificate) :=
-  let facets := facets cert in
-  let activeInverse := activeInverse (root cert) in
-  let simplexIndex := simplexIndex (root cert) in
-  let scalarProducts := scalarProducts (root cert) in
-  let weights := weights (root cert) in
-  let vstar := mapping (facets).[simplexIndex] in 
-  let res := foldi (fun k f acc => if ~~(k =? simplexIndex)%uint63 && (f.2 =? vstar)%uint63 then
-  (acc.1 && for_all (fun i => (sparse_array_bigZ_dot weights.[acc.2] scalarProducts.[activeInverse.[i]] <=? 0)%bigZ) f.1,
-  (acc.2 + 1)%uint63) else acc) facets (true, 0%uint63) in res.1.
+Definition connectivity_check (cert : Certificate) :=
+  let geom_graph := geom_graph cert in
+  isConnected geom_graph.
 
 Definition well_formedness_check (cert : Certificate) :=
      (areActiveSetsWellFormed cert)
@@ -589,12 +679,18 @@ Definition root_check (cert : Certificate) :=
   && (inversibility_check cert)
   && (separability_check cert).
 
+Definition geom_graph_check (cert : Certificate) :=
+     (graph_image_check cert)
+  && (geom_edge_pairwise_check cert)
+  && (connectivity_check cert).
+
 Definition check_certificate (cert : Certificate) :=
      (well_formedness_check cert)
   && (feasibility_check cert)
   && (graph_check cert)
   && (mapping_check cert)
-  && (root_check cert).
+  && (root_check cert)
+  && (geom_graph_check cert).
 
 Section Benchmark.
 
@@ -618,7 +714,7 @@ Ltac2 Eval printf "Loading certificate".
 
 Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
 (* Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/cross8-cert.bin" As cert.  *)
+(* Time LoadData "../lrs-postprocess/data/cross8-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/birkhoff3-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/birkhoff6-cert.bin" As cert.  *)
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d13_n26-cert.bin" As cert. *)
@@ -652,36 +748,13 @@ Time Eval vm_compute in
   mapping_check cert.
 
 Ltac2 Eval printf "".
-Ltac2 Eval printf "Graph image check".
-Time Eval vm_compute in
-  graph_image_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Geometric graph check".
-Time Eval vm_compute in
-  geom_edge_pairwise_check cert.
-
-Ltac2 Eval printf "".
 Ltac2 Eval printf "Root check".
 Time Eval vm_compute in
   root_check cert.
 
-
-(*
 Ltac2 Eval printf "".
-Ltac2 Eval printf "Scalar products check".
+Ltac2 Eval printf "Geometric graph check".
 Time Eval vm_compute in
-  scalarProducts_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Inversibility check".
-Time Eval vm_compute in
-  inversibility_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Separability check".
-Time Eval vm_compute in
-  separability_check cert.
-*)
+  geom_graph_check cert.
 
 End Benchmark.
