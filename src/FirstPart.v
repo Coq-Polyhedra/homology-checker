@@ -361,7 +361,7 @@ Definition weights : Root -> Weights := compose (compose (compose snd snd) snd) 
 End Projectors.
 
 Definition areActiveSetsWellFormed (cert : Certificate) :=
-  let m := length (inequalities cert) in
+  let m := nb_inequalities cert in
   let vertices := vertices cert in
   (for_all_compose (isStrictlySorted Uint63.ltb) activeSet vertices)
   && (for_all_compose (allInRange Uint63.leb (0%uint63) (m-1)%uint63) activeSet vertices).
@@ -373,8 +373,8 @@ Definition isGraphWellFormed (cert : Certificate) :=
   (hasNoLoops graph) && (isUndirected graph).
 
 Definition areFacetsWellFormed (cert : Certificate) :=
-  let m := length (inequalities cert) in
-  let d := length (normal ((inequalities cert).[0])) in 
+  let m := nb_inequalities cert in
+  let d := dimension cert in 
   let facets := facets cert in
   (for_all_compose (isStrictlySorted Uint63.ltb) description facets)
   && (for_all_compose (allInRange Uint63.leb (0%uint63) (m-1)%uint63) description facets)
@@ -398,12 +398,12 @@ Definition isActiveInverseWellFormed (cert : Certificate) :=
   && for_alli (fun i k => (activeInverse.[k] =? i)%uint63) (activeSet vertices.[vstar]).
 
 Definition areWitnessesWellFormed (cert : Certificate) :=
-  let d := length (normal ((inequalities cert).[0])) in 
+  let d := dimension cert in 
   let witnesses := (witnesses (root cert)) in
   (length witnesses =? d)%uint63 && (for_all (hasLength d) witnesses).
 
 Definition areScalarProductsWellFormed (cert : Certificate) :=
-  let d := length (normal ((inequalities cert).[0])) in
+  let d := dimension cert in
   let facets := facets cert in
   let scalarProducts := (scalarProducts (root cert)) in
   let simplexIndex := (simplexIndex (root cert)) in
@@ -412,7 +412,7 @@ Definition areScalarProductsWellFormed (cert : Certificate) :=
   && (for_all (hasLength d) scalarProducts).
 
 Definition areWeightsWellFormed (cert : Certificate) :=
-  let d := length (normal ((inequalities cert).[0])) in 
+  let d := dimension cert in 
   let weights := weights (root cert) in
   let simplexIndex := simplexIndex (root cert) in
   let facets := facets cert in
@@ -464,7 +464,7 @@ Definition isRidgeInFacet (s1 s2 : array int) (v : int) :=
 Definition graph_check (cert : Certificate) :=
   let graph := graph cert in
   let facets := facets cert in
-  let d := length (normal ((inequalities cert).[0])) in
+  let d := dimension cert in
   (hasBoundedDegree graph d) &&  
   for_alli_matrix (fun i j v => isRidgeInFacet (description (facets.[i])) (description (facets.[v]))
   (description (facets.[i])).[j]) graph.
@@ -519,7 +519,7 @@ Definition scalarProducts_check (cert : Certificate) :=
   (inequalities.[(activeSet vertices.[vstar]).[i]])) witnesses.[j])%bigZ) scalarProducts.
 
 Definition inversibility_check (cert : Certificate) :=
-  let d := length (normal ((inequalities cert).[0])) in
+  let d := dimension cert in
   let activeInverse := activeInverse (root cert) in
   let scalarProducts := scalarProducts (root cert) in 
   let vstar := description (facets cert).[simplexIndex (root cert)] in 
@@ -584,7 +584,7 @@ Ltac2 Eval printf "Loading certificate".
 Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
 (* Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/cross8-cert.bin" As cert.  *)
-(* Time LoadData "../lrs-postprocess/data/birkhoff3-cert.bin" As cert.  *)
+Time LoadData "../lrs-postprocess/data/birkhoff3-cert.bin" As cert.  
 (* Time LoadData "../lrs-postprocess/data/birkhoff6-cert.bin" As cert.  *)
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d13_n26-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d14_n28-cert.bin" As cert. *)
