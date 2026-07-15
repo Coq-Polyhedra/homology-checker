@@ -582,10 +582,10 @@ Definition build_cert c : Certificate :=
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Loading certificate".
 
-(* Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert. *)
+(* Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert. *) 
 (* Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/cross8-cert.bin" As cert.  *)
-Time LoadData "../lrs-postprocess/data/birkhoff3-cert.bin" As cert.  
+Time LoadData "../lrs-postprocess/data/birkhoff3-cert.bin" As cert.
 (* Time LoadData "../lrs-postprocess/data/birkhoff6-cert.bin" As cert.  *)
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d13_n26-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d14_n28-cert.bin" As cert. *)
@@ -632,6 +632,7 @@ Ltac2 Eval printf "Root check".
 Time Eval vm_compute in
   root_check cert.
 
+
 (*
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Scalar products check".
@@ -646,6 +647,7 @@ Time Eval vm_compute in
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Separability check".
 Time Eval vm_compute in
-  separability_check cert.*)
+  separability_check cert.
+*)
 
 End Benchmark.
