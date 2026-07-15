@@ -83,7 +83,8 @@ Definition graph_check (cert : Certificate) :=
 
 (* Condition T4 *)
 Definition inversibility_check (cert : Certificate) :=
-  \matrix_(i < d, j < d) ((polytope cert).`A (specialSimplex cert i) j) *m (witnesses cert) = 1%:M.
+  forall (i j : 'I_d), (i = j /\ '[\col_k ((polytope cert).`A (specialSimplex cert i) k), (col j (witnesses cert))] > 0)%R
+  \/ (i <> j /\ '[\col_k ((polytope cert).`A (specialSimplex cert i) k), (col j (witnesses cert))] = 0)%R.
 
 (* Condition T5 *)
 Definition separability_check (cert : Certificate) :=
