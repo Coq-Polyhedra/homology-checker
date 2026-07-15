@@ -12,6 +12,7 @@ Definition simplex m := {set 'I_m}.
 Definition simplicialComplex m := {fset simplex m}.
 
 Notation simplex_graph m := (graph [choiceType of (simplex m)]).
+Notation vertex_graph := (graph [choiceType of ('cV[R]_d)]).
 Notation "'[ u , v ]" := (vdot u v).
 Notation " A *m B" := (mulmx A B).
 Notation "x <=m y" := (lev x y).
@@ -30,11 +31,15 @@ Record Certificate := {
     specialVertex : 'cV[R]_d;
     specialSimplex : 'I_d -> 'I_(polytope.`c);
     witnesses : 'M[R]_(d,d);
-    weights : simplex (polytope.`c) -> 'cV[R]_d
+    weights : simplex (polytope.`c) -> 'cV[R]_d;
+    geom_graph : vertex_graph
 }.
 
 Definition normalVector (polytope : 'hpoly[R]_d) (i : 'I_(polytope.`c)) :=
   trmx (row i polytope.`A).
+
+Definition incomparable {T : finType} (A B : {set T}) :=
+  ~~ (A \subset B) && ~~ (B \subset A).
 
 (* General hypothesis *)
 Definition polytopeIsFullDimensional (cert : Certificate) :=
@@ -63,7 +68,16 @@ Definition specialSimplexInSpecialCone(cert : Certificate) :=
 (* Well-formedness condition on the weights *)
 Definition weightsAreStrictlyPositiveVectors (cert : Certificate) :=
   forall f : simplex (polytope cert).`c, mapping cert f = (specialVertex cert)
-  -> f != (specialSimplex cert @: 'I_d) -> (0 <=m (weights cert f)) /\ (weights cert f <> 0%R). 
+  -> f != (specialSimplex cert @: 'I_d) -> (0 <=m (weights cert f)) /\ (weights cert f <> 0%R).
+  
+(* Well-formedness condition on the geometric graph *)
+Definition geomGraphVerticesArePoints (cert : Certificate) :=
+  vertices (geom_graph cert) = points cert.
+
+Definition geomGraphIsImageOfGraph (cert : Certificate) :=
+  forall v w : 'cV[R]_d, v \in vertices (geom_graph cert) -> w \in vertices (geom_graph cert)
+  -> (w \in successors (geom_graph cert) v <-> exists fv fw : simplex (polytope cert).`c, 
+  fv \in vertices (graph cert) /\ fw \in successors (graph cert) fv /\ mapping cert fv = v /\ mapping cert fw = w).
 
 (* Condition T1 *)
 Definition feasibility_check (cert : Certificate) :=
@@ -92,6 +106,21 @@ Definition separability_check (cert : Certificate) :=
   -> f != (specialSimplex cert @: 'I_d)
   -> forall i : 'I_(polytope cert).`c, i \in f ->
   ('[(witnesses cert) *m (weights cert f) , normalVector (polytope cert) i] <= 0)%R.
+
+(* Condition T6 *)
+Definition geom_edge_pairwise_check (cert : Certificate) :=
+  forall v : 'cV[R]_d, v \in vertices (geom_graph cert) -> forall w : 'cV[R]_d,
+  w \in successors (geom_graph cert) v -> incomparable (activeSets cert v) (activeSets cert w).
+
+(* Condition T7 *)
+Definition connectivity_check (cert : Certificate) :=
+  connected (geom_graph cert).
+
+(* Condition T8 *)
+Definition geom_edge_difference_pairwise_check (cert : Certificate) :=
+  forall v : 'cV[R]_d, v \in vertices (geom_graph cert) -> forall w w' : 'cV[R]_d,
+  w \in successors (geom_graph cert) v /\ w' \in successors (geom_graph cert) v -> w <> w' 
+  -> incomparable (activeSets cert v :\: activeSets cert w) (activeSets cert v :\: activeSets cert w').
 
 End HighLevelChecks.
 
