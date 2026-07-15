@@ -498,14 +498,15 @@ Definition geom_edge_pairwise_check (cert : Certificate) :=
   let vertices := vertices cert in
   for_alli (fun i v =>
     let neighbors := geomGraph.[i] in
-    let ds :=
+    let diffs :=
       fold
         (fun w acc =>
            diff Uint63.ltb (activeSet v) (activeSet vertices.[w]) :: acc)
         neighbors
         [::]
     in
-    pairwise_incomparable ds)
+    all (fun d => if d is [::] then false else true) diffs (* T6 *)
+    && pairwise_incomparable diffs (* T8 *))
   vertices.
 
 Definition scalarProducts_check (cert : Certificate) :=
@@ -580,7 +581,7 @@ Definition build_cert c : Certificate :=
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Loading certificate".
 
-(* Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert. *)
+Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
 (* Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/cross8-cert.bin" As cert.  *)
 (* Time LoadData "../lrs-postprocess/data/birkhoff3-cert.bin" As cert.  *)
@@ -589,7 +590,7 @@ Ltac2 Eval printf "Loading certificate".
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d14_n28-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/permutohedron3-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/permutohedron7-cert.bin" As cert. *)
-Time LoadData "../lrs-postprocess/data/permutohedron8-cert.bin" As cert.
+(* Time LoadData "../lrs-postprocess/data/permutohedron8-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/hypersimplex15-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/hypersimplex16-cert.bin" As cert.  *)
 
