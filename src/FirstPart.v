@@ -523,17 +523,18 @@ Definition inversibility_check (cert : Certificate) :=
   let activeInverse := activeInverse (root cert) in
   let scalarProducts := scalarProducts (root cert) in 
   let vstar := description (facets cert).[simplexIndex (root cert)] in 
-  ifold (fun i acc => acc && (ifold (fun j acc => acc && (if (activeInverse.[vstar.[i]] =? j)%uint63 then 
-  (0 <? scalarProducts.[vstar.[i]].[j])%bigZ else 
-  (0 =? scalarProducts.[vstar.[i]].[j])%bigZ)) d%uint63 true)) d%uint63 true.
+  ifold (fun i acc => acc && (ifold (fun j acc => acc && (if (i =? j)%uint63 then 
+  (0 <? scalarProducts.[activeInverse.[vstar.[i]]].[j])%bigZ else 
+  (0 =? scalarProducts.[activeInverse.[vstar.[i]]].[j])%bigZ)) d%uint63 true)) d%uint63 true.
 
 Definition separability_check (cert : Certificate) :=
   let facets := facets cert in
   let activeInverse := activeInverse (root cert) in
+  let simplexIndex := simplexIndex (root cert) in
   let scalarProducts := scalarProducts (root cert) in
   let weights := weights (root cert) in
-  let vstar := mapping (facets).[simplexIndex (root cert)] in 
-  let res := foldi (fun k f acc => if ~~(k =? vstar)%uint63 && (f.2 =? vstar)%uint63 then
+  let vstar := mapping (facets).[simplexIndex] in 
+  let res := foldi (fun k f acc => if ~~(k =? simplexIndex)%uint63 && (f.2 =? vstar)%uint63 then
   (acc.1 && for_all (fun i => (sparse_array_bigZ_dot weights.[acc.2] scalarProducts.[activeInverse.[i]] <=? 0)%bigZ) f.1,
   (acc.2 + 1)%uint63) else acc) facets (true, 0%uint63) in res.1.
 
@@ -581,7 +582,7 @@ Definition build_cert c : Certificate :=
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Loading certificate".
 
-Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
+(* Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/cross8-cert.bin" As cert.  *)
 Time LoadData "../lrs-postprocess/data/birkhoff3-cert.bin" As cert.  
