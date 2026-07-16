@@ -478,11 +478,26 @@ Definition fullDimInverse : FullDim -> array (array bigZ) := compose snd snd.
 
 End Projectors.
 
+Definition areInequalitiesWellFormed (cert : Certificate) :=
+  let inequalities := inequalities cert in
+  (nb_inequalities cert =? length inequalities)%uint63
+  && (for_all_compose (hasLength (dimension cert)) normal inequalities)
+  && (for_all_compose (exist (fun x => ~~(x =? 0)%bigZ)) normal inequalities).
+
+Definition arePointsWellFormed (cert : Certificate) :=
+  let vertices := vertices cert in
+  (for_all_compose (fun x => ~~(x =? 0)%bigN) (compose commonDenominator point) vertices)
+  && (for_all_compose (hasLength (dimension cert)) (compose numerators point) vertices).
+
 Definition areActiveSetsWellFormed (cert : Certificate) :=
   let m := nb_inequalities cert in
   let vertices := vertices cert in
   (for_all_compose (isStrictlySorted Uint63.ltb) activeSet vertices)
   && (for_all_compose (allInRange Uint63.leb (0%uint63) (m-1)%uint63) activeSet vertices).
+
+Definition areVerticesWellFormed (cert : Certificate) :=
+  (arePointsWellFormed cert)
+  && (areActiveSetsWellFormed cert).
   
 Definition isGraphWellFormed (cert : Certificate) :=
   let graph := graph cert in
@@ -492,13 +507,22 @@ Definition isGraphWellFormed (cert : Certificate) :=
   && (hasNoLoops graph) 
   && (isUndirected graph).
 
-Definition areFacetsWellFormed (cert : Certificate) :=
+Definition areDescriptionsWellFormed (cert : Certificate) :=
   let m := nb_inequalities cert in
   let d := dimension cert in 
   let facets := facets cert in
   (for_all_compose (isStrictlySorted Uint63.ltb) description facets)
   && (for_all_compose (allInRange Uint63.leb (0%uint63) (m-1)%uint63) description facets)
   && (for_all_compose (hasLength d) description facets).
+
+Definition isMappingWellFormed (cert : Certificate) :=
+  let nbVertices := length (vertices cert) in
+  let facets := facets cert in
+  for_all_compose (inRange Uint63.leb (0%uint63) (nbVertices-1)%uint63) mapping facets.
+
+Definition areFacetsWellFormed (cert : Certificate) :=
+  (areDescriptionsWellFormed cert)
+  && (isMappingWellFormed cert).
 
 Definition isGeomGraphWellFormed (cert : Certificate) :=
   let geom_graph := geom_graph cert in
@@ -528,10 +552,25 @@ Definition areGeomEdgeLocalTargetsWellFormed (cert : Certificate) :=
   && for_alli_matrix (fun i j v => inRange Uint63.leb (0%uint63) 
   (length(graph.[geom_edge_sources.[i].[j]])-1)%uint63 v) geom_edge_local_targets.
 
-Definition isMappingWellFormed (cert : Certificate) :=
-  let nbVertices := length (vertices cert) in
-  let facets := facets cert in
-  for_all_compose (inRange Uint63.leb (0%uint63) (nbVertices-1)%uint63) mapping facets.
+Definition isFullDimPointWellFormed (cert : Certificate) :=
+  let fullDimPoint := fullDimPoint (full_dim cert) in
+  (~~(commonDenominator fullDimPoint =? 0)%bigN)
+  && (hasLength (dimension cert) (numerators fullDimPoint)).
+
+Definition isFullDimDirWellFormed (cert : Certificate) :=
+  let fullDimDir := fullDimDir (full_dim cert) in
+  (hasLength (dimension cert) fullDimDir)
+  && (for_all (hasLength (dimension cert)) fullDimDir).
+
+Definition isFullDimInverseWellFormed (cert : Certificate) :=
+  let fullDimInverse := fullDimInverse (full_dim cert) in
+  (hasLength (dimension cert) fullDimInverse)
+  && (for_all (hasLength (dimension cert)) fullDimInverse).
+
+Definition isFullDimWellFormed (cert : Certificate) :=
+  (isFullDimPointWellFormed cert)
+  && (isFullDimDirWellFormed cert)
+  && (isFullDimInverseWellFormed cert).
 
 Definition isSimplexIndexWellFormed (cert : Certificate) :=
   let root := root cert in
@@ -571,6 +610,13 @@ Definition areWeightsWellFormed (cert : Certificate) :=
   && for_all_matrix (fun w => inRange Uint63.leb (0%uint63) (d-1)%uint63 w.1 && (0 <=? w.2)%bigZ) weights 
   && for_all (exist (fun w => (0 <? w.2)%bigZ)) weights 
   && for_all (isStrictlySorted (fun w w' => (w.1 <? w'.1)%uint63)) weights.
+
+Definition isRootWellFormed (cert : Certificate) :=
+  (isSimplexIndexWellFormed cert)
+  && (isActiveInverseWellFormed cert)
+  && (areWitnessesWellFormed cert)
+  && (areScalarProductsWellFormed cert)
+  && (areWeightsWellFormed cert).
   
 Definition areActiveSetsUnique (cert : Certificate) :=
   let vertices := vertices cert in
@@ -715,22 +761,22 @@ Definition full_dim_inverse_check (cert : Certificate) :=
     ) inv.
 
 Definition full_dim_check (cert : Certificate) :=
-     full_dim_feasibility_check cert 
-  && full_dim_inverse_check cert.
+  (full_dim_feasibility_check cert) 
+  && (full_dim_inverse_check cert).
 
 Definition well_formedness_check (cert : Certificate) :=
-     (areActiveSetsWellFormed cert)
+  (areInequalitiesWellFormed cert)
+  && (areVerticesWellFormed cert)
   && (isGraphWellFormed cert)
   && (areFacetsWellFormed cert)
   && (isGeomGraphWellFormed cert)
   && (areGeomEdgeSourcesWellFormed cert)
   && (areGeomEdgeLocalTargetsWellFormed cert)
-  && (isMappingWellFormed cert)
-  && (isSimplexIndexWellFormed cert)
-  && (areWitnessesWellFormed cert)
-  && (areScalarProductsWellFormed cert)
-  && (areWeightsWellFormed cert)
-  && (areActiveSetsUnique cert)
+  && (isFullDimWellFormed cert)
+  && (isRootWellFormed cert).
+
+Definition uniqueness_check (cert : Certificate) :=
+  (areActiveSetsUnique cert)
   && (areFacetsUnique cert).
 
 Definition root_check (cert : Certificate) :=
@@ -745,6 +791,7 @@ Definition geom_graph_check (cert : Certificate) :=
 
 Definition check_certificate (cert : Certificate) :=
      (well_formedness_check cert)
+  && (uniqueness_check cert)
   && (feasibility_check cert)
   && (graph_check cert)
   && (mapping_check cert)
@@ -772,11 +819,11 @@ Definition build_cert c : Certificate :=
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Loading certificate".
 
-(* Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert. *)
+Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
 (* Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/cross8-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/birkhoff3-cert.bin" As cert. *)
-Time LoadData "../lrs-postprocess/data/birkhoff6-cert.bin" As cert. 
+(* Time LoadData "../lrs-postprocess/data/birkhoff6-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d13_n26-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d14_n28-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/permutohedron3-cert.bin" As cert. *)
@@ -791,6 +838,11 @@ Ltac2 Eval printf "".
 Ltac2 Eval printf "Well-formedness check".
 Time Eval vm_compute in 
   well_formedness_check cert.
+
+Ltac2 Eval printf "".
+Ltac2 Eval printf "Uniqueness check".
+Time Eval vm_compute in 
+  uniqueness_check cert.
 
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Feasibility check".
