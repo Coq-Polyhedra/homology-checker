@@ -787,7 +787,7 @@ Time LoadData "../lrs-postprocess/data/birkhoff6-cert.bin" As cert.
 
 Let cert := build_cert cert.
 
-(*Ltac2 Eval printf "".
+Ltac2 Eval printf "".
 Ltac2 Eval printf "Well-formedness check".
 Time Eval vm_compute in 
   well_formedness_check cert.
@@ -820,21 +820,6 @@ Time Eval vm_compute in
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Full dimension check".
 Time Eval vm_compute in
-  full_dim_check cert.*)
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Geometric graph check: graph image".
-Time Eval vm_compute in
-  graph_image_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Geometric graph check: edge check".
-Time Eval vm_compute in
-  geom_edge_pairwise_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Geometric graph check: connectivity".
-Time Eval vm_compute in
-  connectivity_check cert.
+  full_dim_check cert.
 
 End Benchmark.
