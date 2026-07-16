@@ -102,19 +102,33 @@ Definition existi {T : Type} (f : int -> T -> bool) (a : array T) :=
 Definition mem {T : Type} (eqT : T -> T -> bool) (a : array T) (x : T) : bool :=
   exist (fun y => eqT x y) a.
 
-Definition mem_sorted {T : Type} (ltT : T -> T -> bool) (a : array T) (x : T) : bool :=
-  let res := 
-  fold (fun y acc => 
-    if acc is Some _ then acc 
-    else 
-      if ltT y x then None
-      else if ltT x y then Some false
-      else Some true) a None
+Definition mem_sorted {T : Type} (ltT : T -> T -> bool)(a : array T) (x : T) : bool :=
+  let len := length a in
+
+  let step :=
+    fun '(lo, hi, found) =>
+      if found then (lo, hi, found)
+      else if (lo <? hi)%uint63 then
+        let mid := (lo + ((hi - lo) / 2))%uint63 in
+        let y := a.[mid] in
+        if (ltT x y) then
+          (lo, mid, false)
+        else if (ltT y x) then
+          ((mid + 1)%uint63, hi, false)
+        else
+          (lo, hi, true)
+      else
+        (lo, hi, found)
   in
-  match res with
-  | None => false
-  | Some b => b
-  end. 
+
+  let stop :=
+    fun _ '(lo, hi, found) =>
+      found || negb (lo <? hi)%uint63
+  in
+
+  (ifold_from_until (fun _ st => step st)0%uint63 len
+     stop
+     (0%uint63, len, false)).2.
 
 Definition find_from_until {T : Type} (eqT : T -> T -> bool) (a : array T) (x : T) (k : int) : option int :=
   foldi_from_until (fun i _ acc => if (eqT x a.[i]) then Some(i) else None) a k (fun i x => (if x is Some _ then true else false)) None. 
@@ -758,11 +772,11 @@ Definition build_cert c : Certificate :=
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Loading certificate".
 
-Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
+(* Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/cross8-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/birkhoff3-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/birkhoff6-cert.bin" As cert.  *)
+Time LoadData "../lrs-postprocess/data/birkhoff6-cert.bin" As cert. 
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d13_n26-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d14_n28-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/permutohedron3-cert.bin" As cert. *)
@@ -801,11 +815,26 @@ Time Eval vm_compute in
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Geometric graph check".
 Time Eval vm_compute in
-  geom_graph_check cert.*)
+  geom_graph_check cert.
 
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Full dimension check".
 Time Eval vm_compute in
-  full_dim_check cert.
+  full_dim_check cert.*)
+
+Ltac2 Eval printf "".
+Ltac2 Eval printf "Geometric graph check: graph image".
+Time Eval vm_compute in
+  graph_image_check cert.
+
+Ltac2 Eval printf "".
+Ltac2 Eval printf "Geometric graph check: edge check".
+Time Eval vm_compute in
+  geom_edge_pairwise_check cert.
+
+Ltac2 Eval printf "".
+Ltac2 Eval printf "Geometric graph check: connectivity".
+Time Eval vm_compute in
+  connectivity_check cert.
 
 End Benchmark.
