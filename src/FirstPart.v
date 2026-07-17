@@ -503,7 +503,11 @@ Definition isGraphWellFormed (cert : Certificate) :=
   let graph := graph cert in
   let nbFacets := length (facets cert) in
   (length graph =? nbFacets)%uint63 
-  && (for_all_matrix (isVertex graph) graph) 
+  && (for_all_matrix (isVertex graph) graph) (* perhaps we could replace this condition by 
+                                              * for_all_matrix 
+                                                (allInRange Uint63.leb (0%uint63) ((length graph)-1)%uint63) 
+                                                graph
+                                              * more explicitely *)
   && (hasNoLoops graph) 
   && (isUndirected graph).
 
@@ -528,7 +532,7 @@ Definition isGeomGraphWellFormed (cert : Certificate) :=
   let geom_graph := geom_graph cert in
   let nbVertices := length (vertices cert) in
   (length geom_graph =? nbVertices)%uint63 
-  && (for_all_matrix (isVertex geom_graph) geom_graph) 
+  && (for_all_matrix (isVertex geom_graph) geom_graph) (* see remark above *)
   && (hasNoLoops geom_graph) 
   && (isUndirected geom_graph). 
 
@@ -584,6 +588,7 @@ Definition isActiveInverseWellFormed (cert : Certificate) :=
   (length activeInverse =? nb_inequalities cert)%uint63
   && for_alli (fun i k => (activeInverse.[k] =? i)%uint63) (activeSet vertices.[vstar]).
 
+(* witnesses = vectors f_j *)
 Definition areWitnessesWellFormed (cert : Certificate) :=
   let d := dimension cert in 
   let witnesses := (witnesses (root cert)) in
@@ -599,6 +604,13 @@ Definition areScalarProductsWellFormed (cert : Certificate) :=
   (length scalarProducts =? length (activeSet vertices.[mapping facets.[simplexIndex]]))%uint63
   && (for_all (hasLength d) scalarProducts).
 
+Definition isSparseVectorWellFormed d (w : Weight) :=
+  for_all (fun '(i,_) => inRange Uint63.leb (0%uint63) (d-1)%uint63 i) w
+  && isStrictlySorted (fun '(i,_) '(j, _) => (i <? j)%uint63) w.
+
+Definition isSparseVectorPositive (w : Weight) :=
+  (0 <? length w)%uint63 && (for_all (fun '(_,x) => (0 <=? x)%bigZ) w).
+
 Definition areWeightsWellFormed (cert : Certificate) :=
   let d := dimension cert in 
   let weights := weights (root cert) in
@@ -607,9 +619,8 @@ Definition areWeightsWellFormed (cert : Certificate) :=
   let n := counti (fun i x => ~~(i =? simplexIndex)%uint63 && (mapping x =? 
   mapping facets.[simplexIndex])%uint63) facets in
   (length weights =? n)%uint63 
-  && for_all_matrix (fun w => inRange Uint63.leb (0%uint63) (d-1)%uint63 w.1 && (0 <=? w.2)%bigZ) weights 
-  && for_all (exist (fun w => (0 <? w.2)%bigZ)) weights 
-  && for_all (isStrictlySorted (fun w w' => (w.1 <? w'.1)%uint63)) weights.
+  && for_all (isSparseVectorWellFormed d) weights
+  && for_all isSparseVectorPositive weights. 
 
 Definition isRootWellFormed (cert : Certificate) :=
   (isSimplexIndexWellFormed cert)
