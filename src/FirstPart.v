@@ -605,11 +605,11 @@ Definition areScalarProductsWellFormed (cert : Certificate) :=
   && (for_all (hasLength d) scalarProducts).
 
 Definition isSparseVectorWellFormed d (w : Weight) :=
-  for_all (fun '(i,_) => inRange Uint63.leb (0%uint63) (d-1)%uint63 i) w
-  && isStrictlySorted (fun '(i,_) '(j, _) => (i <? j)%uint63) w.
-
-Definition isSparseVectorPositive (w : Weight) :=
-  (0 <? length w)%uint63 && (for_all (fun '(_,x) => (0 <=? x)%bigZ) w).
+  for_all (fun '(i,_) => inRange Uint63.leb (0%uint63) (d-1)%uint63 i) w (* this test can be replace by 
+                                                                          * w.[length w - 1] < d
+                                                                          * if need be *)
+  && isStrictlySorted (fun '(i,_) '(j, _) => (i <? j)%uint63) w
+  && for_all (fun '(_, x) => ~~ (0 =? x)%bigZ) w.
 
 Definition areWeightsWellFormed (cert : Certificate) :=
   let d := dimension cert in 
@@ -619,8 +619,7 @@ Definition areWeightsWellFormed (cert : Certificate) :=
   let n := counti (fun i x => ~~(i =? simplexIndex)%uint63 && (mapping x =? 
   mapping facets.[simplexIndex])%uint63) facets in
   (length weights =? n)%uint63 
-  && for_all (isSparseVectorWellFormed d) weights
-  && for_all isSparseVectorPositive weights. 
+  && for_all (isSparseVectorWellFormed d) weights.
 
 Definition isRootWellFormed (cert : Certificate) :=
   (isSimplexIndexWellFormed cert)
@@ -698,6 +697,9 @@ Definition inversibility_check (cert : Certificate) :=
   (0 <? scalarProducts.[activeInverse.[vstar.[i]]].[j])%bigZ else 
   (0 =? scalarProducts.[activeInverse.[vstar.[i]]].[j])%bigZ)) d%uint63 true)) d%uint63 true.
 
+Definition isSparseVectorPositive (w : Weight) :=
+  (0 <? length w)%uint63 && (for_all (fun '(_,x) => (0 <=? x)%bigZ) w).
+
 Definition separability_check (cert : Certificate) :=
   let facets := facets cert in
   let activeInverse := activeInverse (root cert) in
@@ -705,9 +707,21 @@ Definition separability_check (cert : Certificate) :=
   let scalarProducts := scalarProducts (root cert) in
   let weights := weights (root cert) in
   let vstar := mapping (facets).[simplexIndex] in 
-  let res := foldi (fun k f acc => if ~~(k =? simplexIndex)%uint63 && (f.2 =? vstar)%uint63 then
-  (acc.1 && for_all (fun i => (sparse_array_bigZ_dot weights.[acc.2] scalarProducts.[activeInverse.[i]] <=? 0)%bigZ) f.1,
-  (acc.2 + 1)%uint63) else acc) facets (true, 0%uint63) in res.1.
+  let res := 
+    foldi 
+    (fun k f acc => 
+      if ~~(k =? simplexIndex)%uint63 && (f.2 =? vstar)%uint63 then
+        (acc.1 
+        && 
+        for_all 
+          (fun i => 
+            (isSparseVectorPositive weights.[acc.2])
+            && (sparse_array_bigZ_dot weights.[acc.2] scalarProducts.[activeInverse.[i]] <=? 0)%bigZ) 
+            f.1,
+        (acc.2 + 1)%uint63) 
+      else 
+        acc) 
+    facets (true, 0%uint63) in res.1.
 
 Definition graph_image_check (cert : Certificate) :=
   let facets := facets cert in
