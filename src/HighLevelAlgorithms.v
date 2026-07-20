@@ -24,6 +24,9 @@ Notation "\pdim P" := (adim (hull P)).
 Record Certificate := {
     polytope : 'hpoly[R]_d;
     points : {fset 'cV[R]_d};
+    full_dim_point : 'cV[R]_d;
+    full_dim_dir : 'M[R]_(d,d);
+    full_dim_inv : 'M[R]_(d,d);
     activeSets : 'cV[R]_d -> {set 'I_(polytope.`c)};
     facets : simplicialComplex (polytope.`c);
     mapping : simplex (polytope.`c) -> 'cV[R]_d;
@@ -40,10 +43,6 @@ Definition normalVector (polytope : 'hpoly[R]_d) (i : 'I_(polytope.`c)) :=
 
 Definition incomparable {T : finType} (A B : {set T}) :=
   ~~ (A \subset B) && ~~ (B \subset A).
-
-(* General hypothesis *)
-Definition polytopeIsFullDimensional (cert : Certificate) :=
-  \pdim '[polytope cert] = d.+1.
 
 (* Well-formedness condition on facets *)
 Definition facetsAreDSimplices (cert : Certificate) :=
@@ -78,6 +77,13 @@ Definition geomGraphIsImageOfGraph (cert : Certificate) :=
   forall v w : 'cV[R]_d, v \in vertices (geom_graph cert) -> w \in vertices (geom_graph cert)
   -> (w \in successors (geom_graph cert) v <-> exists fv fw : simplex (polytope cert).`c, 
   fv \in vertices (graph cert) /\ fw \in successors (graph cert) fv /\ mapping cert fv = v /\ mapping cert fw = w).
+
+(* Full dimension hypothesis *)
+Definition full_dim_check (cert : Certificate) :=
+  full_dim_point cert \in points cert 
+  /\ forall i : 'I_d, (full_dim_point cert + col i (full_dim_dir cert))%R \in points cert
+  /\ forall (i j : 'I_d), (i = j /\ '[col i (full_dim_dir cert), col j (full_dim_inv cert)] <> 0)%R
+  \/ (i <> j /\ '[col i (full_dim_dir cert), col j (full_dim_inv cert)] = 0)%R.
 
 (* Condition T1 *)
 Definition feasibility_check (cert : Certificate) :=
