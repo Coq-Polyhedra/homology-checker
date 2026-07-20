@@ -9,7 +9,7 @@ Context (R : realFieldType).
 Context (d : nat).
 
 Definition simplex m := {set 'I_m}.
-Definition simplicialComplex m := {fset simplex m}.
+Definition simplicialComplex m := {set simplex m}.
 
 Notation simplex_graph m := (graph [choiceType of (simplex m)]).
 Notation vertex_graph := (graph [choiceType of ('cV[R]_d)]).
@@ -54,7 +54,7 @@ Definition mappingHasImageInPoints (cert : Certificate) :=
 
 (* Well-formedness condition on graph *)
 Definition graphVerticesAreFacets (cert : Certificate) :=
-  vertices (graph cert) = facets cert.
+  vertices (graph cert) =i facets cert.
 
 Definition graphIsUndirected (cert : Certificate) :=
   forall x y, y \in successors (graph cert) x <-> x \in successors (graph cert) y.
