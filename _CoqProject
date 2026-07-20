@@ -21,5 +21,6 @@ theories/xorder.v
 depot/high_graph.v
 
 src/MathematicalProperties.v
-src/FirstPart.v
+src/HighLevelChecker.v
+src/LowLevelChecker.v
 
