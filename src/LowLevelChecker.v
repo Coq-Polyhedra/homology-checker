@@ -533,8 +533,8 @@ Definition isGeomGraphWellFormed (cert : Certificate) :=
   let nbVertices := length (vertices cert) in
   (length geom_graph =? nbVertices)%uint63 
   && (for_all_matrix (isVertex geom_graph) geom_graph) (* see remark above *)
-  && (hasNoLoops geom_graph) 
-  && (isUndirected geom_graph). 
+  && (isSimpleGraph geom_graph)
+  && (isUndirected geom_graph). (* the undirectness should be a consequence of graph_image_check below *)
 
 Definition areGeomEdgeSourcesWellFormed (cert : Certificate) :=
   let geom_graph := geom_graph cert in
@@ -821,7 +821,8 @@ Definition check_certificate (cert : Certificate) :=
   && (graph_check cert)
   && (mapping_check cert)
   && (root_check cert)
-  && (geom_graph_check cert).
+  && (geom_graph_check cert)
+  && (full_dim_check cert).
 
 Section Benchmark.
 
