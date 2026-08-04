@@ -423,7 +423,8 @@ Definition CommonDenominator := bigN.
 Definition Numerators := array bigZ. 
 Definition Point := (Numerators * CommonDenominator)%type.
 Definition ActiveSet := array int.
-Definition Vertex := (ActiveSet * Point)%type.
+Definition Flag := (array int * array int)%type.
+Definition Vertex := (ActiveSet * (Point * Flag))%type.
 Definition Vertices := array Vertex.
 
 Definition Mapping := int.
@@ -464,7 +465,8 @@ Definition bound : Inequality -> Bound := snd.
 Definition numerators : Point -> Numerators := fst.
 Definition commonDenominator : Point -> CommonDenominator := snd.
 Definition activeSet : Vertex -> ActiveSet := fst.
-Definition point : Vertex -> Point := snd.
+Definition point : Vertex -> Point := compose fst snd.
+Definition flag : Vertex -> Flag := compose snd snd.
 Definition description : Facet -> Description := fst.
 Definition mapping : Facet -> Mapping := snd.
 Definition simplexIndex : Root -> SimplexIndex := fst.
@@ -495,9 +497,22 @@ Definition areActiveSetsWellFormed (cert : Certificate) :=
   (for_all_compose (isStrictlySorted Uint63.ltb) activeSet vertices)
   && (for_all_compose (allInRange Uint63.leb (0%uint63) (m-1)%uint63) activeSet vertices).
 
+Definition areFlagsWellFormed (cert : Certificate) :=
+  let d := dimension cert in
+  let vertices := vertices cert in
+  (for_all 
+    (fun v =>
+         let nb_active := length (activeSet v) in
+         let '(ineq, witness) := flag v in
+         hasLength d%uint63 ineq 
+      && hasLength d%uint63 witness
+      && allInRange Uint63.leb (0%uint63) (nb_active-1)%uint63 ineq) 
+    vertices).
+
 Definition areVerticesWellFormed (cert : Certificate) :=
   (arePointsWellFormed cert)
-  && (areActiveSetsWellFormed cert).
+  && (areActiveSetsWellFormed cert)
+  && (areFlagsWellFormed cert).
   
 Definition isGraphWellFormed (cert : Certificate) :=
   let graph := graph cert in
@@ -762,6 +777,21 @@ Definition connectivity_check (cert : Certificate) :=
   let geom_graph := geom_graph cert in
   isConnected geom_graph.
 
+Definition flag_check (cert : Certificate) :=
+  let vertices := vertices cert in
+  let inequalities := inequalities cert in
+  for_all (fun v =>
+    let active_set := activeSet v in
+    let '(ineqs, witness) := flag v in
+    for_alli (fun i w =>
+      foldi_from_until 
+        (fun _ ineq acc => acc && mem_sorted Uint63.ltb (activeSet vertices.[w]) active_set.[ineq])
+        ineqs
+        0 (fun j acc => acc && (i <=? j)%uint63) true
+      && 
+      ~~ mem_sorted Uint63.ltb (activeSet vertices.[w]) active_set.[ineqs.[i]]) 
+      witness) vertices.
+
 Definition full_dim_feasibility_check (cert : Certificate) :=
   let ineqs := inequalities cert in
   let point := fullDimPoint (full_dim cert) in
@@ -809,9 +839,8 @@ Definition root_check (cert : Certificate) :=
   && (inversibility_check cert)
   && (separability_check cert).
 
-Definition geom_graph_check (cert : Certificate) :=
-     (graph_image_check cert)
-  && (geom_edge_pairwise_check cert)
+Definition vertex_check (cert : Certificate) :=
+     (geom_edge_pairwise_check cert)
   && (connectivity_check cert).
 
 Definition check_certificate (cert : Certificate) :=
@@ -821,7 +850,9 @@ Definition check_certificate (cert : Certificate) :=
   && (graph_check cert)
   && (mapping_check cert)
   && (root_check cert)
-  && (geom_graph_check cert)
+  && (vertex_check cert)
+  && (graph_image_check cert)
+  && (flag_check cert)
   && (full_dim_check cert).
 
 Section Benchmark.
@@ -845,8 +876,8 @@ Definition build_cert c : Certificate :=
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Loading certificate".
 
-Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
-(* Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert. *)
+(* Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert. *)
+Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert.
 (* Time LoadData "../lrs-postprocess/data/cross8-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/birkhoff3-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/birkhoff6-cert.bin" As cert. *)
@@ -891,9 +922,19 @@ Time Eval vm_compute in
   root_check cert.
 
 Ltac2 Eval printf "".
-Ltac2 Eval printf "Geometric graph check".
+Ltac2 Eval printf "Vertex check (local edge test)".
 Time Eval vm_compute in
-  geom_graph_check cert.
+  vertex_check cert.
+
+Ltac2 Eval printf "".
+Ltac2 Eval printf "Vertex check (flag test)".
+Time Eval vm_compute in
+  flag_check cert.
+
+Ltac2 Eval printf "".
+Ltac2 Eval printf "Graph image check".
+Time Eval vm_compute in
+  graph_image_check cert.
 
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Full dimension check".
