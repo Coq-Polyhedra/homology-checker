@@ -244,6 +244,15 @@ End Array.
 Section IntList.
 
 (* in this section, lists are supposed to be sorted decreasingly *)
+Fixpoint mem_intlist (x : int) (l : seq int) : bool :=
+  match l with
+  | [::] => false
+  | y :: l' =>
+      if (y <? x)%uint63 then false
+      else if (x =? y)%uint63 then true
+      else mem_intlist x l'
+  end.
+
 Fixpoint not_subset (a b : seq int) : bool :=
   match a, b with
   | [::], _ => false
@@ -784,12 +793,8 @@ Definition flag_check (cert : Certificate) :=
     let active_set := activeSet v in
     let '(ineqs, witness) := flag v in
     for_alli (fun i w =>
-      foldi_from_until 
-        (fun _ ineq acc => acc && mem_sorted Uint63.ltb (activeSet vertices.[w]) active_set.[ineq])
-        ineqs
-        0 (fun j acc => acc && (i <=? j)%uint63) true
-      && 
-      ~~ mem_sorted Uint63.ltb (activeSet vertices.[w]) active_set.[ineqs.[i]]) 
+      let diff := diff Uint63.ltb (activeSet v) (activeSet vertices.[w]) in
+      ifold (fun j acc => acc && ~~ (mem_intlist active_set.[ineqs.[j]] diff)) i true)
       witness) vertices.
 
 Definition full_dim_feasibility_check (cert : Certificate) :=
@@ -877,10 +882,10 @@ Ltac2 Eval printf "".
 Ltac2 Eval printf "Loading certificate".
 
 (* Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert. *)
-Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert.
+(* Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/cross8-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/birkhoff3-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/birkhoff6-cert.bin" As cert. *)
+Time LoadData "../lrs-postprocess/data/birkhoff6-cert.bin" As cert.
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d13_n26-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d14_n28-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/permutohedron3-cert.bin" As cert. *)
