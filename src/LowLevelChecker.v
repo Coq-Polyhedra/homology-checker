@@ -3,7 +3,7 @@ From Ltac2 Require Import Printf.
 From Coq Require Import Uint63 BinNat.
 From mathcomp Require Import all_ssreflect.
 From Bignums Require Import BigQ.
-From BinReader Require Import BinReader.
+(* From BinReader Require Import BinReader. *)
 Require Import PArray.
 Require Import Coq.Program.Basics.
 Require Import NArith.
@@ -855,12 +855,10 @@ Definition check_certificate (cert : Certificate) :=
   && (graph_check cert)
   && (mapping_check cert)
   && (root_check cert)
-  && (vertex_check cert)
-  && (graph_image_check cert)
+  (* && (vertex_check cert) *)
   && (flag_check cert)
+  && (graph_image_check cert)
   && (full_dim_check cert).
-
-Section Benchmark.
 
 Definition build_cert c : Certificate :=
   let '(nb_ineq, (dim, (ineqs, (verts, ((gr,facs), ((geom_gr, (src, tgt)), (full_dim, rt))))))) := c in
@@ -878,72 +876,3 @@ Definition build_cert c : Certificate :=
     root := rt
   |}.
 
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Loading certificate".
-
-(* Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/cross8-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/birkhoff3-cert.bin" As cert. *)
-Time LoadData "../lrs-postprocess/data/birkhoff6-cert.bin" As cert.
-(* Time LoadData "../lrs-postprocess/data/dual_cyclic_d13_n26-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/dual_cyclic_d14_n28-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/permutohedron3-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/permutohedron7-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/permutohedron8-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/hypersimplex15-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/hypersimplex16-cert.bin" As cert.  *)
-
-Let cert := build_cert cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Well-formedness check".
-Time Eval vm_compute in 
-  well_formedness_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Uniqueness check".
-Time Eval vm_compute in 
-  uniqueness_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Feasibility check".
-Time Eval vm_compute in 
-  feasibility_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Graph check".
-Time Eval vm_compute in
-  graph_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Mapping check".
-Time Eval vm_compute in
-  mapping_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Root check".
-Time Eval vm_compute in
-  root_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Vertex check (local edge test)".
-Time Eval vm_compute in
-  vertex_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Vertex check (flag test)".
-Time Eval vm_compute in
-  flag_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Graph image check".
-Time Eval vm_compute in
-  graph_image_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Full dimension check".
-Time Eval vm_compute in
-  full_dim_check cert.
-
-End Benchmark.

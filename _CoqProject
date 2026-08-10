@@ -1,26 +1,4 @@
--Q theories Polyhedra
--Q depot DepotThese
 -Q src Cert
 
-theories/extra_misc.v
-theories/affine.v
-theories/barycenter.v
-theories/extra_matrix.v
-theories/fsetmin.v
-theories/hpolyhedron.v
-theories/inner_product.v
-theories/lrel.v
-theories/poly_base.v
-theories/polyhedron.v
-theories/row_submx.v
-theories/simplex.v
-theories/vector_order.v
-theories/xfinmap.v
-theories/xorder.v
-
-depot/high_graph.v
-
-src/MathematicalProperties.v
-src/HighLevelChecker.v
 src/LowLevelChecker.v
-
+src/CheckCert.v
