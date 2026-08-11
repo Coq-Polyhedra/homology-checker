@@ -1,10 +1,7 @@
-From Ltac2 Require Import Ltac2.
-From Ltac2 Require Import Printf.
 From Coq Require Import Uint63 BinNat.
-From mathcomp Require Import all_ssreflect.
 From Bignums Require Import BigQ.
-(* From BinReader Require Import BinReader. *)
-Require Import PArray.
+From mathcomp Require Import all_ssreflect.
+From Coq Require Import PArray.
 Require Import Coq.Program.Basics.
 Require Import NArith.
 Import Order.Theory.
