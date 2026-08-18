@@ -1,4 +1,5 @@
 -Q src Cert
 
 src/LowLevelChecker.v
+src/BenchmarkCommon.v
 src/CheckCert.v
