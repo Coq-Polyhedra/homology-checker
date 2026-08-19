@@ -65,7 +65,7 @@ Definition coneOfSimplex (K : asc) (sig : simplex) :=
 
 Definition areFacetsPointed (K : asc) :=
     forall sig : simplex, sig \in (simplices K) -> isFacet sig ->
-    pointed (coneOfSimplex K sig).
+    polyhedron.pointed (coneOfSimplex K sig).
 
 Local Notation "\pdim P" := (adim (hull P)).
 
@@ -667,9 +667,9 @@ Proof.
 *)
 
 Lemma normal_cones_are_pointed (hP : 'hpoly[R]_d) :
-    (isFullDimensional hP) -> (forall x : 'cV[R]_d, (x \in hP) -> pointed (normalCone hP x)).
+    (isFullDimensional hP) -> (forall x : 'cV[R]_d, (x \in hP) -> polyhedron.pointed (normalCone hP x)).
 Proof.
-    intros HfullD x HxInP. destruct (pointed (normalCone hP x)) eqn:Hpointed.
+    intros HfullD x HxInP. destruct (polyhedron.pointed (normalCone hP x)) eqn:Hpointed.
         - trivial.
         - move/eqP in Hpointed. rewrite eqbF_neg in Hpointed.
           move/pointedPn in Hpointed. case: Hpointed => x0 Hpointed.
