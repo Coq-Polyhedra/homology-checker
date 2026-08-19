@@ -1,4 +1,4 @@
-From Coq Require Import PArray PrimString Uint63.
+From Coq Require Import PArray Uint63.
 From Bignums Require Import BigN BigZ.
 From BinReader Require Import BinReader.
 

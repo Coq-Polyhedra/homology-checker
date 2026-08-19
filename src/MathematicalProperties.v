@@ -3,7 +3,7 @@ Import GRing.Theory Num.Theory Order.Theory.
 From Polyhedra Require Import polyhedron row_submx poly_base affine barycenter inner_product vector_order lrel.
 From Polyhedra Require Import hpolyhedron.
 Import HPolyhedron. 
-From DepotThese Require Import high_graph.
+From PolyhedraHirsch Require Import high_graph.
 
 Section Arithmetics.
 
