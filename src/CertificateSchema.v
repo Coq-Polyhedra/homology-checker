@@ -5,9 +5,6 @@ From BinReader Require Import BinReader.
 Open Scope array_scope.
 Open Scope uint63_scope.
 
-(** Exact pre-flatten wire schema used by the August 2026 measurements.
-    Each vertex owns its pair of flag arrays.  The older eight-phase checker
-    decodes these arrays but does not inspect them. *)
 Definition int_array_schema :=
   Packed.array Packed.int63.
 

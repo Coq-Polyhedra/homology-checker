@@ -4,5 +4,5 @@ src/MathematicalProperties.v
 src/HighLevelChecker.v
 
 src/LowLevelChecker.v
-src/BenchmarkCommon.v
+src/CertificateSchema.v
 src/CheckCert.v

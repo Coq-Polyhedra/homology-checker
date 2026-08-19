@@ -1,9 +1,6 @@
-(* From mathcomp Require Import all_ssreflect. *)
 From Ltac2 Require Import Printf.
-From Coq Require Import Uint63.
 From BinReader Require Import BinReader.
-From Cert Require Import LowLevelChecker.
-From Cert Require Import BenchmarkCommon.
+From Cert Require Import LowLevelChecker CertificateSchema.
 
 Section BenchmarkPacked.
 Ltac2 Eval printf "Packed version".
