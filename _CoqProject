@@ -1,7 +1,7 @@
 -Q theories Polyhedra
 -Q depot DepotThese
 -Q src Cert
-
+ 
 theories/extra_misc.v
 theories/affine.v
 theories/barycenter.v
@@ -22,5 +22,7 @@ depot/high_graph.v
 
 src/MathematicalProperties.v
 src/HighLevelChecker.v
-src/LowLevelChecker.v
 
+src/LowLevelChecker.v
+src/BenchmarkCommon.v
+src/CheckCert.v
