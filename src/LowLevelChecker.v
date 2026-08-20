@@ -800,6 +800,16 @@ Definition well_formedness_check (cert : Certificate) :=
   && (isFullDimWellFormed cert)
   && (isRootWellFormed cert).
 
+Definition well_unique_check (cert : Certificate) :=
+  (areInequalitiesWellFormed cert)
+  && (areVerticesWellFormed cert)
+  && (isGraphWellFormed cert)
+  && (areFacetsWellFormed cert)
+  && (isFullDimWellFormed cert)
+  && (isRootWellFormed cert)
+  && (areActiveSetsUnique cert)
+  && (areFacetsUnique cert).
+
 Definition uniqueness_check (cert : Certificate) :=
   (areActiveSetsUnique cert)
   && (areFacetsUnique cert).
@@ -820,9 +830,11 @@ Definition check_certificate (cert : Certificate) :=
   && (feasibility_check cert)
   && (graph_check cert)
   && (mapping_check cert)
+  && (full_dim_check cert)
   && (root_check cert)
   && (geom_graph_check cert)
   && (full_dim_check cert).
+
 
 Section Benchmark.
 
@@ -845,14 +857,14 @@ Definition build_cert c : Certificate :=
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Loading certificate".
 
-Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
+(* Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/cross8-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/birkhoff3-cert.bin" As cert. *)
+(* Time LoadData "../lrs-postprocess/data/birkhoff5-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/birkhoff6-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d13_n26-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/dual_cyclic_d14_n28-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/permutohedron3-cert.bin" As cert. *)
+Time LoadData "../lrs-postprocess/data/permutohedron3-cert.bin" As cert. 
 (* Time LoadData "../lrs-postprocess/data/permutohedron7-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/permutohedron8-cert.bin" As cert. *)
 (* Time LoadData "../lrs-postprocess/data/hypersimplex15-cert.bin" As cert. *)
@@ -860,15 +872,17 @@ Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert.
 
 Let cert := build_cert cert.
 
+(*
 Ltac2 Eval printf "".
-Ltac2 Eval printf "Well-formedness check".
+Ltac2 Eval printf "Certificate check".
 Time Eval vm_compute in 
-  well_formedness_check cert.
+  check_certificate cert. *)
+
 
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Uniqueness check".
 Time Eval vm_compute in 
-  uniqueness_check cert.
+  well_unique_check cert.
 
 Ltac2 Eval printf "".
 Ltac2 Eval printf "Feasibility check".
