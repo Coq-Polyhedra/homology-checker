@@ -7,3 +7,5 @@ src/OddCoveringTheorem.v
 src/HighLevelCertificate.v
 src/NormalCones.v
 src/CertificateCorrectness.v
+src/CertificateSchema.v
+src/CheckCert.v
