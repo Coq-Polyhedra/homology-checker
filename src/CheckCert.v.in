@@ -10,9 +10,11 @@ Definition check_certificate cert :=
   | None => false
   end.
 
-Ltac2 Eval printf "@INSTANCE@".
+Ltac2 Eval printf "Instance: @INSTANCE@".
+Ltac2 Eval printf "Certificate loading:".
 Time LoadDataPacked "../lrs-postprocess/data/@INSTANCE@-cert.bin" As cert.
 
+Ltac2 Eval printf "Certificate checking:".
 Time Eval vm_compute in check_certificate cert.
 
 End Benchmark.

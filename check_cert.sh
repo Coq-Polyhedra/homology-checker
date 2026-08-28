@@ -21,6 +21,8 @@ fi
 certificate="../lrs-postprocess/data/${instance}-cert.bin"
 template="src/CheckCert.v.in"
 output="src/CheckCert.v"
+log_dir="log"
+log_file="${log_dir}/${instance}.log"
 
 if [[ ! -f "$certificate" ]]; then
     echo "Certificate not found: $certificate" >&2
@@ -32,7 +34,26 @@ if [[ ! -f "$template" ]]; then
     exit 1
 fi
 
+mkdir -p "$log_dir"
+
 sed "s/@INSTANCE@/${instance}/g" "$template" > "${output}.tmp"
 mv "${output}.tmp" "$output"
 
-make "$@"
+raw_log=$(mktemp "${log_dir}/.${instance}.raw.XXXXXX")
+trap 'rm -f "$raw_log"' EXIT
+
+# Keep the complete original output on stdout.
+set +e
+make "$@" 2>&1 | tee "$raw_log"
+make_status=${PIPESTATUS[0]}
+set -e
+
+# Save a cleaner version in log/INSTANCE.log.
+sed -n '
+    /Instance/,$ {
+        /^[[:space:]]*- : Init\.unit = ()[[:space:]]*$/d
+        p
+    }
+' "$raw_log" > "$log_file"
+
+exit "$make_status"
