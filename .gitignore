@@ -6,3 +6,4 @@
 *.d
 Makefile
 Makefile.conf
+src/CheckCert.v
