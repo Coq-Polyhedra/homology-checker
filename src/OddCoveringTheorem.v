@@ -1,8 +1,8 @@
 From mathcomp Require Import finmap all_ssreflect all_algebra.
 Import GRing.Theory Num.Theory Order.Theory.
 From Polyhedra Require Import hpolyhedron row_submx inner_product polyhedron poly_base affine vector_order barycenter lrel.
-From DepotThese Require Import high_graph.
-Import HPolyhedron.
+From PolyhedraHirsch Require Import high_graph.
+(* Import HPolyhedron. *)
 Open Scope polyh_scope.
 
 Section Arithmetics.
@@ -358,7 +358,7 @@ Definition ridgesHaveEvenIncidence :=
   forall R : simplex_m, R \in ridgesOf K -> even #|incident_facets K R|.
 
 Definition conesArePointed :=
-  forall F : simplex_m, F \in facetsOf K -> pointed (coneOf F).
+  forall F : simplex_m, F \in facetsOf K -> polyhedron.pointed (coneOf F).
 
 Definition existsSpecialPoint :=
   exists z : 'cV[R]_d, isKGeneric d z /\ odd #|[set F in facetsOf K | z \in coneOf F]|.

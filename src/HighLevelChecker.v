@@ -1,6 +1,6 @@
 From mathcomp Require Import finmap all_ssreflect all_algebra.
 From Polyhedra Require Import hpolyhedron inner_product polyhedron poly_base affine vector_order.
-From DepotThese Require Import high_graph.
+From PolyhedraHirsch Require Import high_graph.
 Import HPolyhedron. 
 
 Section HighLevelChecks.

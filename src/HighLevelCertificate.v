@@ -1,7 +1,7 @@
 From mathcomp Require Import finmap all_ssreflect all_algebra.
 Import GRing.Theory Num.Theory Order.Theory.
 From Polyhedra Require Import hpolyhedron row_submx inner_product polyhedron poly_base affine vector_order barycenter lrel.
-From DepotThese Require Import high_graph.
+From PolyhedraHirsch Require Import high_graph.
 Import HPolyhedron.
 Open Scope polyh_scope.
 From Cert Require Import OddCoveringTheorem NormalCones.

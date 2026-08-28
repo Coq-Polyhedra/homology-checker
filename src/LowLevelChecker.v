@@ -1,10 +1,7 @@
-From Ltac2 Require Import Ltac2.
-From Ltac2 Require Import Printf.
 From Coq Require Import Uint63 BinNat.
-From mathcomp Require Import all_ssreflect.
 From Bignums Require Import BigQ.
-From BinReader Require Import BinReader.
-Require Import PArray.
+From mathcomp Require Import all_ssreflect.
+From Coq Require Import PArray.
 Require Import Coq.Program.Basics.
 Require Import NArith.
 Import Order.Theory.
@@ -244,6 +241,15 @@ End Array.
 Section IntList.
 
 (* in this section, lists are supposed to be sorted decreasingly *)
+Fixpoint mem_intlist (x : int) (l : seq int) : bool :=
+  match l with
+  | [::] => false
+  | y :: l' =>
+      if (y <? x)%uint63 then false
+      else if (x =? y)%uint63 then true
+      else mem_intlist x l'
+  end.
+
 Fixpoint not_subset (a b : seq int) : bool :=
   match a, b with
   | [::], _ => false
@@ -423,7 +429,8 @@ Definition CommonDenominator := bigN.
 Definition Numerators := array bigZ. 
 Definition Point := (Numerators * CommonDenominator)%type.
 Definition ActiveSet := array int.
-Definition Vertex := (ActiveSet * Point)%type.
+Definition Flag := (array int * array int)%type.
+Definition Vertex := (ActiveSet * (Point * Flag))%type.
 Definition Vertices := array Vertex.
 
 Definition Mapping := int.
@@ -464,7 +471,8 @@ Definition bound : Inequality -> Bound := snd.
 Definition numerators : Point -> Numerators := fst.
 Definition commonDenominator : Point -> CommonDenominator := snd.
 Definition activeSet : Vertex -> ActiveSet := fst.
-Definition point : Vertex -> Point := snd.
+Definition point : Vertex -> Point := compose fst snd.
+Definition flag : Vertex -> Flag := compose snd snd.
 Definition description : Facet -> Description := fst.
 Definition mapping : Facet -> Mapping := snd.
 Definition simplexIndex : Root -> SimplexIndex := fst.
@@ -495,9 +503,22 @@ Definition areActiveSetsWellFormed (cert : Certificate) :=
   (for_all_compose (isStrictlySorted Uint63.ltb) activeSet vertices)
   && (for_all_compose (allInRange Uint63.leb (0%uint63) (m-1)%uint63) activeSet vertices).
 
+Definition areFlagsWellFormed (cert : Certificate) :=
+  let d := dimension cert in
+  let vertices := vertices cert in
+  (for_all 
+    (fun v =>
+         let nb_active := length (activeSet v) in
+         let '(ineq, witness) := flag v in
+         hasLength d%uint63 ineq 
+      && hasLength d%uint63 witness
+      && allInRange Uint63.leb (0%uint63) (nb_active-1)%uint63 ineq) 
+    vertices).
+
 Definition areVerticesWellFormed (cert : Certificate) :=
   (arePointsWellFormed cert)
-  && (areActiveSetsWellFormed cert).
+  && (areActiveSetsWellFormed cert)
+  && (areFlagsWellFormed cert).
   
 Definition isGraphWellFormed (cert : Certificate) :=
   let graph := graph cert in
@@ -762,6 +783,17 @@ Definition connectivity_check (cert : Certificate) :=
   let geom_graph := geom_graph cert in
   isConnected geom_graph.
 
+Definition flag_check (cert : Certificate) :=
+  let vertices := vertices cert in
+  let inequalities := inequalities cert in
+  for_all (fun v =>
+    let active_set := activeSet v in
+    let '(ineqs, witness) := flag v in
+    for_alli (fun i w =>
+      let diff := diff Uint63.ltb (activeSet v) (activeSet vertices.[w]) in
+      ifold (fun j acc => acc && ~~ (mem_intlist active_set.[ineqs.[j]] diff)) i true)
+      witness) vertices.
+
 Definition full_dim_feasibility_check (cert : Certificate) :=
   let ineqs := inequalities cert in
   let point := fullDimPoint (full_dim cert) in
@@ -819,9 +851,8 @@ Definition root_check (cert : Certificate) :=
   && (inversibility_check cert)
   && (separability_check cert).
 
-Definition geom_graph_check (cert : Certificate) :=
-     (graph_image_check cert)
-  && (geom_edge_pairwise_check cert)
+Definition vertex_check (cert : Certificate) :=
+     (geom_edge_pairwise_check cert)
   && (connectivity_check cert).
 
 Definition check_certificate (cert : Certificate) :=
@@ -832,11 +863,10 @@ Definition check_certificate (cert : Certificate) :=
   && (mapping_check cert)
   && (full_dim_check cert)
   && (root_check cert)
-  && (geom_graph_check cert)
+  (* && (vertex_check cert) *)
+  && (flag_check cert)
+  && (graph_image_check cert)
   && (full_dim_check cert).
-
-
-Section Benchmark.
 
 Definition build_cert c : Certificate :=
   let '(nb_ineq, (dim, (ineqs, (verts, ((gr,facs), ((geom_gr, (src, tgt)), (full_dim, rt))))))) := c in
@@ -854,64 +884,3 @@ Definition build_cert c : Certificate :=
     root := rt
   |}.
 
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Loading certificate".
-
-(* Time LoadData "../lrs-postprocess/data/poly20dim21-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/poly23dim24-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/cross8-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/birkhoff5-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/birkhoff6-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/dual_cyclic_d13_n26-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/dual_cyclic_d14_n28-cert.bin" As cert. *)
-Time LoadData "../lrs-postprocess/data/permutohedron3-cert.bin" As cert. 
-(* Time LoadData "../lrs-postprocess/data/permutohedron7-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/permutohedron8-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/hypersimplex15-cert.bin" As cert. *)
-(* Time LoadData "../lrs-postprocess/data/hypersimplex16-cert.bin" As cert.  *)
-
-Let cert := build_cert cert.
-
-(*
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Certificate check".
-Time Eval vm_compute in 
-  check_certificate cert. *)
-
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Uniqueness check".
-Time Eval vm_compute in 
-  well_unique_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Feasibility check".
-Time Eval vm_compute in 
-  feasibility_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Graph check".
-Time Eval vm_compute in
-  graph_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Mapping check".
-Time Eval vm_compute in
-  mapping_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Root check".
-Time Eval vm_compute in
-  root_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Geometric graph check".
-Time Eval vm_compute in
-  geom_graph_check cert.
-
-Ltac2 Eval printf "".
-Ltac2 Eval printf "Full dimension check".
-Time Eval vm_compute in
-  full_dim_check cert.
-
-End Benchmark.

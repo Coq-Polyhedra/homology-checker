@@ -3,5 +3,6 @@
 *.vo
 *.vok
 *.vos
-*file.d
-Proofs.v
+*.d
+Makefile
+Makefile.conf

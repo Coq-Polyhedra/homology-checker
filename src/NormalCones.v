@@ -1,7 +1,7 @@
 From mathcomp Require Import finmap all_ssreflect all_algebra.
 Import GRing.Theory Num.Theory Order.Theory.
 From Polyhedra Require Import hpolyhedron row_submx inner_product polyhedron poly_base affine vector_order barycenter lrel.
-From DepotThese Require Import high_graph.
+From PolyhedraHirsch Require Import high_graph.
 Import HPolyhedron.
 Open Scope polyh_scope.
 From Cert Require Import OddCoveringTheorem.
@@ -176,9 +176,9 @@ Proof.
 Qed.
 
 Lemma normal_cones_are_pointed (P : 'hpoly[R]_d) :
-    (\pdim '[P] = d.+1) -> (forall x : 'cV[R]_d, (x \in P) -> pointed (normalCone P x)).
+    (\pdim '[P] = d.+1) -> (forall x : 'cV[R]_d, (x \in P) -> polyhedron.pointed(normalCone P x)).
 Proof.
-    move=> HfullD x HxInP. destruct (pointed (normalCone P x)) eqn:Hpointed.
+    move=> HfullD x HxInP. destruct (polyhedron.pointed(normalCone P x)) eqn:Hpointed.
         - trivial.
         - move/eqP in Hpointed. rewrite eqbF_neg in Hpointed.
           move/pointedPn in Hpointed. case: Hpointed => x0 Hpointed.
