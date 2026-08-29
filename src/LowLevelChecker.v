@@ -883,4 +883,3 @@ Definition build_cert c : Certificate :=
     full_dim := full_dim;
     root := rt
   |}.
-

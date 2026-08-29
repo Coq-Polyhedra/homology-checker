@@ -1,11 +1,10 @@
 -Q src Cert
 
-src/MathematicalProperties.v
 src/HighLevelChecker.v
 src/LowLevelChecker.v
 src/OddCoveringTheorem.v
 src/HighLevelCertificate.v
-src/NormalCones.v
+src/CoveringCriterion.v
 src/CertificateCorrectness.v
 src/CertificateSchema.v
 src/CheckCert.v

@@ -6,7 +6,7 @@ Import HPolyhedron.
 
 Open Scope polyh_scope.
 
-From Cert Require Import OddCoveringTheorem NormalCones HighLevelCertificate.
+From Cert Require Import OddCoveringTheorem CoveringCriterion HighLevelCertificate.
 
 Section FinsetLemmas.
 
@@ -650,6 +650,12 @@ Local Notation m := (m R d P).
 Local Notation simplex_m := (simplex [finType of 'I_m]).
 Local Notation Certificate := (Certificate R d P).
 Local Notation facets := (facets R d P).
+Local Notation mapping := (mapping R d P).
+Local Notation activeSets := (activeSets R d P).
+Local Notation specialSimplex := (specialSimplex R d P).
+Local Notation specialVertex := (specialVertex R d P).
+Local Notation witnesses := (witnesses R d P).
+Local Notation weights := (weights R d P).
 Local Notation normalVector := (normalVector d R).
 Local Notation existsSpecialPoint := (existsSpecialPoint m d R).
 Local Notation mappingHasImageInPoints := (mappingHasImageInPoints d R P V).
@@ -657,10 +663,26 @@ Local Notation specialSimplexInSpecialCone := (specialSimplexInSpecialCone d R P
 Local Notation weightsAreStrictlyPositiveVectors := (weightsAreStrictlyPositiveVectors d R P).
 Local Notation mapping_check := (mapping_check d R P).
 Local Notation inversibility_check := (inversibility_check d R P).
+Local Notation feasibility_check := (feasibility_check d R P V).
 Local Notation separability_check := (separability_check d R P).
+Local Notation facetsAreDSimplices := (facetsAreDSimplices d R P).
+Local Notation coneOf := (coneOf m d R (normalVector P)).
+Local Notation coneOfS := (coneOfS m d R (normalVector P)).
+Local Notation normalsOfS := (normalsOfS m d R (normalVector P)).
+Local Notation coneOf_subset := (coneOf_subset m d R (normalVector P)).
+Local Notation normalsOf := ((normalsOf m d R (normalVector P))).
+Local Notation normalCone := (normalCone d R P).
+Local Notation in_normalConeP := (in_normalConeP d R P).
+Local Notation isKGeneric := (isKGeneric m d R (normalVector P)).
 
 Variable (cert : Certificate).
 
+Local Notation inversibility_cert := (inversibility_cert d R P cert).
+Local Notation activeSets_cert := (activeSets_cert d R P V cert).
+Local Notation facets_cert := (facets_cert d R P cert).
+
+Hypothesis Hfacets : facetsAreDSimplices cert.
+Hypothesis Hfeas : feasibility_check cert.
 Hypothesis Hmappoint : mappingHasImageInPoints cert.
 Hypothesis HspecSimp : specialSimplexInSpecialCone cert.
 Hypothesis Hweights : weightsAreStrictlyPositiveVectors cert.
@@ -668,8 +690,434 @@ Hypothesis Hmapcheck : mapping_check cert.
 Hypothesis Hinvert : inversibility_check cert.
 Hypothesis Hsep : separability_check cert.
 
+Definition zstar : 'cV[R]_d :=
+  \sum_(i < d) (\col_k (P.`A (specialSimplex cert i) k))%R.
+
+Lemma specVert_is_maximizer :
+  (specialVertex cert) \in argmin '[P] zstar.
+Proof.
+  rewrite in_argmin.
+  have HspecVertInV : specialVertex cert \in V.
+    rewrite -(snd HspecSimp). by apply/Hmappoint; apply (fst HspecSimp).
+  apply/andP. split=>//.
+  rewrite -(snd HspecSimp).
+  have HspecSimpInV : mapping cert ((specialSimplex cert) @: 'I_d) \in V.
+    by rewrite (snd HspecSimp).
+  rewrite mem_mk_poly. by apply: (fst Hfeas) (mapping cert ((specialSimplex cert) @: 'I_d)) HspecSimpInV.
+  apply/poly_subset_hsP. move=> x Hx.
+  simpl. rewrite vdot_sumDl. rewrite vdot_sumDl.
+  apply: ler_sum=> i _.
+  have Hact : ((specialSimplex cert) @: 'I_d) \subset activeSets cert (specialVertex cert).
+    rewrite -(snd HspecSimp). apply/Hmapcheck. by apply: (fst HspecSimp).
+  have HactSpecVert := (snd Hfeas) (specialVertex cert) HspecVertInV.
+  rewrite HactSpecVert in Hact. move/subsetP in Hact.
+  have HspecSimpli : specialSimplex cert i \in [set specialSimplex cert x | x : 'I_d].
+    by apply/imsetP; exists i.
+  have Hacti := Hact (specialSimplex cert i) HspecSimpli.
+  rewrite inE in Hacti. move/eqP in Hacti.
+  have Hrew : normalVector P (specialSimplex cert i) = (\col_k P.`A (specialSimplex cert i) k)%R.
+    rewrite/normalVector. by apply/matrixP => k j; rewrite !mxE.
+  rewrite -Hrew Hacti. rewrite mem_mk_poly in_hpolyE in Hx.
+  move/forallP in Hx. have Hxi := Hx (specialSimplex cert i).
+  rewrite/normalVector. by rewrite -row_vdot in Hxi.
+Qed.
+
+Lemma maximizer_is_unique :
+  forall x, x \in argmin '[P] zstar -> x = (specialVertex cert).
+Proof.
+  move=> x Hx.
+  have HspecVertInV : specialVertex cert \in V.
+    rewrite -(snd HspecSimp). by apply/Hmappoint; apply (fst HspecSimp).
+  have HsVInS := (fst Hfeas) (specialVertex cert) HspecVertInV.
+  rewrite -mem_mk_poly in HsVInS.
+  rewrite in_argmin in Hx. move/andP : Hx => [HxP /poly_subset_hsP Hhs].
+  have Heq : ('[ zstar, x] = '[ zstar, specialVertex cert])%R.
+  apply/eqP. rewrite eq_le. apply/andP; split=>//.
+  - by have HhsSv := Hhs (specialVertex cert) HsVInS; simpl in HhsSv.
+  - have HsV := specVert_is_maximizer.
+    rewrite in_argmin in HsV. move/andP : HsV => [_ /poly_subset_hsP HhssV].
+    by have Hhsx := HhssV x HxP; simpl in Hhsx.
+  move/eqP in Heq. rewrite -subr_eq0 in Heq. move/eqP in Heq. rewrite -vdotBr in Heq.
+  rewrite vdot_sumDl in Heq.
+  have Hpos : forall i, (0 <= '[ \col_k P.`A (specialSimplex cert i) k, x - specialVertex cert])%R.
+    move=>i. rewrite vdotBr subr_ge0.
+    have Hact : ((specialSimplex cert) @: 'I_d) \subset activeSets cert (specialVertex cert).
+    rewrite -(snd HspecSimp). apply/Hmapcheck. by apply: (fst HspecSimp).
+    have HactSpecVert := (snd Hfeas) (specialVertex cert) HspecVertInV.
+    rewrite HactSpecVert in Hact. move/subsetP in Hact.
+    have HspecSimpli : specialSimplex cert i \in [set specialSimplex cert x | x : 'I_d].
+      by apply/imsetP; exists i.
+    have Hacti := Hact (specialSimplex cert i) HspecSimpli.
+    rewrite inE in Hacti. move/eqP in Hacti.
+    have Hrew : normalVector P (specialSimplex cert i) = (\col_k P.`A (specialSimplex cert i) k)%R.
+    rewrite/normalVector. by apply/matrixP => k j; rewrite !mxE.
+    rewrite -Hrew Hacti. rewrite mem_mk_poly in_hpolyE in HxP.
+    move/forallP in HxP. have Hxi := HxP (specialSimplex cert i).
+    rewrite/normalVector. by rewrite -row_vdot in Hxi.
+  have HeqT : forall i : 'I_d, '[ \col_k P.`A (specialSimplex cert i) k, x - specialVertex cert]%R = 0%R.
+    move=> i.
+     have HeqTB := (@psumr_eq0P R [finType of 'I_d] predT (fun i =>
+    ('[\col_k P.`A (specialSimplex cert i) k, x - specialVertex cert])%R)).
+    apply: HeqTB. move=> j _. by apply: Hpos j.
+    by change ((\sum_i '[\col_k P.`A (specialSimplex cert i) k, x - specialVertex cert])%R = 0%R).
+    by [].
+  have Horth : (x - specialVertex cert)%R \in (<<[seq (\col_k (P.`A (specialSimplex cert i) k))%R | i <- enum 'I_d]>>^OC)%VS.
+    apply/orthv_spanP. move=>y /mapP [i [HiId Hyi]].
+    rewrite Hyi. by apply: HeqT i.
+  have Hdimfree : \dim <<[seq (\col_k P.`A (specialSimplex cert i) k)%R | i <- enum 'I_d]>> = d.
+    have Hfree := inversibility_cert Hinvert.
+    move/eqP in Hfree. by rewrite size_map size_enum_ord in Hfree.
+  have Hdim : \dim (<<[seq (\col_k (P.`A (specialSimplex cert i) k))%R | i <- enum 'I_d]>>^OC)%VS = 0.
+    rewrite dim_orthv. rewrite Hdimfree. apply: subnn. 
+  move/eqP in Hdim. rewrite dimv_eq0 in Hdim. move/eqP in Hdim.
+  rewrite Hdim in Horth. rewrite memv0 in Horth.
+  rewrite subr_eq0 in Horth. by move/eqP in Horth.
+Qed.
+
+Lemma zstar_in_specialCone :
+  zstar \in coneOf (specialSimplex cert @: 'I_d).
+Proof.
+  apply/in_coneOfP.
+  pose w0 : {fsfun 'cV[R]_d ~> R} := [fsfun x in normalsOf [set specialSimplex cert i | i : 'I_d] => 1%R].
+  have Hw0 : conic w0.
+    apply/conicwP => y.
+    rewrite fsfunE.
+    case: ifP => _.
+    - exact: ler01.
+    - by [].
+  pose w : {conic 'cV[R]_d ~> R} := @mkConicFun _ _ w0 Hw0.
+  exists w.
+  have Hwsub : (finsupp w `<=` normalsOf [set specialSimplex cert x | x : 'I_d])%fset.
+    apply/fsubsetP => y Hy.
+    apply/in_normalsOfP. rewrite mem_finsupp /w /w0 /= fsfunE in Hy.
+    have HyN : y \in normalsOf [set specialSimplex cert i | i : 'I_d].
+      move: Hy. case: ifP => HyN.
+      + by move=> _.
+      + by rewrite eqxx.
+    by move/in_normalsOfP in HyN. 
+  split=>//. rewrite (combinewE Hwsub).
+  have Hnormal i : (\col_k P.`A (specialSimplex cert i) k)%R \in
+  normalsOf [set specialSimplex cert x | x : 'I_d].
+  apply/in_normalsOfP. exists (specialSimplex cert i). split=>//.
+  - apply/imsetP. exists i. by []. by [].
+  - rewrite/normalVector. by apply/matrixP => k j; rewrite !mxE.
+  have Huniq := free_uniq (inversibility_cert Hinvert).
+  pose nvec := fun i : 'I_d => (\col_k P.`A (specialSimplex cert i) k)%R.
+  have Hnvec_inj : injective nvec.
+    move=> i j Hij.
+    have Hsize : size [seq (\col_k P.`A (specialSimplex cert i) k)%R | i <- enum 'I_d] = d.
+      by rewrite size_map size_enum_ord.
+    have Hisize : i < size [seq (\col_k P.`A (specialSimplex cert i) k)%R | i <- enum 'I_d].
+      by rewrite Hsize.
+    have Hjsize : j < size [seq (\col_k P.`A (specialSimplex cert i) k)%R | i <- enum 'I_d].
+      by rewrite Hsize.
+    apply: val_inj. apply/eqP.
+    rewrite -(@nth_uniq _ 0%R [seq (\col_k P.`A (specialSimplex cert i) k)%R | i <- enum 'I_d] i j Hisize Hjsize Huniq).
+    apply/eqP.
+    have Henum (k : 'I_d) : val k < size (enum 'I_d). 
+      rewrite size_enum_ord. by apply: ltn_ord.
+    rewrite (@nth_map 'I_d i 'cV[R]_d 0%R  nvec (val i) (enum 'I_d) (Henum i)).
+    rewrite (@nth_map 'I_d i 'cV[R]_d 0%R  nvec (val j) (enum 'I_d) (Henum j)).
+    by rewrite !nth_ord_enum.
+  pose phi : 'I_d -> normalsOf [set specialSimplex cert x | x : 'I_d] :=
+    fun i => Sub (nvec i) (Hnormal i).
+  have Hphi_inj : injective phi.
+    move=> i j Hij. 
+    apply: Hnvec_inj. have Hval := congr1 (fun x => val x) Hij.
+    exact Hval.
+  have Hphi_surj : forall y, exists i : 'I_d, phi i == y.
+    move=> y. have Hy := valP y. move/in_normalsOfP in Hy.
+    case: Hy => [i [Hi Hyi]]. move/imsetP: Hi => [j Hj Hij].
+    exists j. apply/eqP. apply: val_inj. rewrite Hyi. rewrite/phi. simpl.
+    rewrite/nvec. rewrite/normalVector. rewrite Hij. by apply/matrixP => k l; rewrite !mxE.
+  pose psi := fun y => xchoose (Hphi_surj y).
+  have Hphi_psi : forall y, phi (psi y) = y.
+    move=> y. apply/eqP. change (phi (xchoose (Hphi_surj y)) == y).
+    exact: xchooseP (Hphi_surj y).
+  have Hpsi_phi : forall i, psi (phi i) = i.
+    move=> i. apply: Hphi_inj. exact: Hphi_psi (phi i).
+  have Hphi_bij : bijective phi.
+    apply: (@Bijective _ _ phi psi).
+    - exact: Hpsi_phi.
+    - exact: Hphi_psi.
+  have Hphi_bij_on : {on [pred i | predT i], bijective phi}.
+    exact: onW_bij _ Hphi_bij.
+  rewrite (reindex phi Hphi_bij_on). simpl.
+  apply:eq_bigr=> i _.
+  rewrite fsfunE. rewrite (Hnormal i). 
+  by rewrite scale1r.
+Qed.  
+
+Lemma zstar_notin_other_cones :
+  forall f, f \in facets cert -> f != (specialSimplex cert @: 'I_d) -> zstar \notin coneOf f.
+Proof.
+  move=> f Hffac Hfspec.
+  case: (mapping cert f =P specialVertex cert).
+  - move=> Hfmap.
+    pose qf := (witnesses cert *m (weights cert f))%R.
+    have Hcone : forall y, y \in coneOf f -> ('[y,qf] <= 0)%R.
+      move=>y /in_coneOfP [w [Hfsw Hcomb]].
+      rewrite (combinewE Hfsw) in Hcomb. rewrite Hcomb.
+      rewrite vdot_sumDl. 
+      have Hle : ((\sum_(i : normalsOf f) '[w (fsval i) *: fsval i, qf])%R <=
+      (\sum_(i : normalsOf f) (0%R : R))%R)%R.
+      apply: ler_sum => x _.
+      rewrite vdotZl. apply: mulr_ge0_le0.
+      apply:ge0_fconic.
+      rewrite vdotC. have Hfsvalx := fsvalP x.
+      move/in_normalsOfP: Hfsvalx => [i [Hif Hfv]].
+      rewrite Hfv. by apply: Hsep.
+      rewrite [(\sum_(i : normalsOf f) (0%R : R))%R]big1 in Hle.
+      exact Hle. by move=> _ _.
+    have Hzstar : ('[zstar, qf] > 0)%R.
+      rewrite vdot_sumDl. 
+      have Hmul : (witnesses cert *m (weights cert f))%R = (\sum_(i < d) ((weights cert f i ord0) *: col i (witnesses cert)))%R.
+        apply/matrixP => i j. rewrite !mxE. rewrite summxE. apply eq_bigr => k _.
+        rewrite !mxE. rewrite mulrC. have Hj : j = ord0. by apply/ord1.
+        by rewrite Hj.
+      have Hscal i : ('[ \col_k P.`A (specialSimplex cert i) k, qf] = weights cert f i ord0 * '[\col_k P.`A (specialSimplex cert i) k, col i (witnesses cert)])%R.
+        rewrite/qf Hmul. rewrite vdot_sumDr. rewrite -vdotZr. rewrite (bigD1 i) //=.
+        have Hnull : (\sum_(i0 < d | i0 != i) '[ \col_k P.`A (specialSimplex cert i) k, weights cert f i0 ord0 *:
+        col i0 (witnesses cert)] = 0)%R.
+        apply: big1 => j Hj. have Hsepji := (Hinvert i j).
+        case Hsepji.
+        + move=> [Habs _]. move/eqP in Habs. rewrite eq_sym in Habs. move/eqP in Habs. by move/eqP: Hj.
+        + move=> [_ Hsc]. rewrite vdotZr. rewrite Hsc. by rewrite mulr0.
+        rewrite Hnull. by rewrite GRing.addr0.
+      have [/forallP Hwpos Hwnul] := Hweights f Hfmap Hfspec.
+      have Hcoord : [exists i : 'I_d, weights cert f i ord0 != 0%R].
+        rewrite -(negbK ([exists i : 'I_d, weights cert f i ord0 != 0%R])).
+        rewrite negb_exists. 
+        apply (@contra ([forall x, ~~ (weights cert f x ord0 != 0%R)]) (weights cert f == 0%R)).
+        move/forallP => Hforall. apply/eqP. apply/matrixP => i j.
+        have Hj : j = ord0. by apply/ord1. rewrite Hj.
+        have Hi := Hforall i. rewrite negbK in Hi. rewrite mxE. by apply/eqP.
+        by move/eqP in Hwnul.
+      move/existsP: Hcoord => [i Hi].
+      rewrite (bigD1 i). simpl.
+      rewrite (Hscal i). 
+      have Hpos : (\sum_(i0 < d | i0 != i) '[ \col_k P.`A (specialSimplex cert i0) k, qf] >= 0)%R.
+        apply: sumr_ge0. move=> j Hij.
+        rewrite (Hscal j). apply: mulr_ge0. have Hwposj := Hwpos j. by rewrite mxE in Hwposj.
+        case: (Hinvert j j). 
+        + move=> [_ Hsc].  by exact: ltW Hsc.
+        + by move=> [Habs _].
+      have Hspos : (weights cert f i ord0 * '[ \col_k P.`A (specialSimplex cert i) k, col i (witnesses cert)] > 0)%R.
+      + apply:mulr_gt0. have Hwposi := Hwpos i. rewrite mxE in Hwposi.
+        rewrite lt_neqAle. apply/andP. split=>//. by rewrite eq_sym.
+      + case: (Hinvert i i).
+        * by move=> [_ Hsc].
+        + by move=> [Habs _].
+      have Hres := (@ltr_le_add R 0%R (weights cert f i ord0 * '[ \col_k P.`A (specialSimplex cert i) k, col i (witnesses cert)])%R
+      0%R (\sum_(i0 < d | i0 != i) '[ \col_k P.`A (specialSimplex cert i0) k, qf])%R) Hspos Hpos.
+      by rewrite add0r in Hres. by [].
+    case Hin: (zstar \in coneOf f).
+    have Hconezstar := Hcone zstar Hin. rewrite ltNge in Hzstar. by move/negP in Hzstar. by []. 
+  - move=> Hfmap.
+    have Hsubset : coneOf f `<=` normalCone (mapping cert f).
+      apply: coneOfS. 
+      rewrite -(activeSets_cert Hfeas (mapping cert f) (Hmappoint f Hffac)).
+      by exact: Hmapcheck f Hffac.
+    case Hin: (zstar \in coneOf f).
+    + move/poly_subsetP in Hsubset. 
+      have Hsubsetzstar := Hsubset zstar Hin.
+      rewrite -mem_polyE in Hsubsetzstar.
+      have HmapfInP := (fst Hfeas) (mapping cert f) (Hmappoint f Hffac).
+      move/(in_normalConeP (mapping cert f) zstar HmapfInP) in Hsubsetzstar.
+      by have Habs := maximizer_is_unique (mapping cert f) Hsubsetzstar.
+    + by [].
+Qed.
+
+Lemma zstar_is_dgeneric :
+  isKGeneric (set_to_asc (facets cert)) (d.+1) zstar.
+Proof.
+  move=> f Hf Hfdim.
+  case Hin : (zstar \in coneOf f).
+  - move/in_set_to_ascP: Hf => [g [Hg Hfg]].
+    have/poly_subsetP Hsub := coneOfS f g Hfg.
+    have Hzsin := Hsub zstar Hin. rewrite -mem_polyE in Hzsin.
+    have Hgs : g = specialSimplex cert @: 'I_d.
+      case: (g =P (specialSimplex cert @: 'I_d)) => Hcase.
+      + by [].
+      + move/eqP in Hcase.
+        have Habs := zstar_notin_other_cones g Hg Hcase.
+        by rewrite Hzsin in Habs.
+    rewrite Hgs in Hfg.
+    have Hex : [exists i : 'I_d, normalVector P (specialSimplex cert i) \notin (normalsOf f)].
+      rewrite -(negbK ([exists i : 'I_d, normalVector P (specialSimplex cert i) \notin (normalsOf f)])).
+      rewrite negb_exists. 
+      apply (@contra ([forall x, ~~ (normalVector P (specialSimplex cert x) \notin normalsOf f)]) (\pdim (coneOf f) == d.+1)).
+      move/forallP => Hforall.
+      have Heq : normalsOf f = normalsOf [set specialSimplex cert x | x : 'I_d].
+        apply/fsetP => y. apply/idP/idP.
+        - move=> Hy. have/fsubsetP Hsubs := normalsOfS f [set specialSimplex cert x | x : 'I_d] Hfg.
+          exact: Hsubs y Hy.
+        - move=> Hy. move/in_normalsOfP: Hy => [i [Hi Hyi]]. move/imsetP: Hi => [j Hjd Hij].
+          rewrite Hij in Hyi. rewrite Hyi. have Hforallj := Hforall j. by rewrite negbK in Hforallj.
+      rewrite/coneOf. rewrite Heq. rewrite eq_le. apply/andP; split=>//.
+      + apply: adim_leSn.
+      + pose X := [seq (\col_k P.`A (specialSimplex cert i) k)%R | i <- enum 'I_d].
+        have Hdimfree : \dim <<X>> = d.
+          have Hfree := inversibility_cert Hinvert.
+          move/eqP in Hfree. by rewrite size_map size_enum_ord in Hfree.
+        have Hseq : ([seq (x-0)%R | x <- X] = [seq x | x <- X])%VS.
+            apply eq_map => x. by rewrite subr0.
+        have Hdir : dir [affine <<[seq (x-0)%R | x <- X]>> & 0%R] = <<X>>%VS.
+          rewrite dir_mk_affine. rewrite Hseq. by rewrite map_id.
+        have Hadim : adim [affine <<[seq (x-0)%R | x <- X]>> & 0%R] = (\dim <<X>>).+1.
+          rewrite -Hdir. apply: adimN0_eq. by apply: mk_affine_proper0.
+        rewrite Hdimfree in Hadim. rewrite -Hadim.
+        apply: dim_sub_affine.
+        + apply: zero_coneOf.
+        + move=> x Hx.
+          move/mapP: Hx => [i [Hi [Hij]]].
+          have Hx : x \in normalsOf [set specialSimplex cert x0 | x0 : 'I_d].
+            apply/in_normalsOfP. exists (specialSimplex cert i). split=>//.
+            apply/imsetP. exists i. by rewrite inE. by [].
+            have Hrew : normalVector P (specialSimplex cert i) = (\col_k P.`A (specialSimplex cert i) k)%R.
+            rewrite/normalVector. by apply/matrixP => k j; rewrite !mxE.
+            by rewrite Hrew.
+          by exact: coneOf_subset ([set specialSimplex cert x0 | x0 : 'I_d]) x Hx.
+        case Hdimcone : (\pdim (coneOf f) == d.+1).
+        + move/eqP in Hdimcone. rewrite Hdimcone in Hfdim. by rewrite ltnn in Hfdim.
+        + by [].
+    move/existsP: Hex => [k Hk]. 
+    have Hforall : forall y, y \in coneOf f -> ('[y, col k (witnesses cert)] = 0)%R.
+      move=> y Hy.
+      move/in_coneOfP: Hy => [w [Hfin Hcomb]].
+      rewrite combineE in Hcomb. rewrite Hcomb. rewrite vdot_sumDl.
+      apply: big1 => i _. rewrite vdotZl. move/fsubsetP in Hfin. 
+      have HvalP := Hfin (fsval i) (fsvalP i).
+      have/fsubsetP Hsubset := normalsOfS f [set specialSimplex cert x | x : 'I_d] Hfg.
+      have Hval := Hsubset (fsval i) HvalP.
+      move/in_normalsOfP: Hval => [j [Hjf Hfsval]].
+      move/imsetP: Hjf => [l Hl Hjl]. rewrite Hjl in Hfsval.
+      have Hrew : normalVector P (specialSimplex cert l) = (\col_k P.`A (specialSimplex cert l) k)%R.
+        rewrite/normalVector. by apply/matrixP => o p; rewrite !mxE.
+      have/eqP Hdiff : l != k.
+        case Heq: (l == k).
+        + move/eqP in Heq. rewrite Heq in Hfsval. rewrite Hfsval in HvalP. 
+          by rewrite HvalP in Hk.
+        + by [].
+      have Hnull : ('[fsval i, col k (witnesses cert)] = 0)%R.
+        rewrite Hfsval. rewrite Hrew. case: (Hinvert l k).
+        + move=> [Habs _]. move/eqP in Habs. move/eqP in Hdiff. by rewrite Habs in Hdiff.
+        + by move=> [_ Hscal].
+      rewrite Hnull. by rewrite mulr0.
+    have Hzstar : ('[ zstar, col k (witnesses cert)] > 0)%R.
+      have Hsimpl : ('[ zstar, col k (witnesses cert)] = '[\col_i (P.`A (specialSimplex cert k) i), (col k (witnesses cert))])%R.
+        rewrite vdot_sumDl. rewrite (bigD1 k) //. simpl.
+        have Hnull : (\sum_(i < d | i != k) '[ \col_k0 P.`A (specialSimplex cert i) k0, 
+        col k (witnesses cert)] = 0)%R.
+        apply: big1 => i Hi. move/eqP in Hi. case: (Hinvert i k).
+        + move=> [Habs _]. move/eqP in Habs. move/eqP in Hi. by rewrite Habs in Hi.
+        + by move=> [_ Hscal].
+        rewrite Hnull. by rewrite addr0.
+      have Hpos : ('[ \col_i P.`A (specialSimplex cert k) i, col k (witnesses cert)] > 0)%R.
+        case: (Hinvert k k).
+        + by move=> [_ Hscal].
+        + move=> [Habs _]. move/eqP in Habs. by rewrite eqxx in Habs.
+      by rewrite Hsimpl.
+    have Hforallz := (Hforall zstar) Hin.
+    rewrite Hforallz in Hzstar. by rewrite ltxx in Hzstar.
+  - by [].
+Qed.
+
 Lemma exists_special_point :
   existsSpecialPoint (normalVector P) (set_to_asc (facets cert)).
-Admitted.
+Proof.
+  exists zstar. split.
+  - exact: zstar_is_dgeneric.
+  - have Hsing : [set F in facetsOf (set_to_asc (facets cert)) | zstar \in coneOf F] = [set (specialSimplex cert @: 'I_d)].
+      apply/setP => x. apply/idP/idP.
+      + move=> Hx. rewrite inE in Hx. move/andP: Hx => [Hxf Hzx].
+        case Heqx: (x == (specialSimplex cert @: 'I_d)).
+        * by rewrite in_set1.
+        * rewrite (facets_cert Hfacets) in Hxf.
+          have Hneq : x != [set specialSimplex cert x | x : 'I_d]. by rewrite /negb Heqx.
+          have Habs := zstar_notin_other_cones x Hxf Hneq. by rewrite Hzx in Habs.
+      + move=> Hx. rewrite inE. apply/andP. split.
+        rewrite in_set1 in Hx. move/eqP in Hx. rewrite Hx. rewrite (facets_cert Hfacets).
+        exact: (fst HspecSimp). rewrite in_set1 in Hx. move/eqP in Hx. rewrite Hx.
+        exact: zstar_in_specialCone.
+    rewrite Hsing. rewrite cards1.
+    by [].
+Qed.
 
 End SpecialPoint.
+
+Section CertificateCorrectness.
+
+Context (d : nat) (R : realFieldType).
+
+Variable (P : 'hpoly[R]_d) (V : {fset 'cV[R]_d}).
+
+Local Notation Certificate := (Certificate R d P).
+Local Notation m := (m R d P).
+Local Notation facetsAreDSimplices := (facetsAreDSimplices d R P).
+Local Notation mappingHasImageInPoints := (mappingHasImageInPoints d R P V).
+Local Notation graphVerticesAreFacets := (graphVerticesAreFacets d R P).
+Local Notation graphIsUndirected := (graphIsUndirected d R P).
+Local Notation specialSimplexInSpecialCone := (specialSimplexInSpecialCone d R P).
+Local Notation weightsAreStrictlyPositiveVectors := (weightsAreStrictlyPositiveVectors d R P).
+Local Notation full_dim_check := (full_dim_check d R P V).
+Local Notation feasibility_check := (feasibility_check d R P V).
+Local Notation mapping_check := (mapping_check d R P).
+Local Notation graph_check := (graph_check d R P).
+Local Notation inversibility_check := (inversibility_check d R P).
+Local Notation separability_check := (separability_check d R P).
+Local Notation normalVector := (normalVector d R).
+Local Notation facets := (facets R d P).
+Local Notation mapping := (mapping R d P).
+Local Notation specialSimplex := (specialSimplex R d P).
+Local Notation odd_covering_theorem := (odd_covering_theorem m d R (normalVector P)).
+Local Notation ridges_have_even_incidence := (ridges_have_even_incidence d R P).
+Local Notation cones_are_pointed := (cones_are_pointed d R P V).
+Local Notation exists_special_point := (exists_special_point d R P V).
+Local Notation dim_cert := (dim_cert d R P).
+Local Notation facets_cert := (facets_cert d R P).
+Local Notation cone_subset_cert := (cone_subset_cert d R P V).
+
+Hypothesis Hdim : d > 0.
+Hypothesis Hnormals : forall i : 'I_m, (normalVector P i <> 0)%R.
+
+Definition well_formedness_check (cert : Certificate) :=
+  facetsAreDSimplices cert /\ 
+  mappingHasImageInPoints cert /\ 
+  graphVerticesAreFacets cert /\ 
+  graphIsUndirected cert /\ 
+  specialSimplexInSpecialCone cert /\
+  weightsAreStrictlyPositiveVectors cert.
+
+Definition check_certificate (cert : Certificate) :=
+  well_formedness_check cert /\ 
+  full_dim_check cert /\ 
+  feasibility_check cert /\ 
+  mapping_check cert /\ 
+  graph_check cert /\ 
+  inversibility_check cert /\ 
+  separability_check cert.
+
+Theorem certificate_correctness :
+  (exists cert : Certificate, check_certificate cert) -> ((vertex_set '[P]) `<=` V)%fset.
+Proof.
+  move=> [cert H].
+  move: H => [Hwell [Hfulldim [Hfeas [Hmapcheck [Hgraph [Hinvert Hsep]]]]]].
+  move: Hwell => [Hfacets [Hmappoint [Hvert [Hundir [HspecSimp Hweights]]]]].
+  have Hnonemp : facets cert != set0.
+    apply/set0Pn. exists (specialSimplex cert @: 'I_d). exact: fst HspecSimp.
+  have Hodd := odd_covering_theorem (set_to_asc (facets cert)) (set_to_asc_is_asc (facets cert)) 
+  (dim_cert cert Hfacets Hnonemp) (Hnormals)
+  (ridges_have_even_incidence cert Hdim Hfacets Hvert Hgraph Hundir) 
+  (cones_are_pointed cert Hfeas Hfulldim Hfacets Hmappoint Hmapcheck) 
+  (exists_special_point cert Hfacets Hfeas Hmappoint HspecSimp Hweights Hmapcheck Hinvert Hsep).
+  apply: covering_criterion.
+  - exact: (fst Hfeas).
+  - move=> z. have Hoddz := Hodd z. move: Hoddz => [F [HF HzF]]. rewrite (facets_cert cert Hfacets) in HF. 
+    exists (mapping cert F). split.
+    + exact: Hmappoint F HF.
+    + have/poly_subsetP Hsub := cone_subset_cert cert Hfeas Hmappoint Hmapcheck F HF.
+      exact: Hsub z HzF.
+Qed.
+
+End CertificateCorrectness.

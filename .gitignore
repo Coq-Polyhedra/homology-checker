@@ -7,3 +7,5 @@
 Makefile
 Makefile.conf
 src/CheckCert.v
+src/Proofs.v
+src/MathematicalProperties.v

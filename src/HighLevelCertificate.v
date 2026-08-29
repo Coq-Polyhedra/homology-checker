@@ -4,7 +4,7 @@ From Polyhedra Require Import hpolyhedron row_submx inner_product polyhedron pol
 From PolyhedraHirsch Require Import high_graph.
 Import HPolyhedron.
 Open Scope polyh_scope.
-From Cert Require Import OddCoveringTheorem NormalCones.
+From Cert Require Import OddCoveringTheorem CoveringCriterion.
 
 Section Certificate.
 
@@ -166,21 +166,30 @@ Local Notation m := (m R d P).
 Local Notation simplex_m := (simplex [finType of 'I_m]).
 Local Notation Certificate := (Certificate R d P).
 Local Notation active_constraints := (active_constraints d R P).
+Local Notation normalVector := (normalVector d R).
+Local Notation coneOf := (coneOf m d R (normalVector P)).
+Local Notation normalCone := (normalCone d R P).
 
 Variable (cert : Certificate).
 
 Local Notation facetsAreDSimplices := (facetsAreDSimplices d R P cert).
 Local Notation graphVerticesAreFacets := (graphVerticesAreFacets d R P cert).
 Local Notation graphIsUndirected := (graphIsUndirected d R P cert).
+Local Notation mappingHasImageInPoints := (mappingHasImageInPoints d R P V cert).
 Local Notation feasibility_check := (feasibility_check d R P V cert).
+Local Notation inversibility_check := (inversibility_check d R P cert).
 Local Notation graph_check := (graph_check d R P cert).
 Local Notation full_dim_check := (full_dim_check d R P V cert).
+Local Notation mapping_check := (mapping_check d R P cert).
 Local Notation facets := (facets R d P cert).
 Local Notation graph := (graph R d P cert).
+Local Notation specialSimplex := (specialSimplex R d P cert).
+Local Notation witnesses := (witnesses R d P cert).
 Local Notation activeSets := (activeSets R d P cert).
 Local Notation full_dim_point := (full_dim_point R d P cert).
 Local Notation full_dim_dir := (full_dim_dir R d P cert).
 Local Notation full_dim_inv := (full_dim_inv R d P cert).
+Local Notation mapping := (mapping R d P cert).
 
 Lemma vertices_card (f : simplex_m) :
   facetsAreDSimplices -> graphVerticesAreFacets -> 
@@ -339,6 +348,61 @@ Lemma activeSets_cert :
 Proof.
   move=>Hfeas x HxV.
   by rewrite (snd (Hfeas) x HxV).
+Qed.
+
+Lemma inversibility_cert :
+  inversibility_check -> free [seq (\col_k (P.`A (specialSimplex i) k))%R | i <- enum 'I_d].
+Proof.
+  move=> Hinv.
+  apply/freeP=> w Hw i.
+    have Hwi := congr1 (fun u => '[u, col (enum_val i) witnesses]%R) Hw.
+    rewrite vdot0l vdot_sumDl (bigD1 i) //= big1 ?addr0 in Hwi.
+    rewrite (nth_map (enum_val i) 0%R) ?size_enum ?ltn_ord // in Hwi.
+    rewrite vdotZl in Hwi.
+    move/eqP in Hwi. rewrite GRing.mulf_eq0 in Hwi.
+    move/orP: Hwi => [/eqP Ha | /eqP Hb].
+    - by [].
+    - have Hi := (Hinv (enum_val i) (enum_val i)).
+      have Hnz : '[\col_k (P.`A (specialSimplex (enum_val i)) k), col (enum_val i) witnesses]%R <> 0%R.
+      case: Hi => [[_ Hnz] | [Hneq _]].
+      + apply/eqP. rewrite gt_eqF. by []. by [].
+      + by case: Hneq.
+      rewrite -(enum_val_nth (enum_val i)) in Hb.
+      by move: Hnz; rewrite Hb.
+    rewrite size_enum_ord.
+    change (val i < d).
+    have Hi : val i < #|'I_d| := ltn_ord i.
+    have Hcard : #|'I_d| = d. apply: card_ord.
+    exact: (ltn_ord (cast_ord (card_ord d) i)).
+    move=> j HjDi. have Hij := (Hinv (enum_val j) (enum_val i)).
+    have Hneq : enum_val j <> enum_val i.
+      move=> Heq.
+      have Hijord : j = i := (can_inj enum_valK) j i Heq.
+      move: HjDi.
+      by rewrite Hijord eqxx.
+    have Hzero : '[\col_k (P.`A (specialSimplex (enum_val j)) k), col (enum_val i) witnesses]%R = 0%R.
+      case: Hij => [[Heq _] | [_ Hzero]].
+      + by case: (Hneq Heq).
+      + exact Hzero.
+    rewrite vdotZl. 
+    rewrite (nth_map (enum_val i) 0%R) ?size_enum ?ltn_ord //.
+    rewrite -(enum_val_nth (enum_val i)).
+    rewrite Hzero.
+    by rewrite GRing.mulr0.
+    rewrite size_enum_ord.
+    change (val j < d).
+    have Hj : val j < #|'I_d| := ltn_ord j.
+    have Hcard : #|'I_d| = d. apply: card_ord.
+    exact: (ltn_ord (cast_ord (card_ord d) j)).
+Qed.
+
+Lemma cone_subset_cert :
+  feasibility_check -> mappingHasImageInPoints -> mapping_check -> forall f : simplex_m, f \in facets -> (coneOf f) `<=` normalCone (mapping f).
+Proof.
+  move=> Hfeas Hmappoint Hmapcheck f Hf. 
+  apply:coneOfS. 
+  rewrite -(activeSets_cert Hfeas (mapping f) (Hmappoint f Hf)).
+  exact: Hmapcheck f Hf.
 Qed.
 
 End CertificateLemmas.

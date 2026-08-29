@@ -242,3 +242,36 @@ Proof.
 Qed.
 
 End NormalCones.
+
+Section CoveringCriterion.
+
+Context (d : nat) (R : realFieldType).
+
+Variable (P : 'hpoly[R]_d) (V : {fset 'cV[R]_d}).
+
+Local Notation normalCone := (normalCone d R P).
+Local Notation in_normalConeP := (in_normalConeP d R P).
+
+Theorem covering_criterion :
+  {subset V <= P} -> (forall z : 'cV[R]_d, exists x : 'cV[R]_d, 
+  (x \in V)/\ (z \in normalCone x)) -> ((vertex_set '[P]) `<=` V)%fset.
+Proof.
+  move=> Hsub Hcover.
+  apply/fsubsetP => v Hv.
+  have Hopt : exists c, argmin '[P] c = [pt v]%:PH.
+    rewrite in_vertex_setP in Hv.
+    have Hemp : [pt v]%:PH `>` ([poly0]).
+    apply/proper0P. exists v. apply: in_pt_self.
+    have Hexists := face_argmin Hv Hemp.
+    move: Hexists => [c [Hbound Heq]].
+    by exists c.
+  move: Hopt => [c Hopt].
+  have Hcoverc := Hcover c.
+  move: Hcoverc => [z [Hz Hcz]].
+  move/(in_normalConeP z c (Hsub z Hz)) in Hcz.
+  rewrite Hopt in Hcz.
+  rewrite (polyhedron.in_pt v z) in Hcz. move/eqP in Hcz.
+  by rewrite Hcz in Hz.
+Qed.
+
+End CoveringCriterion.

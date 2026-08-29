@@ -273,6 +273,54 @@ Proof.
   exact: HPQ x (HwP x Hxw). by [].
 Qed.
 
+Lemma in_cone (V : {fset 'cV[R]_d}) : {subset V <= cone V}.
+Proof.
+  move => x x_in_V; apply/in_coneP.
+  pose w0 : {fsfun 'cV[R]_d ~> R} := [fsfun y in [fset x] => 1%R].
+  have Hw0 : conic w0.
+    apply/conicwP => y.
+    rewrite /w0 fsfunE.
+    case: ifP => _.
+    - exact: ler01.
+    - exact: lexx.
+  pose w : {conic 'cV[R]_d ~> R} := @mkConicFun _ _ w0 Hw0.
+  have Hfinsupp : (finsupp w `<=` [fset x])%fset.
+  apply/fsubsetP => y Hy.
+  rewrite mem_finsupp /w /w0 /= fsfunE in Hy.
+  have Hyx : y = x.
+    case Hsing: (y \in [fset x]).
+    + rewrite in_fset1 in Hsing. by move/eqP in Hsing.
+    + rewrite Hsing in Hy. by rewrite eqxx in Hy.
+  rewrite Hyx. by rewrite in_fset1 eqxx.
+  have Hfinsuppeq : (finsupp w = [fset x]).
+    apply/fsetP => y.
+    apply/idP/idP.
+    + move=> Hy. move/fsubsetP in Hfinsupp. exact: Hfinsupp y Hy.
+    + move=> Hy. rewrite in_fset1 in Hy. move/eqP in Hy. rewrite Hy.
+      rewrite mem_coffinsupp. rewrite /w /w0 fsfunE. rewrite in_fset1.
+      rewrite eqxx. by exact: ltr01.
+  exists w. 
+  - apply/fsubsetP => y Hy. move/fsubsetP in Hfinsupp.
+    have Hyx := Hfinsupp y Hy. rewrite in_fset1 in Hyx. move/eqP in Hyx. 
+    by rewrite Hyx.
+  - rewrite combineE. rewrite Hfinsuppeq. rewrite big_fset1.
+    rewrite /w0 fsfunE. rewrite in_fset1. rewrite eqxx. by rewrite scale1r.
+Qed.
+
+Lemma zero_cone (V : {fset 'cV[R]_d}) : 0%R \in cone V.
+Proof.
+  apply/in_coneP. 
+  pose w0 : {fsfun 'cV[R]_d ~> R} := fs0.
+  have Hw0 : conic w0.
+    apply/conicwP => y.
+    by rewrite fsfunE.
+  pose w : {conic 'cV[R]_d ~> R} := @mkConicFun _ _ w0 Hw0.
+  exists w.
+  - rewrite supp_fs0. by apply/fsubsetP => x; rewrite in_fset0.
+  - rewrite combineE. rewrite supp_fs0. symmetry. apply big1.
+    move=> i _. have Hi := valP i. by rewrite in_fset0 in Hi.
+Qed.
+
 Definition normalsOf (F : {set 'I_m}) :=
   [fset (normals i) | i : 'I_m & i \in F]%fset.
 
@@ -311,6 +359,14 @@ Lemma coneOfS :
 Proof.
   move=> F G HFG. exact: coneS (normalsOf F) (normalsOf G) (normalsOfS F G HFG).
 Qed.
+
+Lemma coneOf_subset (F : {set 'I_m}) :
+  {subset normalsOf F <= coneOf F}.
+Proof. by apply: in_cone. Qed.
+
+Lemma zero_coneOf (F : {set 'I_m}) :
+  0%R \in coneOf F.
+Proof. by apply: zero_cone. Qed.
 
 End Cones.
 
@@ -361,7 +417,7 @@ Definition conesArePointed :=
   forall F : simplex_m, F \in facetsOf K -> polyhedron.pointed (coneOf F).
 
 Definition existsSpecialPoint :=
-  exists z : 'cV[R]_d, isKGeneric d z /\ odd #|[set F in facetsOf K | z \in coneOf F]|.
+  exists z : 'cV[R]_d, isKGeneric (d.+1) z /\ odd #|[set F in facetsOf K | z \in coneOf F]|.
 
 Definition conesCoverSpace :=
     forall x : 'cV[R]_d, exists F : simplex_m, F \in facetsOf K /\ x \in coneOf F.
