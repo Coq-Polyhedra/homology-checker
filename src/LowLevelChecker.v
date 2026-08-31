@@ -6,7 +6,7 @@ Require Import Coq.Program.Basics.
 Require Import NArith.
 Import Order.Theory.
 
-Section Uint63.
+Section Uint63Iterators.
 
 Fixpoint ifold_ {T : Type} (n : nat) (f : int -> T -> T) (i M : int) (stopCondition : int -> T -> bool) (x : T) :=
   if (i =? M)%uint63 || (stopCondition i x) then (i, x) else
@@ -23,9 +23,12 @@ Definition ifold {T : Type} (f : int -> T -> T) (i : int) (x : T) :=
 Definition ifold_from_until {T : Type} (f : int -> T -> T) (k : int) (i : int) (stopCondition: int -> T -> bool) (x : T) :=
   (ifold_ Uint63.size f k i stopCondition x).2.
 
-End Uint63.
+Definition ifor_all_range0 (f : int -> bool) (n : int) :=
+  ifold (fun i acc => acc && (f i)) n true.
 
-Section Array.
+End Uint63Iterators.
+
+Section ArrayIterators.
 
 Definition fold {T A : Type} (f : T -> A -> A) (a : array T) (x0 : A) :=
   ifold (fun i acc => f a.[i] acc) (length a) x0.
@@ -35,15 +38,9 @@ Definition foldi {T A : Type} (f : int -> T -> A -> A) (a : array T) (x0 : A) :=
 
 Definition fold_from_until {T A : Type} (f : T -> A -> A) (a : array T) (k : int) (stopCondition : int -> A -> bool) (x0 : A) :=
   ifold_from_until (fun i acc => f a.[i] acc) k (length a) stopCondition x0.
-
-Definition foldi_from_until {T A : Type} (f : int -> T -> A -> A) (a : array T) (k : int) (stopCondition : int -> A -> bool) (x0 : A) :=
-  ifold_from_until (fun i acc => f i a.[i] acc) k (length a) stopCondition x0.
  
 Definition fold_compose {A B C : Type} (f : B -> C -> C) (g : A -> B) (a : array A) (x0 : C) :=
   fold (compose f g) a x0.
-
-Definition foldi_compose {A B C : Type} (f : int -> B -> C -> C) (g : A -> B) (a : array A) (x0 : C) :=
-  foldi (fun i => compose (f i) g) a x0.
 
 Definition fold2 {T1 T2 A : Type} (f : T1 -> T2 -> A -> A) (a1 : array T1) (a2 : array T2) (x0 : A) :=
   ifold (fun i acc => f a1.[i] a2.[i] acc) (if (length a1 <? length a2)%uint63 then length a1 else length a2) x0.
@@ -69,6 +66,9 @@ Definition fold_alt {T A : Type} (f_in f_notin : T -> A -> A) (s : array T) (not
 Definition for_all {T : Type} (f : T -> bool) (a : array T) :=
   fold (fun x acc => acc && f x) a true.
 
+Definition for_all_range0 {T : Type} (f : T -> bool) (a : array T) (n : int) :=
+  ifor_all_range0 (fun i => f a.[i]) n.   
+
 Definition for_alli {T : Type} (f : int -> T -> bool) (a : array T) :=
   foldi (fun i x acc => acc && f i x) a true.
 
@@ -82,10 +82,7 @@ Definition for_alli_matrix {T : Type} (f : int -> int -> T -> bool) (a : array (
   for_alli (fun i _ => for_alli (f i) a.[i]) a.
 
 Definition for_all_compose {A B : Type} (f : B -> bool) (g : A -> B) (a : array A) :=
-  fold_compose (fun x acc => acc && f x) g a true.
-
-Definition for_alli_compose {A B : Type} (f : int -> B -> bool) (g : A -> B) (a : array A) :=
-  foldi_compose (fun i x acc => acc && (f i x)) g a true.
+  for_all (compose f g) a.
 
 Definition for_all_alt {T : Type} (f_in f_notin : T -> bool) (s : array T) (notin : array int) :=
   fold_alt (fun x acc => f_in x && acc) (fun x acc => f_notin x && acc) s notin true.
@@ -93,13 +90,16 @@ Definition for_all_alt {T : Type} (f_in f_notin : T -> bool) (s : array T) (noti
 Definition exist {T : Type} (f : T -> bool) (a : array T) :=
   fold_from_until (fun x acc => acc || f x) a 0 (fun _ acc => acc) false.
 
-Definition existi {T : Type} (f : int -> T -> bool) (a : array T) :=
-  foldi_from_until (fun i x acc => acc || f i x) a 0 (fun _ acc => acc) false.
+End ArrayIterators.
 
+Section ArrayFunctions.
+
+(* linear search in a non-necessarily sorted array *)
 Definition mem {T : Type} (eqT : T -> T -> bool) (a : array T) (x : T) : bool :=
   exist (fun y => eqT x y) a.
 
-Definition mem_sorted {T : Type} (ltT : T -> T -> bool)(a : array T) (x : T) : bool :=
+(* binary search in a sorted array *)
+Definition mem_sorted {T : Type} (ltT : T -> T -> bool) (a : array T) (x : T) : bool :=
   let len := length a in
 
   let step :=
@@ -127,9 +127,7 @@ Definition mem_sorted {T : Type} (ltT : T -> T -> bool)(a : array T) (x : T) : b
      stop
      (0%uint63, len, false)).2.
 
-Definition find_from_until {T : Type} (eqT : T -> T -> bool) (a : array T) (x : T) (k : int) : option int :=
-  foldi_from_until (fun i _ acc => if (eqT x a.[i]) then Some(i) else None) a k (fun i x => (if x is Some _ then true else false)) None. 
-
+(* linear search based subset function on sorted arrays *)
 Definition subset {t : Type} (lt_t : rel t) (a b : array t) : bool :=
   let subset_step :=
     fun _ '(i, j, ok) =>
@@ -152,16 +150,14 @@ Definition subset {t : Type} (lt_t : rel t) (a b : array t) : bool :=
         (i, j, true)
   in
   let res :=
-    ifold (*_until
-      (length a + length b)%uint63
-      (fun _ '(i, _, ok) =>
-         ~~ ok || ~~ (i <? length a)%uint63)*)
+    ifold 
       subset_step
       (length a + length b)%uint63
       (0%uint63, 0%uint63, true)
   in
   res.2.
   
+(* linear search based diff function on sorted arrays *)
 Definition diff {t : Type} (lt_t : rel t) (a b : array t) : seq t :=
   let diff_step :=
     fun '(i, j, acc) =>
@@ -183,14 +179,8 @@ Definition diff {t : Type} (lt_t : rel t) (a b : array t) : seq t :=
       (length a + length b)%uint63
       (0%uint63, 0%uint63, [::])).2.
 
-Definition count {T : Type} (P : T -> bool) (a : array T) :=
-  fold (fun x acc => if P x then (acc + 1)%uint63 else acc) a 0%uint63.
-
 Definition counti {T : Type} (P : int -> T -> bool) (a : array T) :=
   foldi (fun i x acc => if P i x then (acc + 1)%uint63 else acc) a 0%uint63.
-
-Definition eqbArray {T : Type} (eqT : T -> T -> bool) (a b : array T) : bool :=
-  for_all2 eqT a b.
 
 Definition lex_cmp {T : Type} (ltT : T -> T -> bool) (a b : array T) : comparison :=
   let c :=
@@ -222,7 +212,7 @@ Definition compareConsecutive {T : Type} (ltT : T -> T -> bool) (a : array T) (i
   ltT (a.[i]) (a.[(i+1)%uint63]). 
 
 Definition isStrictlySorted {T : Type} (ltT : T -> T -> bool) (a : array T) : bool := 
-  for_alli (fun i _ => ((i =? (length(a)-1)%uint63)%uint63) || (compareConsecutive ltT a i)) a.
+  for_alli (fun i _ => ((length a)-1 <=? i)%uint63 || compareConsecutive ltT a i) a.
 
 Definition inRange {T : Type} (leT : T -> T -> bool) (m M : T) (x : T) : bool :=
   (leT m x) && (leT x M).
@@ -236,11 +226,12 @@ Definition hasLength {T : Type} (k : int) (a : array T) : bool :=
 Definition isValidIndex {T : Type} (a : array T) (x : int) : bool :=
   inRange Uint63.leb 0%uint63 (length a - 1)%uint63 x.
 
-End Array.
+End ArrayFunctions.
 
 Section IntList.
-
 (* in this section, lists are supposed to be sorted decreasingly *)
+(* such lists are typically returned by the latter diff function *)
+
 Fixpoint mem_intlist (x : int) (l : seq int) : bool :=
   match l with
   | [::] => false
@@ -517,8 +508,7 @@ Definition areFlagsWellFormed (cert : Certificate) :=
 
 Definition areVerticesWellFormed (cert : Certificate) :=
   (arePointsWellFormed cert)
-  && (areActiveSetsWellFormed cert)
-  && (areFlagsWellFormed cert).
+  && (areActiveSetsWellFormed cert).
   
 Definition isGraphWellFormed (cert : Certificate) :=
   let graph := graph cert in
@@ -664,21 +654,18 @@ Definition check_ineqs (ineqs : Inequalities) (active_set : ActiveSet) (x : Poin
     ineqs active_set.
 
 (* The following variant of check_ineqs is easier to prove, but 25% slower on non-Hirsch polytopes *)
-(*
-Definition check_ineqs (ineqs : array (array bigZ * bigZ)) (saturated : array int) (x : array bigZ * bigN) :=
+(* Definition check_ineqs (ineqs : Inequalities) (active_set : ActiveSet) (x : Point) :=
   for_alli (fun i ineq =>
-    if mem_sorted Uint63.ltb i saturated then 
-      (array_bigZ_dot ineq.1 x.1 =? BigZ.mul ineq.2 (BigZ.Pos x.2))%bigZ
+    if mem_sorted Uint63.ltb active_set i then 
+      (array_bigZ_dot (normal ineq) (numerators x) =? BigZ.mul (bound ineq) (BigZ.Pos (commonDenominator x)))%bigZ
     else 
-      (array_bigZ_dot ineq.1 x.1 <? BigZ.mul ineq.2 (BigZ.Pos x.2))%bigZ
-  ) ineqs.
-*)
+      (array_bigZ_dot (normal ineq) (numerators x) <? BigZ.mul (bound ineq) (BigZ.Pos (commonDenominator x)))%bigZ
+  ) ineqs. *)
 
 Definition feasibility_check (cert : Certificate) := 
   let inequalities := inequalities cert in
   let vertices := vertices cert in
-  ifold (fun i acc => acc && check_ineqs inequalities (activeSet vertices.[i]) (point vertices.[i])) 
-    (length vertices) true.
+  for_all (fun v => check_ineqs inequalities (activeSet v) (point v)) vertices.
 
 (* Check if s1 \ s2 = v *)
 Definition isRidgeInFacet (s1 s2 : array int) (v : int) :=
@@ -713,10 +700,17 @@ Definition inversibility_check (cert : Certificate) :=
   let d := dimension cert in
   let activeInverse := activeInverse (root cert) in
   let scalarProducts := scalarProducts (root cert) in 
-  let vstar := description (facets cert).[simplexIndex (root cert)] in 
-  ifold (fun i acc => acc && (ifold (fun j acc => acc && (if (i =? j)%uint63 then 
-  (0 <? scalarProducts.[activeInverse.[vstar.[i]]].[j])%bigZ else 
-  (0 =? scalarProducts.[activeInverse.[vstar.[i]]].[j])%bigZ)) d%uint63 true)) d%uint63 true.
+  let vstar := description (facets cert).[simplexIndex (root cert)] in
+  for_alli 
+    (fun i idx => 
+      ifor_all_range0 
+        (fun j => 
+          if (i =? j)%uint63 then 
+            (0 <? scalarProducts.[activeInverse.[idx]].[j])%bigZ 
+          else 
+            (0 =? scalarProducts.[activeInverse.[idx]].[j])%bigZ
+        ) d%uint63
+    ) vstar.
 
 Definition isSparseVectorPositive (w : Weight) :=
   (0 <? length w)%uint63 && (for_all (fun '(_,x) => (0 <=? x)%bigZ) w).
@@ -728,21 +722,22 @@ Definition separability_check (cert : Certificate) :=
   let scalarProducts := scalarProducts (root cert) in
   let weights := weights (root cert) in
   let vstar := mapping (facets).[simplexIndex] in 
-  let res := 
+  let '(res, _) := 
     foldi 
     (fun k f acc => 
-      if ~~(k =? simplexIndex)%uint63 && (f.2 =? vstar)%uint63 then
-        (acc.1 
+      if ~~ (k =? simplexIndex)%uint63 && (f.2 =? vstar)%uint63 then
+        let '(res, idx) := acc in
+        (res 
         && 
         for_all 
           (fun i => 
             (isSparseVectorPositive weights.[acc.2])
             && (sparse_array_bigZ_dot weights.[acc.2] scalarProducts.[activeInverse.[i]] <=? 0)%bigZ) 
             f.1,
-        (acc.2 + 1)%uint63) 
+        (idx + 1)%uint63) 
       else 
         acc) 
-    facets (true, 0%uint63) in res.1.
+    facets (true, 0%uint63) in res.
 
 Definition graph_image_check (cert : Certificate) :=
   let facets := facets cert in
@@ -789,9 +784,11 @@ Definition flag_check (cert : Certificate) :=
   for_all (fun v =>
     let active_set := activeSet v in
     let '(ineqs, witness) := flag v in
-    for_alli (fun i w =>
-      let diff := diff Uint63.ltb (activeSet v) (activeSet vertices.[w]) in
-      ifold (fun j acc => acc && ~~ (mem_intlist active_set.[ineqs.[j]] diff)) i true)
+    for_alli 
+      (fun i w =>
+        let diff := diff Uint63.ltb active_set (activeSet vertices.[w]) in
+          (for_all_range0 (fun ineq => ~~ (mem_intlist active_set.[ineq] diff)) ineqs i) 
+        && ~~ (mem_sorted Uint63.ltb (activeSet vertices.[w]) active_set.[ineqs.[i]]))
       witness) vertices.
 
 Definition full_dim_feasibility_check (cert : Certificate) :=
@@ -821,52 +818,55 @@ Definition full_dim_check (cert : Certificate) :=
   (full_dim_feasibility_check cert) 
   && (full_dim_inverse_check cert).
 
+Module VtxContainment.
+
 Definition well_formedness_check (cert : Certificate) :=
   (areInequalitiesWellFormed cert)
   && (areVerticesWellFormed cert)
   && (isGraphWellFormed cert)
   && (areFacetsWellFormed cert)
-  && (isGeomGraphWellFormed cert)
-  && (areGeomEdgeSourcesWellFormed cert)
-  && (areGeomEdgeLocalTargetsWellFormed cert)
-  && (isFullDimWellFormed cert)
-  && (isRootWellFormed cert).
-
-Definition well_unique_check (cert : Certificate) :=
-  (areInequalitiesWellFormed cert)
-  && (areVerticesWellFormed cert)
-  && (isGraphWellFormed cert)
-  && (areFacetsWellFormed cert)
-  && (isFullDimWellFormed cert)
   && (isRootWellFormed cert)
+  && (isFullDimWellFormed cert)
   && (areActiveSetsUnique cert)
-  && (areFacetsUnique cert).
-
-Definition uniqueness_check (cert : Certificate) :=
-  (areActiveSetsUnique cert)
   && (areFacetsUnique cert).
 
 Definition root_check (cert : Certificate) :=
      (scalarProducts_check cert)
-  && (inversibility_check cert)
-  && (separability_check cert).
-
-Definition vertex_check (cert : Certificate) :=
-     (geom_edge_pairwise_check cert)
-  && (connectivity_check cert).
+  && (inversibility_check cert) (* T4 *)
+  && (separability_check cert). (* T5 *)
 
 Definition check_certificate (cert : Certificate) :=
      (well_formedness_check cert)
-  && (uniqueness_check cert)
-  && (feasibility_check cert)
-  && (graph_check cert)
-  && (mapping_check cert)
-  && (full_dim_check cert)
-  && (root_check cert)
-  (* && (vertex_check cert) *)
-  && (flag_check cert)
-  && (graph_image_check cert)
+  && (feasibility_check cert) (* T1 *)
+  && (mapping_check cert)     (* T2 *)
+  && (graph_check cert)       (* T3 *)
+  && (root_check cert)        (* T4 + T5 *)  
   && (full_dim_check cert).
+
+End VtxContainment.
+
+Module VtxEquality.
+
+Definition check_certificate (cert : Certificate) :=
+     (areFlagsWellFormed cert)
+  && (flag_check cert).
+
+End VtxEquality.
+
+Module GraphEquality.
+
+Definition well_formedness_check (cert : Certificate) :=
+     (isGeomGraphWellFormed cert)
+  && (areGeomEdgeSourcesWellFormed cert)
+  && (areGeomEdgeLocalTargetsWellFormed cert).
+  
+Definition check_certificate (cert : Certificate) :=
+     (well_formedness_check cert)
+  && (graph_image_check cert)
+  && (geom_edge_pairwise_check cert) (* T6 + T8 *)
+  && (connectivity_check cert).      (* T7 *)
+
+End GraphEquality.
 
 Definition build_cert c : Certificate :=
   let '(nb_ineq, (dim, (ineqs, (verts, ((gr,facs), ((geom_gr, (src, tgt)), (full_dim, rt))))))) := c in
