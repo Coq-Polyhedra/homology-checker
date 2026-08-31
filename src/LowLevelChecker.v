@@ -805,8 +805,8 @@ Definition geom_edge_pairwise_check (cert : Certificate) :=
         neighbors
         [::]
     in
-    all (fun d => if d is [::] then false else true) diffs (* T6 *)
-    && pairwise_incomparable diffs (* T8 *))
+    all (fun d => if d is [::] then false else true) diffs (* T7 *)
+    && pairwise_incomparable diffs (* T9 *))
   vertices.
 
 Definition connectivity_check (cert : Certificate) :=
@@ -886,7 +886,7 @@ Module VtxEquality.
 
 Definition check_certificate (cert : Certificate) :=
      (areFlagsWellFormed cert)
-  && (flag_check cert).
+  && (flag_check cert).        (* T6 *)
 
 End VtxEquality.
 
@@ -900,7 +900,7 @@ Definition well_formedness_check (cert : Certificate) :=
 Definition check_certificate (cert : Certificate) :=
      (well_formedness_check cert)
   && (graph_image_check cert)
-  && (geom_edge_pairwise_check cert) (* T6 + T8 *)
-  && (connectivity_check cert).      (* T7 *)
+  && (geom_edge_pairwise_check cert) (* T7 + T9 *)
+  && (connectivity_check cert).      (* T8 *)
 
 End GraphEquality.

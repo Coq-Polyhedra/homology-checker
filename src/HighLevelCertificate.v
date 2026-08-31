@@ -137,16 +137,16 @@ Definition separability_check :=
   -> forall i : 'I_m, i \in f ->
   ('[witnesses *m (weights f) , normalVector P i] <= 0)%R.
 
-(* Condition T6 *)
+(* Condition T7 *)
 Definition geom_edge_pairwise_check :=
   forall v : 'cV[R]_d, v \in vertices geom_graph -> forall w : 'cV[R]_d,
   w \in successors geom_graph v -> incomparable (activeSets v) (activeSets w).
 
-(* Condition T7 *)
+(* Condition T8 *)
 Definition connectivity_check :=
   connected geom_graph.
 
-(* Condition T8 *)
+(* Condition T9 *)
 Definition geom_edge_difference_pairwise_check :=
   forall v : 'cV[R]_d, v \in vertices geom_graph -> forall w w' : 'cV[R]_d,
   w \in successors geom_graph v /\ w' \in successors geom_graph v -> w <> w' 
