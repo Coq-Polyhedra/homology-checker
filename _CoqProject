@@ -1,6 +1,5 @@
 -Q src Cert
 
-src/HighLevelChecker.v
 src/LowLevelChecker.v
 src/OddCoveringTheorem.v
 src/HighLevelCertificate.v
