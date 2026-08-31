@@ -79,7 +79,7 @@ Definition for_all_matrix {T : Type} (f : T -> bool) (a : array (array T)) : boo
   for_all (for_all f) a.
 
 Definition for_alli_matrix {T : Type} (f : int -> int -> T -> bool) (a : array (array T)) : bool :=
-  for_alli (fun i _ => for_alli (f i) a.[i]) a.
+  for_alli (fun i x => for_alli (f i) x) a.
 
 Definition for_all_compose {A B : Type} (f : B -> bool) (g : A -> B) (a : array A) :=
   for_all (compose f g) a.
@@ -453,6 +453,22 @@ Record Certificate := {
   root : Root
 }.
 
+Definition build_cert c : Certificate :=
+  let '(nb_ineq, (dim, (ineqs, (verts, ((gr,facs), ((geom_gr, (src, tgt)), (full_dim, rt))))))) := c in
+  {|
+    nb_inequalities := nb_ineq;
+    dimension := dim;
+    inequalities := ineqs;
+    vertices := verts;
+    graph := gr;
+    facets := facs;
+    geom_graph := geom_gr;
+    geom_edge_sources := src;
+    geom_edge_local_targets := tgt;
+    full_dim := full_dim;
+    root := rt
+  |}.
+
 End Types.
 
 Section Projectors.
@@ -476,6 +492,8 @@ Definition fullDimDir : FullDim -> array (array bigZ) := compose fst snd.
 Definition fullDimInverse : FullDim -> array (array bigZ) := compose snd snd.
 
 End Projectors.
+
+Section WellFormedness.
 
 Definition areInequalitiesWellFormed (cert : Certificate) :=
   let inequalities := inequalities cert in
@@ -647,6 +665,10 @@ Definition areFacetsUnique (cert : Certificate) :=
   let facets := facets cert in
   isStrictlySorted (fun f1 f2 => (ltbArray Uint63.eqb Uint63.ltb) (description f1) (description f2)) facets.
 
+End WellFormedness.
+
+Section ConditionChecking.
+
 Definition check_ineqs (ineqs : Inequalities) (active_set : ActiveSet) (x : Point) :=
   for_all_alt 
     (fun ineq => (array_bigZ_dot (normal ineq) (numerators x) =? BigZ.mul (bound ineq) (BigZ.Pos (commonDenominator x)))%bigZ)
@@ -670,6 +692,7 @@ Definition feasibility_check (cert : Certificate) :=
 (* Check if s1 \ s2 = v *)
 Definition isRidgeInFacet (s1 s2 : array int) (v : int) :=
   match diff Uint63.ltb s1 s2 with
+  | [::]   => true
   | [:: x] => (x =? v)%uint63
   | _ => false
   end.
@@ -678,9 +701,21 @@ Definition graph_check (cert : Certificate) :=
   let graph := graph cert in
   let facets := facets cert in
   let d := dimension cert in
-  (hasBoundedDegree graph d) &&  
-  for_alli_matrix (fun i j v => isRidgeInFacet (description (facets.[i])) (description (facets.[v]))
-  (description (facets.[i])).[j]) graph.
+     (hasBoundedDegree graph d) 
+  &&  for_alli 
+        (fun i adj => 
+          let f := description facets.[i] in
+          for_alli 
+            (fun j w => 
+              let f' := description facets.[w] in
+              isRidgeInFacet f f' f.[j])
+          adj)
+      graph.
+(* 
+  for_alli_matrix 
+    (fun i j v => 
+      isRidgeInFacet (description (facets.[i])) (description (facets.[v]))
+  (description (facets.[i])).[j]) graph. *)
 
 Definition mapping_check (cert : Certificate) :=
   let facets := facets cert in
@@ -818,6 +853,8 @@ Definition full_dim_check (cert : Certificate) :=
   (full_dim_feasibility_check cert) 
   && (full_dim_inverse_check cert).
 
+End ConditionChecking.
+
 Module VtxContainment.
 
 Definition well_formedness_check (cert : Certificate) :=
@@ -867,19 +904,3 @@ Definition check_certificate (cert : Certificate) :=
   && (connectivity_check cert).      (* T7 *)
 
 End GraphEquality.
-
-Definition build_cert c : Certificate :=
-  let '(nb_ineq, (dim, (ineqs, (verts, ((gr,facs), ((geom_gr, (src, tgt)), (full_dim, rt))))))) := c in
-  {|
-    nb_inequalities := nb_ineq;
-    dimension := dim;
-    inequalities := ineqs;
-    vertices := verts;
-    graph := gr;
-    facets := facs;
-    geom_graph := geom_gr;
-    geom_edge_sources := src;
-    geom_edge_local_targets := tgt;
-    full_dim := full_dim;
-    root := rt
-  |}.
