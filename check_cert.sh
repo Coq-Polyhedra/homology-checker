@@ -45,7 +45,7 @@ trap 'rm -f "$raw_log"' EXIT
 
 # Keep the complete original output on stdout.
 set +e
-make rocq 2>&1 | tee "$raw_log"
+make check-cert "$@" 2>&1 | tee "$raw_log"
 make_status=${PIPESTATUS[0]}
 set -e
 
