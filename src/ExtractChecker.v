@@ -28,8 +28,6 @@ Extraction Inline PArray.array.
     [make]/[set]; all certificate traversals use the same backing arrays. *)
 Extract Constant PArray.get => "Native_array.get".
 Extract Constant PArray.length => "Native_array.length".
-Extract Constant PArray.make => "Native_array.make".
-Extract Constant PArray.set => "Native_array.set".
 
 (**
   The proof-oriented definition of [ifold_] is a depth-63 binary recursion.
@@ -48,6 +46,8 @@ Extract Constant ifold_from_until => "Native_loop.ifold_from_until".
 Extract Constant mem_sorted => "Native_array_ops.mem_sorted".
 Extract Constant mem => "Native_array_ops.mem".
 Extract Constant diff => "Native_array_ops.diff".
+
+Extract Constant bfs => "Native_graph.bfs".
 
 (**
   The checker never observes the representation of the two bignum types.

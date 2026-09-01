@@ -938,6 +938,6 @@ Definition check_certificate (cert : Certificate) :=
      (well_formedness_check cert)
   && (graph_image_check cert)
   && (geom_edge_pairwise_check cert) (* T7 + T9 *)
-  (* && (connectivity_check cert) *) .      (* T8 *)
+  && (connectivity_check cert).      (* T8 *)
 
 End GraphEquality.
