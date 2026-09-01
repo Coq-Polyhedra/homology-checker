@@ -21,6 +21,7 @@ fi
 certificate="../lrs-postprocess/data/${instance}-cert.bin"
 template="src/CheckCert.v.in"
 output="src/CheckCert.v"
+target="src/CheckCert.vo"
 log_dir="log"
 log_file="${log_dir}/${instance}.log"
 
@@ -44,7 +45,7 @@ trap 'rm -f "$raw_log"' EXIT
 
 # Keep the complete original output on stdout.
 set +e
-make "$@" 2>&1 | tee "$raw_log"
+make rocq 2>&1 | tee "$raw_log"
 make_status=${PIPESTATUS[0]}
 set -e
 

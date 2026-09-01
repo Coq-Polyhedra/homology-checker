@@ -4,7 +4,7 @@ DUNE ?= dune
 
 .PHONY: all rocq extract test clean
 
-all: extract
+all: rocq extract
 	$(DUNE) build --profile release ocaml/homology_checker.exe
 
 rocq:
