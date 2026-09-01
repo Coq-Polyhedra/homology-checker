@@ -60,6 +60,7 @@ Extract Constant fold3 => "Native_array_ops.fold3".
 *)
 Extract Constant mem_sorted => "Native_array_ops.mem_sorted".
 Extract Constant mem => "Native_array_ops.mem".
+Extract Constant diff => "Native_array_ops.diff".
 
 (**
   The checker never observes the representation of the two bignum types.

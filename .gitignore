@@ -4,7 +4,6 @@
 *.vok
 *.vos
 *.d
-Makefile
-Makefile.conf
+Makefile.coq*
 src/CheckCert.v
 ocaml/extracted_checker.ml*
