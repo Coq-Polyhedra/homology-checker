@@ -7,3 +7,4 @@
 Makefile.coq*
 src/CheckCert.v
 ocaml/extracted_checker.ml*
+_build
