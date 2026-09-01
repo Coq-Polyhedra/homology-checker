@@ -14,11 +14,6 @@ Definition vertex_equality_check c : bool :=
 Definition graph_equality_check c : bool :=
   GraphEquality.check_certificate (build_cert c).
 
-Definition check_data c : bool :=
-  vertex_containment_check c
-  && vertex_equality_check c
-  && graph_equality_check c.
-
 Set Extraction Optimize.
 
 (**
@@ -45,14 +40,6 @@ Extract Constant PArray.set => "Native_array.set".
 *)
 Extract Constant ifold => "Native_loop.ifold".
 Extract Constant ifold_from_until => "Native_loop.ifold_from_until".
-
-(** Iterate directly over the backing OCaml arrays.  Higher-level Gallina
-    traversals such as [for_all] remain unchanged and use these primitives. *)
-Extract Constant fold => "Native_array_ops.fold".
-Extract Constant foldi => "Native_array_ops.foldi".
-Extract Constant fold_from_until => "Native_array_ops.fold_from_until".
-Extract Constant fold2 => "Native_array_ops.fold2".
-Extract Constant fold3 => "Native_array_ops.fold3".
 
 (**
   Preserve the Gallina membership algorithms while avoiding their extracted
@@ -83,5 +70,4 @@ Extract Constant NativeBig.z_ltb => "Native_z.lt".
 Extract Constant NativeBig.z_leb => "Native_z.leq".
 
 Extraction "ocaml/extracted_checker.ml"
-  vertex_containment_check vertex_equality_check graph_equality_check
-  check_data.
+  vertex_containment_check vertex_equality_check graph_equality_check.

@@ -10,7 +10,7 @@ all: extract
 rocq:
 	$(MAKE) -f Makefile.coq
 
-extract:
+extract: src/ExtractChecker.v
 	$(MAKE) -f Makefile.coq src/ExtractChecker.vo
 	@if [ ! -f ocaml/extracted_checker.ml ]; then \
 		rm -f src/ExtractChecker.vo; \
@@ -19,5 +19,5 @@ extract:
 
 clean:
 	$(MAKE) -f Makefile.coq clean
-	$(DUNE) clean
 	rm -f ocaml/extracted_checker.ml*
+	$(DUNE) clean

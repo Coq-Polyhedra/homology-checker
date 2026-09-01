@@ -7,3 +7,4 @@ src/CoveringCriterion.v
 src/CertificateCorrectness.v
 src/CertificateSchema.v
 src/CheckCert.v
+src/ExtractChecker.v
