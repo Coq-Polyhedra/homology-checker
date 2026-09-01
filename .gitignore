@@ -7,3 +7,4 @@
 Makefile
 Makefile.conf
 src/CheckCert.v
+ocaml/extracted_checker.ml*

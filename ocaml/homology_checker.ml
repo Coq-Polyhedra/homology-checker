@@ -27,7 +27,6 @@ let run filename =
       Extracted_checker.graph_equality_check certificate
   in
   let accepted = containment && equality && graph in
-  print_endline (if accepted then "true" else "false");
   if accepted then 0 else 1
 
 let () =
