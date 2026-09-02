@@ -417,12 +417,14 @@ Proof. by apply/colP => k; rewrite !mxE. Qed.
 
 (* [hm : 0 < m] inhabits 'I_m for [specialSimplex_of] (out-of-range entries,
    excluded by well-formedness, fall back to that inhabitant). *)
-Definition interp_cert (hm : (0 < m)%N) : H.Certificate R d hpoly_of :=
-  @H.Build_Certificate R d hpoly_of
+Definition interp_cert (hm : (0 < m)%N) : H.Certificate R d :=
+  @H.Build_Certificate R d hpoly_of points_of
     full_dim_point_of full_dim_dir_of full_dim_inv_of
     activeSets_of facets_of mapping_of
     graph_of                       (* graph *)
     specialVertex_of (specialSimplex_of hm) witnesses_of weights_of
+    (fun _ _ => @Ordinal m 0 hm)
+    (fun _ _ => 0)
     geom_graph_of.                 (* geom_graph *)
 
 (* -------------------------------------------------------------------------- *)
@@ -932,7 +934,7 @@ Qed.
 
 Theorem feasibility_check_correct (hm : (0 < m)%N) :
   L.areInequalitiesWellFormed c -> L.arePointsWellFormed c -> L.areActiveSetsWellFormed c ->
-  L.feasibility_check c -> @H.feasibility_check d R hpoly_of points_of (interp_cert hm).
+  L.feasibility_check c -> @H.feasibility_check d R (interp_cert hm).
 Proof.
 move=> hineq hpts hact hfeas; have hvert := vertex_active hineq hpts hact hfeas.
 have hin : forall v (i : 'I_m), i \in activeSet_of v -> '[normal_of i, point_of_vertex v] = bound_of i.
@@ -960,7 +962,7 @@ Qed.
 (* -------------------------------------------------------------------------- *)
 
 Theorem mapping_check_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) :
-  L.isMappingWellFormed c -> L.mapping_check c -> @H.mapping_check d R hpoly_of (interp_cert hm).
+  L.isMappingWellFormed c -> L.mapping_check c -> @H.mapping_check d R (interp_cert hm).
 Proof.
 move=> hmapwf; rewrite /L.mapping_check; cbv zeta => /for_all_alenP hchk.
 rewrite /H.mapping_check /interp_cert /H.facets /H.mapping /H.activeSets.
@@ -979,7 +981,7 @@ Qed.
 
 Theorem graph_check_correct (hm : (0 < m)%N) :
   L.isGraphWellFormed c -> L.areDescriptionsWellFormed c -> L.areFacetsUnique c ->
-  L.graph_check c -> @H.graph_check d R hpoly_of (interp_cert hm).
+  L.graph_check c -> @H.graph_check d R (interp_cert hm).
 Proof.
 move=> hg hdesc huniq; rewrite /L.graph_check; cbv zeta => /andP[hreg hridge].
 have hinj := desc_of_inj hm hdesc huniq.
@@ -1054,7 +1056,7 @@ Theorem inversibility_check_correct (hm : (0 < m)%N) (hnf : (0 < nf)%N) :
   L.isSimplexIndexWellFormed c -> L.isActiveInverseWellFormed c ->
   L.areWitnessesWellFormed c -> L.areScalarProductsWellFormed c ->
   L.mapping_check c -> L.scalarProducts_check c -> L.inversibility_check c ->
-  @H.inversibility_check d R hpoly_of (interp_cert hm).
+  @H.inversibility_check d R (interp_cert hm).
 Proof.
 move=> hineq hdesc hsi hai hw hsp hmap hspc hinv.
 have hE := sp_entry hm hnf hineq hdesc hsi hai hw hsp hmap hspc.
@@ -1147,7 +1149,7 @@ Theorem separability_check_correct (hm : (0 < m)%N) :
   L.isActiveInverseWellFormed c -> L.areWitnessesWellFormed c ->
   L.areScalarProductsWellFormed c -> L.areWeightsWellFormed c ->
   L.mapping_check c -> L.scalarProducts_check c -> L.separability_check c ->
-  @H.separability_check d R hpoly_of (interp_cert hm).
+  @H.separability_check d R (interp_cert hm).
 Proof.
 move=> hineq hai hw hsp hwt hmap hspc hsep.
 rewrite /H.separability_check /interp_cert /H.mapping /H.specialVertex
@@ -1210,7 +1212,7 @@ Qed.
 (* -------------------------------------------------------------------------- *)
 
 Lemma facetsAreDSimplices_correct (hm : (0 < m)%N) : L.areDescriptionsWellFormed c ->
-  @H.facetsAreDSimplices d R hpoly_of (interp_cert hm).
+  @H.facetsAreDSimplices d R (interp_cert hm).
 Proof.
 move=> hdesc; rewrite /H.facetsAreDSimplices /interp_cert /H.facets => f /imsetP[k _ ->].
 by rewrite /desc_of (card_set_of_array_sorted (desc_sorted k hdesc) (desc_range hm hdesc))
@@ -1218,14 +1220,14 @@ by rewrite /desc_of (card_set_of_array_sorted (desc_sorted k hdesc) (desc_range 
 Qed.
 
 Lemma graphVerticesAreFacets_correct (hm : (0 < m)%N) :
-  @H.graphVerticesAreFacets d R hpoly_of (interp_cert hm).
+  @H.graphVerticesAreFacets d R (interp_cert hm).
 Proof.
 rewrite /H.graphVerticesAreFacets /interp_cert /H.graph /H.facets vtx_graph_of => f.
 by apply/imfsetP/imsetP => -[k _ ->]; exists k; rewrite ?in_setT.
 Qed.
 
 Lemma mappingHasImageInPoints_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) : L.isMappingWellFormed c ->
-  @H.mappingHasImageInPoints d R hpoly_of points_of (interp_cert hm).
+  @H.mappingHasImageInPoints d R (interp_cert hm).
 Proof.
 move=> hmapwf; rewrite /H.mappingHasImageInPoints /interp_cert /H.facets /H.mapping.
 move=> f /imsetP[k _ ->]; rewrite /mapping_of; case: pickP => [k' _|/(_ k)]; last by rewrite eqxx.
@@ -1235,7 +1237,7 @@ by rewrite /point_of_vertex /vertex_of /aget -[nat_of_ord v0]/(nat_of_int (L.map
 Qed.
 
 Lemma graphIsUndirected_correct (hm : (0 < m)%N) : L.isGraphWellFormed c ->
-  @H.graphIsUndirected d R hpoly_of (interp_cert hm).
+  @H.graphIsUndirected d R (interp_cert hm).
 Proof.
 move=> hg; rewrite /H.graphIsUndirected /interp_cert /H.graph.
 suff hsym : forall x y, y \in successors graph_of x -> x \in successors graph_of y.
@@ -1251,7 +1253,7 @@ Qed.
 
 Lemma specialSimplexInSpecialCone_correct (hm : (0 < m)%N) (hnf : (0 < nf)%N) :
   L.isSimplexIndexWellFormed c -> L.areDescriptionsWellFormed c -> L.areFacetsUnique c ->
-  @H.specialSimplexInSpecialCone d R hpoly_of (interp_cert hm).
+  @H.specialSimplexInSpecialCone d R (interp_cert hm).
 Proof.
 move=> hsi hdesc huniq; have hk := kstar_ord hnf hsi.
 rewrite /H.specialSimplexInSpecialCone /interp_cert /H.specialSimplex /H.facets /H.mapping
@@ -1266,7 +1268,7 @@ Lemma weightsAreStrictlyPositiveVectors_correct (hm : (0 < m)%N) (hnv : (0 < nv)
   L.areDescriptionsWellFormed c -> L.isMappingWellFormed c -> L.isSimplexIndexWellFormed c ->
   L.areWeightsWellFormed c -> L.areActiveSetsUnique c ->
   L.feasibility_check c -> L.separability_check c ->
-  @H.weightsAreStrictlyPositiveVectors d R hpoly_of (interp_cert hm).
+  @H.weightsAreStrictlyPositiveVectors d R (interp_cert hm).
 Proof.
 move=> hineq hpts hact hdesc hmapwf hsi hwt hasu hfeas hsep; have hk := kstar_ord hnf hsi.
 rewrite /H.weightsAreStrictlyPositiveVectors /interp_cert /H.mapping /H.specialVertex
@@ -1309,7 +1311,7 @@ Qed.
 
 Theorem full_dim_check_correct (hm : (0 < m)%N) :
   L.areInequalitiesWellFormed c -> L.isFullDimWellFormed c -> L.full_dim_check c ->
-  @H.full_dim_check d R hpoly_of (interp_cert hm).
+  @H.full_dim_check d R (interp_cert hm).
 Proof.
 move=> hineq hfd; rewrite /L.full_dim_check => /andP[hfeas hinv].
 have hlen := ineqs_len hineq; have hnorm := normal_len hineq.
@@ -1370,7 +1372,7 @@ Qed.
 (* -------------------------------------------------------------------------- *)
 
 Lemma geomGraphVerticesArePoints_correct (hm : (0 < m)%N) :
-  @H.geomGraphVerticesArePoints d R hpoly_of points_of (interp_cert hm).
+  @H.geomGraphVerticesArePoints d R (interp_cert hm).
 Proof.
 by rewrite /H.geomGraphVerticesArePoints /interp_cert /H.geom_graph vtx_geom_graph_of.
 Qed.
@@ -1385,15 +1387,15 @@ Qed.
    [H.geomGraphIsImageOfGraph] directly. *)
 Definition geomGraphIsImageOfGraph_ne (hm : (0 < m)%N) : Prop :=
     forall v w : 'cV[R]_d,
-    v \in vertices (@H.geom_graph R d hpoly_of (interp_cert hm)) ->
-    w \in vertices (@H.geom_graph R d hpoly_of (interp_cert hm)) ->
+    v \in vertices (@H.geom_graph R d (interp_cert hm)) ->
+    w \in vertices (@H.geom_graph R d (interp_cert hm)) ->
     v <> w ->
-    (w \in successors (@H.geom_graph R d hpoly_of (interp_cert hm)) v <->
+    (w \in successors (@H.geom_graph R d (interp_cert hm)) v <->
      exists fv fw : {set 'I_m},
-       fv \in vertices (@H.graph R d hpoly_of (interp_cert hm))
-       /\ fw \in successors (@H.graph R d hpoly_of (interp_cert hm)) fv
-       /\ @H.mapping R d hpoly_of (interp_cert hm) fv = v
-       /\ @H.mapping R d hpoly_of (interp_cert hm) fw = w).
+       fv \in vertices (@H.graph R d (interp_cert hm))
+       /\ fw \in successors (@H.graph R d (interp_cert hm)) fv
+       /\ @H.mapping R d (interp_cert hm) fv = v
+       /\ @H.mapping R d (interp_cert hm) fw = w).
 
 Lemma geomGraphIsImageOfGraph_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N)
     (hnf : (0 < nf)%N) (hd : (0 < d)%N) :
@@ -1406,9 +1408,9 @@ Lemma geomGraphIsImageOfGraph_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N)
 Proof.
 move=> hgf hdesc hmapwf hfu hreg hg hsrc htgt himg.
 have hdinj := desc_of_inj hm hdesc hfu.
-have hGE : @H.geom_graph R d hpoly_of (interp_cert hm) = geom_graph_of by [].
-have hGR : @H.graph R d hpoly_of (interp_cert hm) = graph_of by [].
-have hMA : @H.mapping R d hpoly_of (interp_cert hm) = mapping_of by [].
+have hGE : @H.geom_graph R d (interp_cert hm) = geom_graph_of by [].
+have hGR : @H.graph R d (interp_cert hm) = graph_of by [].
+have hMA : @H.mapping R d (interp_cert hm) = mapping_of by [].
 move: himg; rewrite /L.graph_image_check; cbv zeta => /andP[himg1 himg2].
 move=> v w; rewrite hGE hGR hMA vtx_geom_graph_of vtx_graph_of => hv hw hvw; split.
 - (* a geometric edge is the image of the facet edge its tables name *)
@@ -1565,7 +1567,7 @@ Lemma geom_edge_pairwise_correct (hm : (0 < m)%N) :
   L.areInequalitiesWellFormed c -> L.arePointsWellFormed c -> L.areActiveSetsWellFormed c ->
   L.areActiveSetsUnique c -> L.feasibility_check c ->
   L.isGeomGraphWellFormed c -> L.geom_edge_pairwise_check c ->
-  @H.geom_edge_pairwise_check d R hpoly_of (interp_cert hm).
+  @H.geom_edge_pairwise_check d R (interp_cert hm).
 Proof.
 move=> hineq hpts hact hasu hfeas hg hchk.
 have hAS := activeSets_of_vertex hm hineq hpts hact hasu hfeas.
@@ -1615,7 +1617,7 @@ Qed.
 (* The BFS visit count certifies connectivity of the geometric graph. *)
 Lemma connectivity_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) :
   L.isGeomGraphWellFormed c -> L.connectivity_check c ->
-  @H.connectivity_check d R hpoly_of (interp_cert hm).
+  @H.connectivity_check d R (interp_cert hm).
 Proof.
 move=> hg hchk.
 rewrite /H.connectivity_check /interp_cert /H.geom_graph.
@@ -1652,7 +1654,7 @@ Qed.
 Lemma geom_edge_difference_pairwise_correct (hm : (0 < m)%N) :
   L.areInequalitiesWellFormed c -> L.arePointsWellFormed c -> L.areActiveSetsWellFormed c ->
   L.areActiveSetsUnique c -> L.feasibility_check c -> L.geom_edge_pairwise_check c ->
-  @H.geom_edge_difference_pairwise_check d R hpoly_of (interp_cert hm).
+  @H.geom_edge_difference_pairwise_check d R (interp_cert hm).
 Proof.
 move=> hineq hpts hact hasu hfeas hchk.
 have hAS := activeSets_of_vertex hm hineq hpts hact hasu hfeas.
@@ -1732,11 +1734,11 @@ Qed.
 Theorem graph_equality_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) (hnf : (0 < nf)%N)
     (hd : (0 < d)%N) :
   L.VtxContainment.check_certificate c -> L.GraphEquality.check_certificate c ->
-  [/\ @H.geomGraphVerticesArePoints d R hpoly_of points_of (interp_cert hm),
+  [/\ @H.geomGraphVerticesArePoints d R (interp_cert hm),
       geomGraphIsImageOfGraph_ne hm,
-      @H.geom_edge_pairwise_check d R hpoly_of (interp_cert hm),
-      @H.connectivity_check d R hpoly_of (interp_cert hm) &
-      @H.geom_edge_difference_pairwise_check d R hpoly_of (interp_cert hm)].
+      @H.geom_edge_pairwise_check d R (interp_cert hm),
+      @H.connectivity_check d R (interp_cert hm) &
+      @H.geom_edge_difference_pairwise_check d R (interp_cert hm)].
 Proof.
 move=> /certP[/wfP hwf hfeas _ hgraph _] /geqP[[hg hsrc htgt] [himg hpair hconn]].
 move: hgraph; rewrite /L.graph_check; cbv zeta => /andP[hreg _].
@@ -1766,11 +1768,11 @@ Qed.
 
 Theorem vtx_containment_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) (hnf : (0 < nf)%N) :
   L.VtxContainment.check_certificate c ->
-  [/\ @H.feasibility_check d R hpoly_of points_of (interp_cert hm),
-      @H.mapping_check d R hpoly_of (interp_cert hm),
-      @H.graph_check d R hpoly_of (interp_cert hm),
-      @H.inversibility_check d R hpoly_of (interp_cert hm) &
-      @H.separability_check d R hpoly_of (interp_cert hm)].
+  [/\ @H.feasibility_check d R (interp_cert hm),
+      @H.mapping_check d R (interp_cert hm),
+      @H.graph_check d R (interp_cert hm),
+      @H.inversibility_check d R (interp_cert hm) &
+      @H.separability_check d R (interp_cert hm)].
 Proof.
 move=> /certP[/wfP hwf hfeas hmap hgraph [/rootP[hspc hinv hsep] _]].
 split.
@@ -1786,7 +1788,7 @@ Qed.
 Theorem well_formedness_check_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) (hnf : (0 < nf)%N)
     (hd : (0 < d)%N) :
   L.VtxContainment.well_formedness_check c -> L.feasibility_check c -> L.separability_check c ->
-  @CC.well_formedness_check d R hpoly_of points_of (interp_cert hm).
+  @CC.well_formedness_check d R (interp_cert hm).
 Proof.
 move=> /wfP hwf hfeas hsep.
 split; first exact: facetsAreDSimplices_correct hm (wf_desc hwf).
@@ -1800,7 +1802,7 @@ Qed.
 
 Theorem check_certificate_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) (hnf : (0 < nf)%N)
     (hd : (0 < d)%N) :
-  L.VtxContainment.check_certificate c -> @CC.check_certificate d R hpoly_of points_of (interp_cert hm).
+  L.VtxContainment.check_certificate c -> @CC.check_certificate d R (interp_cert hm).
 Proof.
 move=> hchk; have [h1 h2 h3 h4 h5] := vtx_containment_correct hm hnv hnf hchk.
 have [hwf hfeas _ _ [/rootP[_ _ hsep] hfd]] := certP hchk.
@@ -1835,9 +1837,9 @@ Corollary vertex_containment (hm : (0 < m)%N) (hnv : (0 < nv)%N) (hnf : (0 < nf)
 Proof.
 move=> hchk.
 have [/wfP hdata _ _ _ _] := certP hchk.
-apply: (@CC.certificate_correctness d R (hpoly_of R c) (points_of R c) hd
+apply: (@CC.certificate_correctness d R (interp_cert R hm) hd
           (normal_of_neq0 (wf_ineq hdata))).
-by exists (interp_cert R hm); exact: check_certificate_correct hm hnv hnf hd hchk.
+by exact: check_certificate_correct hm hnv hnf hd hchk.
 Qed.
 
 End EndToEnd.

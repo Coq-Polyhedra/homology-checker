@@ -10,27 +10,25 @@ Section Certificate.
 
 Context (R : realFieldType) (d : nat).
 
-Variable (P : 'hpoly[R]_d) (V : {fset 'cV[R]_d}).
-
-Definition m := P.`c.
-
-Notation simplex_m := (simplex [finType of 'I_m]).
-Notation simplex_graph := (graph [choiceType of (simplex_m)]).
+Notation simplex_of m := (simplex [finType of 'I_m]).
+Notation simplex_graph m := (graph [choiceType of (simplex_of m)]).
 Notation vertex_graph := (graph [choiceType of ('cV[R]_d)]).
 
 Record Certificate := {
+    polytope : 'hpoly[R]_d;
+    points : {fset 'cV[R]_d};
     full_dim_point : 'cV[R]_d;
     full_dim_dir : 'M[R]_(d,d);
     full_dim_inv : 'M[R]_(d,d);
-    activeSets : 'cV[R]_d -> {set 'I_m};
-    facets : {set simplex_m};
-    mapping : simplex_m -> 'cV[R]_d;
-    graph : simplex_graph;
+    activeSets : 'cV[R]_d -> {set 'I_(polytope.`c)};
+    facets : {set simplex_of (polytope.`c)};
+    mapping : simplex_of (polytope.`c) -> 'cV[R]_d;
+    graph : simplex_graph (polytope.`c);
     specialVertex : 'cV[R]_d;
-    specialSimplex : 'I_d -> 'I_m;
+    specialSimplex : 'I_d -> 'I_(polytope.`c);
     witnesses : 'M[R]_(d,d);
-    weights : simplex_m -> 'cV[R]_d;
-    flag_indices : 'cV[R]_d -> 'I_d -> 'I_m;
+    weights : simplex_of (polytope.`c) -> 'cV[R]_d;
+    flag_indices : 'cV[R]_d -> 'I_d -> 'I_(polytope.`c);
     flag_vertices : 'cV[R]_d -> 'I_d -> 'cV[R]_d;
     geom_graph : vertex_graph
 }.
@@ -41,14 +39,11 @@ Section HighLevelChecks.
 
 Context (d : nat) (R : realFieldType).
 
-Variable (P : 'hpoly[R]_d) (V : {fset 'cV[R]_d}).
-
 Notation "'[ u , v ]" := (vdot u v).
 Notation "x <=m y" := (lev x y).
 
-Local Notation m := (m R d P).
-Local Notation simplex_m := (simplex [finType of 'I_m]).
-Local Notation Certificate := (Certificate R d P).
+Local Notation simplex_of m := (simplex [finType of 'I_m]).
+Local Notation Certificate := (Certificate R d).
 
 Definition incomparable {T : finType} (A B : {set T}) :=
   ~~ (A \subset B) && ~~ (B \subset A).
@@ -58,28 +53,31 @@ Definition normalVector (polytope : 'hpoly[R]_d) (i : 'I_(polytope.`c)) :=
 
 Variable (cert : Certificate).
 
-Local Notation full_dim_point := (full_dim_point R d P cert).
-Local Notation full_dim_dir := (full_dim_dir R d P cert).
-Local Notation full_dim_inv := (full_dim_inv R d P cert).
-Local Notation activeSets := (activeSets R d P cert).
-Local Notation facets := (facets R d P cert).
-Local Notation mapping := (mapping R d P cert).
-Local Notation graph := (graph R d P cert).
-Local Notation specialVertex := (specialVertex R d P cert).
-Local Notation specialSimplex := (specialSimplex R d P cert).
-Local Notation witnesses := (witnesses R d P cert).
-Local Notation weights := (weights R d P cert).
-Local Notation flag_indices := (flag_indices R d P cert).
-Local Notation flag_vertices := (flag_vertices R d P cert).
-Local Notation geom_graph := (geom_graph R d P cert).
+Local Notation polytope := (polytope R d cert).
+Local Notation points := (points R d cert).
+Local Notation full_dim_point := (full_dim_point R d cert).
+Local Notation full_dim_dir := (full_dim_dir R d cert).
+Local Notation full_dim_inv := (full_dim_inv R d cert).
+Local Notation activeSets := (activeSets R d cert).
+Local Notation facets := (facets R d cert).
+Local Notation mapping := (mapping R d cert).
+Local Notation graph := (graph R d cert).
+Local Notation specialVertex := (specialVertex R d cert).
+Local Notation specialSimplex := (specialSimplex R d cert).
+Local Notation witnesses := (witnesses R d cert).
+Local Notation weights := (weights R d cert).
+Local Notation flag_indices := (flag_indices R d cert).
+Local Notation flag_vertices := (flag_vertices R d cert).
+Local Notation geom_graph := (geom_graph R d cert).
+Local Notation m := (polytope.`c).
 
 (* Well-formedness condition on facets *)
 Definition facetsAreDSimplices :=
-  forall f : simplex_m, f \in facets -> #|f| == d.
+  forall f : simplex_of m, f \in facets -> #|f| == d.
 
 (* Well-formedness condition on mapping *)
 Definition mappingHasImageInPoints :=
-  forall f : simplex_m, f \in facets -> mapping f \in V.
+  forall f : simplex_of m, f \in facets -> mapping f \in points.
 
 (* Well-formedness condition on graph *)
 Definition graphVerticesAreFacets :=
@@ -95,41 +93,41 @@ Definition specialSimplexInSpecialCone :=
 
 (* Well-formedness condition on the weights *)
 Definition weightsAreStrictlyPositiveVectors :=
-  forall f : simplex_m, mapping f = specialVertex
+  forall f : simplex_of m, mapping f = specialVertex
   -> f != specialSimplex @: 'I_d -> (0 <=m (weights f)) /\ (weights f <> 0%R).
 
 (* Well-formedness condition on flag indices *)
 Definition flagIndicesAreInActiveSets :=
-  forall v, v \in V -> forall i, flag_indices v i \in activeSets v.
+  forall v : 'cV[R]_d, v \in points -> forall i : 'I_d, flag_indices v i \in activeSets v.
 
 (* Well-formedness condition on flag vertices *)
 Definition flagVerticesArePoints :=
-  forall v, v \in V -> forall i, flag_vertices v i \in V.
+  forall v : 'cV[R]_d, v \in points -> forall i : 'I_d, flag_vertices v i \in points.
   
 (* Well-formedness condition on the geometric graph *)
 Definition geomGraphVerticesArePoints :=
-  vertices geom_graph = V.
+  vertices geom_graph = points.
 
 Definition geomGraphIsImageOfGraph :=
   forall v w : 'cV[R]_d, v \in vertices geom_graph -> w \in vertices geom_graph
-  -> (w \in successors geom_graph v <-> exists fv fw : simplex_m, fv \in vertices graph
+  -> (w \in successors geom_graph v <-> exists fv fw : simplex_of m, fv \in vertices graph
   /\ fw \in successors graph fv /\ mapping fv = v /\ mapping fw = w).
 
 (* Full dimension hypothesis *)
 Definition full_dim_check :=
-  full_dim_point \in P
-  /\ (forall i : 'I_d, (full_dim_point + col i full_dim_dir)%R \in P)
+  full_dim_point \in polytope
+  /\ (forall i : 'I_d, (full_dim_point + col i full_dim_dir)%R \in polytope)
   /\ forall (i j : 'I_d), (i = j /\ '[col i full_dim_dir, col j full_dim_inv] <> 0)%R
   \/ (i <> j /\ '[col i full_dim_dir, col j full_dim_inv] = 0)%R.
 
 (* Condition T1 *)
 Definition feasibility_check :=
-  {subset V <= P} /\ forall x : 'cV[R]_d, x \in V ->
-  activeSets x = [set i : 'I_m | '[normalVector P i , x] == P.`b i ord0].
+  {subset points <= polytope} /\ forall x : 'cV[R]_d, x \in points ->
+  activeSets x = [set i : 'I_m | '[normalVector polytope i , x] == polytope.`b i ord0].
 
 (* Condition T2 *)
 Definition mapping_check :=
-  forall f : simplex_m, f \in facets ->
+  forall f : simplex_of m, f \in facets ->
   f \subset activeSets (mapping f).
 
 (* Condition T3 *)
@@ -139,19 +137,19 @@ Definition graph_check :=
 
 (* Condition T4 *)
 Definition inversibility_check :=
-  forall (i j : 'I_d), (i = j /\ '[\col_k (P.`A (specialSimplex i) k), (col j witnesses)] > 0)%R
-  \/ (i <> j /\ '[\col_k (P.`A (specialSimplex i) k), (col j witnesses)] = 0)%R.
+  forall (i j : 'I_d), (i = j /\ '[\col_k (polytope.`A (specialSimplex i) k), (col j witnesses)] > 0)%R
+  \/ (i <> j /\ '[\col_k (polytope.`A (specialSimplex i) k), (col j witnesses)] = 0)%R.
 
 (* Condition T5 *)
 Definition separability_check :=
-  forall f : simplex_m, mapping f = specialVertex
+  forall f : simplex_of m, mapping f = specialVertex
   -> f != specialSimplex @: 'I_d
   -> forall i : 'I_m, i \in f ->
-  ('[witnesses *m (weights f) , normalVector P i] <= 0)%R.
+  ('[witnesses *m (weights f) , normalVector polytope i] <= 0)%R.
 
 (* Condition T6 *)
 Definition flag_check :=
-  forall v, v \in V -> forall k : 'I_d, flag_indices v k \notin activeSets (flag_vertices v k)
+  forall v, v \in points -> forall k : 'I_d, flag_indices v k \notin activeSets (flag_vertices v k)
   /\ forall j : 'I_d, j < k -> flag_indices v j \in activeSets (flag_vertices v k).
 
 (* Condition T7 *)
@@ -175,40 +173,40 @@ Section CertificateLemmas.
 
 Context (d : nat) (R : realFieldType).
 
-Variable (P : 'hpoly[R]_d) (V : {fset 'cV[R]_d}).
-
 Notation "'[ u , v ]" := (vdot u v).
 
-Local Notation m := (m R d P).
-Local Notation simplex_m := (simplex [finType of 'I_m]).
-Local Notation Certificate := (Certificate R d P).
-Local Notation active_constraints := (active_constraints d R P).
-Local Notation normalVector := (normalVector d R).
-Local Notation coneOf := (coneOf m d R (normalVector P)).
-Local Notation normalCone := (normalCone d R P).
+Local Notation Certificate := (Certificate R d).
 
 Variable (cert : Certificate).
 
-Local Notation facetsAreDSimplices := (facetsAreDSimplices d R P cert).
-Local Notation graphVerticesAreFacets := (graphVerticesAreFacets d R P cert).
-Local Notation graphIsUndirected := (graphIsUndirected d R P cert).
-Local Notation mappingHasImageInPoints := (mappingHasImageInPoints d R P V cert).
-Local Notation feasibility_check := (feasibility_check d R P V cert).
-Local Notation inversibility_check := (inversibility_check d R P cert).
-Local Notation graph_check := (graph_check d R P cert).
-Local Notation full_dim_check := (full_dim_check d R P cert).
-Local Notation mapping_check := (mapping_check d R P cert).
-Local Notation facets := (facets R d P cert).
-Local Notation graph := (graph R d P cert).
-Local Notation specialSimplex := (specialSimplex R d P cert).
-Local Notation witnesses := (witnesses R d P cert).
-Local Notation activeSets := (activeSets R d P cert).
-Local Notation full_dim_point := (full_dim_point R d P cert).
-Local Notation full_dim_dir := (full_dim_dir R d P cert).
-Local Notation full_dim_inv := (full_dim_inv R d P cert).
-Local Notation mapping := (mapping R d P cert).
+Local Notation polytope := (polytope R d cert).
+Local Notation m := polytope.`c.
+Local Notation points := (points R d cert).
+Local Notation simplex_of m := (simplex [finType of 'I_m]).
+Local Notation active_constraints := (active_constraints d R polytope).
+Local Notation normalVector := (normalVector d R polytope).
+Local Notation coneOf := (coneOf m d R (normalVector)).
+Local Notation normalCone := (normalCone d R polytope).
+Local Notation facetsAreDSimplices := (facetsAreDSimplices d R cert).
+Local Notation graphVerticesAreFacets := (graphVerticesAreFacets d R cert).
+Local Notation graphIsUndirected := (graphIsUndirected d R cert).
+Local Notation mappingHasImageInPoints := (mappingHasImageInPoints d R cert).
+Local Notation feasibility_check := (feasibility_check d R cert).
+Local Notation inversibility_check := (inversibility_check d R cert).
+Local Notation graph_check := (graph_check d R cert).
+Local Notation full_dim_check := (full_dim_check d R cert).
+Local Notation mapping_check := (mapping_check d R cert).
+Local Notation facets := (facets R d cert).
+Local Notation graph := (graph R d cert).
+Local Notation specialSimplex := (specialSimplex R d cert).
+Local Notation witnesses := (witnesses R d cert).
+Local Notation activeSets := (activeSets R d cert).
+Local Notation full_dim_point := (full_dim_point R d cert).
+Local Notation full_dim_dir := (full_dim_dir R d cert).
+Local Notation full_dim_inv := (full_dim_inv R d cert).
+Local Notation mapping := (mapping R d cert).
 
-Lemma vertices_card (f : simplex_m) :
+Lemma vertices_card (f : simplex_of m) :
   facetsAreDSimplices -> graphVerticesAreFacets -> 
   f \in vertices graph -> #|f| = d.
 Proof.
@@ -218,7 +216,7 @@ Proof.
   by rewrite -(Hvert f).
 Qed.
 
-Lemma facets_cardND1 (f : simplex_m) (i : 'I_m) :
+Lemma facets_cardND1 (f : simplex_of m) (i : 'I_m) :
   facetsAreDSimplices -> graphVerticesAreFacets -> f \in vertices graph -> 
   i \in f -> #|f :\ i| = d - 1.
 Proof.
@@ -249,7 +247,7 @@ Proof.
     by rewrite facetsOf_set0.
 Qed. 
 
-Lemma incident_facets_cert_subset (r : simplex_m) : 
+Lemma incident_facets_cert_subset (r : simplex_of m) : 
   facetsAreDSimplices -> {subset incident_facets (set_to_asc facets) r <= facets}.
 Proof.
   move=> Hfacets.
@@ -268,7 +266,7 @@ Proof.
   exact: dim_regular_set d facets Hreg.
 Qed.
 
-Lemma ridges_card (r : simplex_m) :
+Lemma ridges_card (r : simplex_of m) :
   facetsAreDSimplices -> facets != set0 -> 
   r \in ridgesOf (set_to_asc facets) -> #|r| = d.-1.
 Proof.
@@ -278,7 +276,7 @@ Proof.
   by rewrite (dim_cert Hfacets Hemp) in Hrdim.
 Qed.
 
-Lemma successors_subset (f : simplex_m) :
+Lemma successors_subset (f : simplex_of m) :
   graphVerticesAreFacets -> {subset successors graph f <= facets}.
 Proof.
   move=> Hgraph x Hx.
@@ -288,13 +286,13 @@ Proof.
 Qed.
 
 Lemma full_dim_cert :
-  feasibility_check -> full_dim_check -> \pdim '[P] = d.+1.
+  feasibility_check -> full_dim_check -> \pdim '[polytope] = d.+1.
 Proof.
   move=> _ [Hpoint [Hdir Hinv]].
-  have HpointP : full_dim_point \in '[P].
+  have HpointP : full_dim_point \in '[polytope].
     by rewrite mem_mk_poly.
   pose X := [seq (full_dim_point + col i full_dim_dir)%R | i <- enum 'I_d].
-  have HXP : {in X, forall x : 'cV_d, x \in '[P]}.
+  have HXP : {in X, forall x : 'cV_d, x \in '[polytope]}.
     move=> x Hx.
     rewrite /X in Hx. move/mapP in Hx. move: Hx => [i Hi Hxi].
     rewrite Hxi. rewrite mem_mk_poly. by exact: Hdir i.
@@ -360,14 +358,14 @@ Proof.
 Qed.
 
 Lemma activeSets_cert :
-  feasibility_check -> forall x : 'cV[R]_d, x \in V -> activeSets x = active_constraints x.
+  feasibility_check -> forall x : 'cV[R]_d, x \in points -> activeSets x = active_constraints x.
 Proof.
   move=>Hfeas x HxV.
   by rewrite (snd (Hfeas) x HxV).
 Qed.
 
 Lemma inversibility_cert :
-  inversibility_check -> free [seq (\col_k (P.`A (specialSimplex i) k))%R | i <- enum 'I_d].
+  inversibility_check -> free [seq (\col_k (polytope.`A (specialSimplex i) k))%R | i <- enum 'I_d].
 Proof.
   move=> Hinv.
   apply/freeP=> w Hw i.
@@ -379,7 +377,7 @@ Proof.
     move/orP: Hwi => [/eqP Ha | /eqP Hb].
     - by [].
     - have Hi := (Hinv (enum_val i) (enum_val i)).
-      have Hnz : '[\col_k (P.`A (specialSimplex (enum_val i)) k), col (enum_val i) witnesses]%R <> 0%R.
+      have Hnz : '[\col_k (polytope.`A (specialSimplex (enum_val i)) k), col (enum_val i) witnesses]%R <> 0%R.
       case: Hi => [[_ Hnz] | [Hneq _]].
       + apply/eqP. rewrite gt_eqF. by []. by [].
       + by case: Hneq.
@@ -396,7 +394,7 @@ Proof.
       have Hijord : j = i := (can_inj enum_valK) j i Heq.
       move: HjDi.
       by rewrite Hijord eqxx.
-    have Hzero : '[\col_k (P.`A (specialSimplex (enum_val j)) k), col (enum_val i) witnesses]%R = 0%R.
+    have Hzero : '[\col_k (polytope.`A (specialSimplex (enum_val j)) k), col (enum_val i) witnesses]%R = 0%R.
       case: Hij => [[Heq _] | [_ Hzero]].
       + by case: (Hneq Heq).
       + exact Hzero.
@@ -413,7 +411,7 @@ Proof.
 Qed.
 
 Lemma cone_subset_cert :
-  feasibility_check -> mappingHasImageInPoints -> mapping_check -> forall f : simplex_m, f \in facets -> (coneOf f) `<=` normalCone (mapping f).
+  feasibility_check -> mappingHasImageInPoints -> mapping_check -> forall f : simplex_of m, f \in facets -> (coneOf f) `<=` normalCone (mapping f).
 Proof.
   move=> Hfeas Hmappoint Hmapcheck f Hf. 
   apply:coneOfS. 

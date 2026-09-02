@@ -70,35 +70,35 @@ Section RidgesHaveEvenIncidence.
 
 Context (d : nat) (R : realFieldType).
 
-Variable (P : 'hpoly[R]_d) (V : {fset 'cV[R]_d}).
-
-Local Notation m := (m R d P).
-Local Notation simplex_m := (simplex [finType of 'I_m]).
-Local Notation Certificate := (Certificate R d P).
-Local Notation facetsAreDSimplices := (facetsAreDSimplices d R P).
-Local Notation graphVerticesAreFacets := (graphVerticesAreFacets d R P).
-Local Notation graphIsUndirected := (graphIsUndirected d R P).
-Local Notation graph_check := (graph_check d R P).
-Local Notation ridgesHaveEvenIncidence := (ridgesHaveEvenIncidence m).
-Local Notation facets := (facets R d P).
-Local Notation graph := (graph R d P).
+Local Notation Certificate := (Certificate R d).
 
 Variable (cert : Certificate).
 
-Local Notation vertices_card := (vertices_card d R P cert).
-Local Notation facets_cardND1 := (facets_cardND1 d R P cert).
-Local Notation facets_regular := (facets_regular d R P cert).
-Local Notation facets_cert := (facets_cert d R P cert).
-Local Notation incident_facets_cert_subset := (incident_facets_cert_subset d R P cert).
-Local Notation dim_cert := (dim_cert d R P cert).
-Local Notation ridges_card := (ridges_card d R P cert).
-Local Notation successors_subset := (successors_subset d R P cert).
+Local Notation polytope := (polytope R d cert).
+Local Notation m := polytope.`c.
+Local Notation points := (points R d cert).
+Local Notation simplex_m := (simplex [finType of 'I_m]).
+Local Notation facetsAreDSimplices := (facetsAreDSimplices d R cert).
+Local Notation graphVerticesAreFacets := (graphVerticesAreFacets d R cert).
+Local Notation graphIsUndirected := (graphIsUndirected d R cert).
+Local Notation graph_check := (graph_check d R cert).
+Local Notation ridgesHaveEvenIncidence := (ridgesHaveEvenIncidence m).
+Local Notation facets := (facets R d).
+Local Notation graph := (graph R d).
+Local Notation vertices_card := (vertices_card d R cert).
+Local Notation facets_cardND1 := (facets_cardND1 d R cert).
+Local Notation facets_regular := (facets_regular d R cert).
+Local Notation facets_cert := (facets_cert d R cert).
+Local Notation incident_facets_cert_subset := (incident_facets_cert_subset d R cert).
+Local Notation dim_cert := (dim_cert d R cert).
+Local Notation ridges_card := (ridges_card d R cert).
+Local Notation successors_subset := (successors_subset d R cert).
 
 Hypothesis Hdim : d >= 1.
-Hypothesis Hfacets : facetsAreDSimplices cert.
-Hypothesis Hvert   : graphVerticesAreFacets cert.
-Hypothesis Hgraph  : graph_check cert.
-Hypothesis Hundir : graphIsUndirected cert.
+Hypothesis Hfacets : facetsAreDSimplices.
+Hypothesis Hvert   : graphVerticesAreFacets.
+Hypothesis Hgraph  : graph_check.
+Hypothesis Hundir : graphIsUndirected.
 
 Definition graph_neighbors (f : simplex_m) (i : 'I_m) :=
   [set g in successors (graph cert) f | f :\ i \subset g].
@@ -594,40 +594,40 @@ Section ConesArePointed.
 
 Context (d : nat) (R : realFieldType).
 
-Variable (P : 'hpoly[R]_d) (V : {fset 'cV[R]_d}).
-
-Local Notation m := (m R d P).
-Local Notation simplex_m := (simplex [finType of 'I_m]).
-Local Notation Certificate := (Certificate R d P).
-Local Notation facetsAreDSimplices := (facetsAreDSimplices d R P).
-Local Notation full_dim_check := (full_dim_check d R P).
-Local Notation mappingHasImageInPoints := (mappingHasImageInPoints d R P V).
-Local Notation feasibility_check := (feasibility_check d R P V).
-Local Notation mapping_check := (mapping_check d R P).
-Local Notation conesArePointed := (conesArePointed m d R).
-Local Notation facets := (facets R d P).
-Local Notation mapping := (mapping R d P).
-Local Notation normalVector := (normalVector d R).
-Local Notation coneOf := (coneOf m d R (normalVector P)).
-Local Notation coneOfS := (coneOfS m d R (normalVector P)).
-Local Notation active_constraints := (active_constraints d R P).
-Local Notation normalCone := (normalCone d R P).
-Local Notation normal_cones_are_pointed := (normal_cones_are_pointed d R P).
+Local Notation Certificate := (Certificate R d).
 
 Variable (cert : Certificate).
 
-Local Notation facets_cert := (facets_cert d R P cert).
-Local Notation activeSets_cert := (activeSets_cert d R P V cert).
-Local Notation full_dim_cert := (full_dim_cert d R P V cert).
+Local Notation polytope := (polytope R d cert).
+Local Notation m := polytope.`c.
+Local Notation points := (points R d cert).
+Local Notation simplex_m := (simplex [finType of 'I_m]).
+Local Notation facetsAreDSimplices := (facetsAreDSimplices d R cert).
+Local Notation full_dim_check := (full_dim_check d R cert).
+Local Notation mappingHasImageInPoints := (mappingHasImageInPoints d R cert).
+Local Notation feasibility_check := (feasibility_check d R cert).
+Local Notation mapping_check := (mapping_check d R cert).
+Local Notation conesArePointed := (conesArePointed m d R).
+Local Notation facets := (facets R d).
+Local Notation mapping := (mapping R d).
+Local Notation normalVector := (normalVector d R).
+Local Notation coneOf := (coneOf m d R (normalVector polytope)).
+Local Notation coneOfS := (coneOfS m d R (normalVector polytope)).
+Local Notation active_constraints := (active_constraints d R polytope).
+Local Notation normalCone := (normalCone d R polytope).
+Local Notation normal_cones_are_pointed := (normal_cones_are_pointed d R polytope).
+Local Notation facets_cert := (facets_cert d R cert).
+Local Notation activeSets_cert := (activeSets_cert d R cert).
+Local Notation full_dim_cert := (full_dim_cert d R cert).
 
-Hypothesis Hfeas : feasibility_check cert.
-Hypothesis Hfulldim : full_dim_check cert.
-Hypothesis Hfacets : facetsAreDSimplices cert.
-Hypothesis Hmappoint : mappingHasImageInPoints cert.
-Hypothesis Hmapcheck: mapping_check cert.
+Hypothesis Hfeas : feasibility_check.
+Hypothesis Hfulldim : full_dim_check.
+Hypothesis Hfacets : facetsAreDSimplices.
+Hypothesis Hmappoint : mappingHasImageInPoints.
+Hypothesis Hmapcheck: mapping_check.
 
 Lemma cones_are_pointed :
-  conesArePointed (normalVector P) (set_to_asc (facets cert)).
+  conesArePointed (normalVector polytope) (set_to_asc (facets cert)).
 Proof.
   move=> f Hf.
   rewrite (facets_cert Hfacets) in Hf.
@@ -644,42 +644,42 @@ Section SpecialPoint.
 
 Context (d : nat) (R : realFieldType).
 
-Variable (P : 'hpoly[R]_d) (V : {fset 'cV[R]_d}).
-
-Local Notation m := (m R d P).
-Local Notation simplex_m := (simplex [finType of 'I_m]).
-Local Notation Certificate := (Certificate R d P).
-Local Notation facets := (facets R d P).
-Local Notation mapping := (mapping R d P).
-Local Notation activeSets := (activeSets R d P).
-Local Notation specialSimplex := (specialSimplex R d P).
-Local Notation specialVertex := (specialVertex R d P).
-Local Notation witnesses := (witnesses R d P).
-Local Notation weights := (weights R d P).
-Local Notation normalVector := (normalVector d R).
-Local Notation existsSpecialPoint := (existsSpecialPoint m d R).
-Local Notation mappingHasImageInPoints := (mappingHasImageInPoints d R P V).
-Local Notation specialSimplexInSpecialCone := (specialSimplexInSpecialCone d R P).
-Local Notation weightsAreStrictlyPositiveVectors := (weightsAreStrictlyPositiveVectors d R P).
-Local Notation mapping_check := (mapping_check d R P).
-Local Notation inversibility_check := (inversibility_check d R P).
-Local Notation feasibility_check := (feasibility_check d R P V).
-Local Notation separability_check := (separability_check d R P).
-Local Notation facetsAreDSimplices := (facetsAreDSimplices d R P).
-Local Notation coneOf := (coneOf m d R (normalVector P)).
-Local Notation coneOfS := (coneOfS m d R (normalVector P)).
-Local Notation normalsOfS := (normalsOfS m d R (normalVector P)).
-Local Notation coneOf_subset := (coneOf_subset m d R (normalVector P)).
-Local Notation normalsOf := ((normalsOf m d R (normalVector P))).
-Local Notation normalCone := (normalCone d R P).
-Local Notation in_normalConeP := (in_normalConeP d R P).
-Local Notation isKGeneric := (isKGeneric m d R (normalVector P)).
+Local Notation Certificate := (Certificate R d).
 
 Variable (cert : Certificate).
 
-Local Notation inversibility_cert := (inversibility_cert d R P cert).
-Local Notation activeSets_cert := (activeSets_cert d R P V cert).
-Local Notation facets_cert := (facets_cert d R P cert).
+Local Notation polytope := (polytope R d cert).
+Local Notation m := polytope.`c.
+Local Notation points := (points R d cert).
+Local Notation simplex_m := (simplex [finType of 'I_m]).
+Local Notation facets := (facets R d).
+Local Notation mapping := (mapping R d).
+Local Notation activeSets := (activeSets R d).
+Local Notation specialSimplex := (specialSimplex R d).
+Local Notation specialVertex := (specialVertex R d).
+Local Notation witnesses := (witnesses R d).
+Local Notation weights := (weights R d).
+Local Notation normalVector := (normalVector d R).
+Local Notation existsSpecialPoint := (existsSpecialPoint m d R).
+Local Notation mappingHasImageInPoints := (mappingHasImageInPoints d R).
+Local Notation specialSimplexInSpecialCone := (specialSimplexInSpecialCone d R).
+Local Notation weightsAreStrictlyPositiveVectors := (weightsAreStrictlyPositiveVectors d R).
+Local Notation mapping_check := (mapping_check d R).
+Local Notation inversibility_check := (inversibility_check d R).
+Local Notation feasibility_check := (feasibility_check d R).
+Local Notation separability_check := (separability_check d R).
+Local Notation facetsAreDSimplices := (facetsAreDSimplices d R).
+Local Notation coneOf := (coneOf m d R (normalVector polytope)).
+Local Notation coneOfS := (coneOfS m d R (normalVector polytope)).
+Local Notation normalsOfS := (normalsOfS m d R (normalVector polytope)).
+Local Notation coneOf_subset := (coneOf_subset m d R (normalVector polytope)).
+Local Notation normalsOf := ((normalsOf m d R (normalVector polytope))).
+Local Notation normalCone := (normalCone d R polytope).
+Local Notation in_normalConeP := (in_normalConeP d R polytope).
+Local Notation isKGeneric := (isKGeneric m d R (normalVector polytope)).
+Local Notation inversibility_cert := (inversibility_cert d R cert).
+Local Notation activeSets_cert := (activeSets_cert d R cert).
+Local Notation facets_cert := (facets_cert d R cert).
 
 Hypothesis Hfacets : facetsAreDSimplices cert.
 Hypothesis Hfeas : feasibility_check cert.
@@ -691,17 +691,17 @@ Hypothesis Hinvert : inversibility_check cert.
 Hypothesis Hsep : separability_check cert.
 
 Definition zstar : 'cV[R]_d :=
-  \sum_(i < d) (\col_k (P.`A (specialSimplex cert i) k))%R.
+  \sum_(i < d) (\col_k (polytope.`A (specialSimplex cert i) k))%R.
 
 Lemma specVert_is_maximizer :
-  (specialVertex cert) \in argmin '[P] zstar.
+  (specialVertex cert) \in argmin '[polytope] zstar.
 Proof.
   rewrite in_argmin.
-  have HspecVertInV : specialVertex cert \in V.
+  have HspecVertInV : specialVertex cert \in points.
     rewrite -(snd HspecSimp). by apply/Hmappoint; apply (fst HspecSimp).
   apply/andP. split=>//.
   rewrite -(snd HspecSimp).
-  have HspecSimpInV : mapping cert ((specialSimplex cert) @: 'I_d) \in V.
+  have HspecSimpInV : mapping cert ((specialSimplex cert) @: 'I_d) \in points.
     by rewrite (snd HspecSimp).
   rewrite mem_mk_poly. by apply: (fst Hfeas) (mapping cert ((specialSimplex cert) @: 'I_d)) HspecSimpInV.
   apply/poly_subset_hsP. move=> x Hx.
@@ -715,7 +715,7 @@ Proof.
     by apply/imsetP; exists i.
   have Hacti := Hact (specialSimplex cert i) HspecSimpli.
   rewrite inE in Hacti. move/eqP in Hacti.
-  have Hrew : normalVector P (specialSimplex cert i) = (\col_k P.`A (specialSimplex cert i) k)%R.
+  have Hrew : normalVector polytope (specialSimplex cert i) = (\col_k polytope.`A (specialSimplex cert i) k)%R.
     rewrite/normalVector. by apply/matrixP => k j; rewrite !mxE.
   rewrite -Hrew Hacti. rewrite mem_mk_poly in_hpolyE in Hx.
   move/forallP in Hx. have Hxi := Hx (specialSimplex cert i).
@@ -723,10 +723,10 @@ Proof.
 Qed.
 
 Lemma maximizer_is_unique :
-  forall x, x \in argmin '[P] zstar -> x = (specialVertex cert).
+  forall x, x \in argmin '[polytope] zstar -> x = (specialVertex cert).
 Proof.
   move=> x Hx.
-  have HspecVertInV : specialVertex cert \in V.
+  have HspecVertInV : specialVertex cert \in points.
     rewrite -(snd HspecSimp). by apply/Hmappoint; apply (fst HspecSimp).
   have HsVInS := (fst Hfeas) (specialVertex cert) HspecVertInV.
   rewrite -mem_mk_poly in HsVInS.
@@ -739,7 +739,7 @@ Proof.
     by have Hhsx := HhssV x HxP; simpl in Hhsx.
   move/eqP in Heq. rewrite -subr_eq0 in Heq. move/eqP in Heq. rewrite -vdotBr in Heq.
   rewrite vdot_sumDl in Heq.
-  have Hpos : forall i, (0 <= '[ \col_k P.`A (specialSimplex cert i) k, x - specialVertex cert])%R.
+  have Hpos : forall i, (0 <= '[ \col_k polytope.`A (specialSimplex cert i) k, x - specialVertex cert])%R.
     move=>i. rewrite vdotBr subr_ge0.
     have Hact : ((specialSimplex cert) @: 'I_d) \subset activeSets cert (specialVertex cert).
     rewrite -(snd HspecSimp). apply/Hmapcheck. by apply: (fst HspecSimp).
@@ -749,25 +749,25 @@ Proof.
       by apply/imsetP; exists i.
     have Hacti := Hact (specialSimplex cert i) HspecSimpli.
     rewrite inE in Hacti. move/eqP in Hacti.
-    have Hrew : normalVector P (specialSimplex cert i) = (\col_k P.`A (specialSimplex cert i) k)%R.
+    have Hrew : normalVector polytope (specialSimplex cert i) = (\col_k polytope.`A (specialSimplex cert i) k)%R.
     rewrite/normalVector. by apply/matrixP => k j; rewrite !mxE.
     rewrite -Hrew Hacti. rewrite mem_mk_poly in_hpolyE in HxP.
     move/forallP in HxP. have Hxi := HxP (specialSimplex cert i).
     rewrite/normalVector. by rewrite -row_vdot in Hxi.
-  have HeqT : forall i : 'I_d, '[ \col_k P.`A (specialSimplex cert i) k, x - specialVertex cert]%R = 0%R.
+  have HeqT : forall i : 'I_d, '[ \col_k polytope.`A (specialSimplex cert i) k, x - specialVertex cert]%R = 0%R.
     move=> i.
      have HeqTB := (@psumr_eq0P R [finType of 'I_d] predT (fun i =>
-    ('[\col_k P.`A (specialSimplex cert i) k, x - specialVertex cert])%R)).
+    ('[\col_k polytope.`A (specialSimplex cert i) k, x - specialVertex cert])%R)).
     apply: HeqTB. move=> j _. by apply: Hpos j.
-    by change ((\sum_i '[\col_k P.`A (specialSimplex cert i) k, x - specialVertex cert])%R = 0%R).
+    by change ((\sum_i '[\col_k polytope.`A (specialSimplex cert i) k, x - specialVertex cert])%R = 0%R).
     by [].
-  have Horth : (x - specialVertex cert)%R \in (<<[seq (\col_k (P.`A (specialSimplex cert i) k))%R | i <- enum 'I_d]>>^OC)%VS.
+  have Horth : (x - specialVertex cert)%R \in (<<[seq (\col_k (polytope.`A (specialSimplex cert i) k))%R | i <- enum 'I_d]>>^OC)%VS.
     apply/orthv_spanP. move=>y /mapP [i [HiId Hyi]].
     rewrite Hyi. by apply: HeqT i.
-  have Hdimfree : \dim <<[seq (\col_k P.`A (specialSimplex cert i) k)%R | i <- enum 'I_d]>> = d.
+  have Hdimfree : \dim <<[seq (\col_k polytope.`A (specialSimplex cert i) k)%R | i <- enum 'I_d]>> = d.
     have Hfree := inversibility_cert Hinvert.
     move/eqP in Hfree. by rewrite size_map size_enum_ord in Hfree.
-  have Hdim : \dim (<<[seq (\col_k (P.`A (specialSimplex cert i) k))%R | i <- enum 'I_d]>>^OC)%VS = 0.
+  have Hdim : \dim (<<[seq (\col_k (polytope.`A (specialSimplex cert i) k))%R | i <- enum 'I_d]>>^OC)%VS = 0.
     rewrite dim_orthv. rewrite Hdimfree. apply: subnn. 
   move/eqP in Hdim. rewrite dimv_eq0 in Hdim. move/eqP in Hdim.
   rewrite Hdim in Horth. rewrite memv0 in Horth.
@@ -796,23 +796,23 @@ Proof.
       + by rewrite eqxx.
     by move/in_normalsOfP in HyN. 
   split=>//. rewrite (combinewE Hwsub).
-  have Hnormal i : (\col_k P.`A (specialSimplex cert i) k)%R \in
+  have Hnormal i : (\col_k polytope.`A (specialSimplex cert i) k)%R \in
   normalsOf [set specialSimplex cert x | x : 'I_d].
   apply/in_normalsOfP. exists (specialSimplex cert i). split=>//.
   - apply/imsetP. exists i. by []. by [].
   - rewrite/normalVector. by apply/matrixP => k j; rewrite !mxE.
   have Huniq := free_uniq (inversibility_cert Hinvert).
-  pose nvec := fun i : 'I_d => (\col_k P.`A (specialSimplex cert i) k)%R.
+  pose nvec := fun i : 'I_d => (\col_k polytope.`A (specialSimplex cert i) k)%R.
   have Hnvec_inj : injective nvec.
     move=> i j Hij.
-    have Hsize : size [seq (\col_k P.`A (specialSimplex cert i) k)%R | i <- enum 'I_d] = d.
+    have Hsize : size [seq (\col_k polytope.`A (specialSimplex cert i) k)%R | i <- enum 'I_d] = d.
       by rewrite size_map size_enum_ord.
-    have Hisize : i < size [seq (\col_k P.`A (specialSimplex cert i) k)%R | i <- enum 'I_d].
+    have Hisize : i < size [seq (\col_k polytope.`A (specialSimplex cert i) k)%R | i <- enum 'I_d].
       by rewrite Hsize.
-    have Hjsize : j < size [seq (\col_k P.`A (specialSimplex cert i) k)%R | i <- enum 'I_d].
+    have Hjsize : j < size [seq (\col_k polytope.`A (specialSimplex cert i) k)%R | i <- enum 'I_d].
       by rewrite Hsize.
     apply: val_inj. apply/eqP.
-    rewrite -(@nth_uniq _ 0%R [seq (\col_k P.`A (specialSimplex cert i) k)%R | i <- enum 'I_d] i j Hisize Hjsize Huniq).
+    rewrite -(@nth_uniq _ 0%R [seq (\col_k polytope.`A (specialSimplex cert i) k)%R | i <- enum 'I_d] i j Hisize Hjsize Huniq).
     apply/eqP.
     have Henum (k : 'I_d) : val k < size (enum 'I_d). 
       rewrite size_enum_ord. by apply: ltn_ord.
@@ -875,9 +875,9 @@ Proof.
         apply/matrixP => i j. rewrite !mxE. rewrite summxE. apply eq_bigr => k _.
         rewrite !mxE. rewrite mulrC. have Hj : j = ord0. by apply/ord1.
         by rewrite Hj.
-      have Hscal i : ('[ \col_k P.`A (specialSimplex cert i) k, qf] = weights cert f i ord0 * '[\col_k P.`A (specialSimplex cert i) k, col i (witnesses cert)])%R.
+      have Hscal i : ('[ \col_k polytope.`A (specialSimplex cert i) k, qf] = weights cert f i ord0 * '[\col_k polytope.`A (specialSimplex cert i) k, col i (witnesses cert)])%R.
         rewrite/qf Hmul. rewrite vdot_sumDr. rewrite -vdotZr. rewrite (bigD1 i) //=.
-        have Hnull : (\sum_(i0 < d | i0 != i) '[ \col_k P.`A (specialSimplex cert i) k, weights cert f i0 ord0 *:
+        have Hnull : (\sum_(i0 < d | i0 != i) '[ \col_k polytope.`A (specialSimplex cert i) k, weights cert f i0 ord0 *:
         col i0 (witnesses cert)] = 0)%R.
         apply: big1 => j Hj. have Hsepji := (Hinvert i j).
         case Hsepji.
@@ -896,20 +896,20 @@ Proof.
       move/existsP: Hcoord => [i Hi].
       rewrite (bigD1 i). simpl.
       rewrite (Hscal i). 
-      have Hpos : (\sum_(i0 < d | i0 != i) '[ \col_k P.`A (specialSimplex cert i0) k, qf] >= 0)%R.
+      have Hpos : (\sum_(i0 < d | i0 != i) '[ \col_k polytope.`A (specialSimplex cert i0) k, qf] >= 0)%R.
         apply: sumr_ge0. move=> j Hij.
         rewrite (Hscal j). apply: mulr_ge0. have Hwposj := Hwpos j. by rewrite mxE in Hwposj.
         case: (Hinvert j j). 
         + move=> [_ Hsc].  by exact: ltW Hsc.
         + by move=> [Habs _].
-      have Hspos : (weights cert f i ord0 * '[ \col_k P.`A (specialSimplex cert i) k, col i (witnesses cert)] > 0)%R.
+      have Hspos : (weights cert f i ord0 * '[ \col_k polytope.`A (specialSimplex cert i) k, col i (witnesses cert)] > 0)%R.
       + apply:mulr_gt0. have Hwposi := Hwpos i. rewrite mxE in Hwposi.
         rewrite lt_neqAle. apply/andP. split=>//. by rewrite eq_sym.
       + case: (Hinvert i i).
         * by move=> [_ Hsc].
         + by move=> [Habs _].
-      have Hres := (@ltr_le_add R 0%R (weights cert f i ord0 * '[ \col_k P.`A (specialSimplex cert i) k, col i (witnesses cert)])%R
-      0%R (\sum_(i0 < d | i0 != i) '[ \col_k P.`A (specialSimplex cert i0) k, qf])%R) Hspos Hpos.
+      have Hres := (@ltr_le_add R 0%R (weights cert f i ord0 * '[ \col_k polytope.`A (specialSimplex cert i) k, col i (witnesses cert)])%R
+      0%R (\sum_(i0 < d | i0 != i) '[ \col_k polytope.`A (specialSimplex cert i0) k, qf])%R) Hspos Hpos.
       by rewrite add0r in Hres. by [].
     case Hin: (zstar \in coneOf f).
     have Hconezstar := Hcone zstar Hin. rewrite ltNge in Hzstar. by move/negP in Hzstar. by []. 
@@ -943,10 +943,10 @@ Proof.
         have Habs := zstar_notin_other_cones g Hg Hcase.
         by rewrite Hzsin in Habs.
     rewrite Hgs in Hfg.
-    have Hex : [exists i : 'I_d, normalVector P (specialSimplex cert i) \notin (normalsOf f)].
-      rewrite -(negbK ([exists i : 'I_d, normalVector P (specialSimplex cert i) \notin (normalsOf f)])).
+    have Hex : [exists i : 'I_d, normalVector polytope (specialSimplex cert i) \notin (normalsOf f)].
+      rewrite -(negbK ([exists i : 'I_d, normalVector polytope (specialSimplex cert i) \notin (normalsOf f)])).
       rewrite negb_exists. 
-      apply (@contra ([forall x, ~~ (normalVector P (specialSimplex cert x) \notin normalsOf f)]) (\pdim (coneOf f) == d.+1)).
+      apply (@contra ([forall x, ~~ (normalVector polytope (specialSimplex cert x) \notin normalsOf f)]) (\pdim (coneOf f) == d.+1)).
       move/forallP => Hforall.
       have Heq : normalsOf f = normalsOf [set specialSimplex cert x | x : 'I_d].
         apply/fsetP => y. apply/idP/idP.
@@ -956,7 +956,7 @@ Proof.
           rewrite Hij in Hyi. rewrite Hyi. have Hforallj := Hforall j. by rewrite negbK in Hforallj.
       rewrite/coneOf. rewrite Heq. rewrite eq_le. apply/andP; split=>//.
       + apply: adim_leSn.
-      + pose X := [seq (\col_k P.`A (specialSimplex cert i) k)%R | i <- enum 'I_d].
+      + pose X := [seq (\col_k polytope.`A (specialSimplex cert i) k)%R | i <- enum 'I_d].
         have Hdimfree : \dim <<X>> = d.
           have Hfree := inversibility_cert Hinvert.
           move/eqP in Hfree. by rewrite size_map size_enum_ord in Hfree.
@@ -974,7 +974,7 @@ Proof.
           have Hx : x \in normalsOf [set specialSimplex cert x0 | x0 : 'I_d].
             apply/in_normalsOfP. exists (specialSimplex cert i). split=>//.
             apply/imsetP. exists i. by rewrite inE. by [].
-            have Hrew : normalVector P (specialSimplex cert i) = (\col_k P.`A (specialSimplex cert i) k)%R.
+            have Hrew : normalVector polytope (specialSimplex cert i) = (\col_k polytope.`A (specialSimplex cert i) k)%R.
             rewrite/normalVector. by apply/matrixP => k j; rewrite !mxE.
             by rewrite Hrew.
           by exact: coneOf_subset ([set specialSimplex cert x0 | x0 : 'I_d]) x Hx.
@@ -992,7 +992,7 @@ Proof.
       have Hval := Hsubset (fsval i) HvalP.
       move/in_normalsOfP: Hval => [j [Hjf Hfsval]].
       move/imsetP: Hjf => [l Hl Hjl]. rewrite Hjl in Hfsval.
-      have Hrew : normalVector P (specialSimplex cert l) = (\col_k P.`A (specialSimplex cert l) k)%R.
+      have Hrew : normalVector polytope (specialSimplex cert l) = (\col_k polytope.`A (specialSimplex cert l) k)%R.
         rewrite/normalVector. by apply/matrixP => o p; rewrite !mxE.
       have/eqP Hdiff : l != k.
         case Heq: (l == k).
@@ -1005,15 +1005,15 @@ Proof.
         + by move=> [_ Hscal].
       rewrite Hnull. by rewrite mulr0.
     have Hzstar : ('[ zstar, col k (witnesses cert)] > 0)%R.
-      have Hsimpl : ('[ zstar, col k (witnesses cert)] = '[\col_i (P.`A (specialSimplex cert k) i), (col k (witnesses cert))])%R.
+      have Hsimpl : ('[ zstar, col k (witnesses cert)] = '[\col_i (polytope.`A (specialSimplex cert k) i), (col k (witnesses cert))])%R.
         rewrite vdot_sumDl. rewrite (bigD1 k) //. simpl.
-        have Hnull : (\sum_(i < d | i != k) '[ \col_k0 P.`A (specialSimplex cert i) k0, 
+        have Hnull : (\sum_(i < d | i != k) '[ \col_k0 polytope.`A (specialSimplex cert i) k0, 
         col k (witnesses cert)] = 0)%R.
         apply: big1 => i Hi. move/eqP in Hi. case: (Hinvert i k).
         + move=> [Habs _]. move/eqP in Habs. move/eqP in Hi. by rewrite Habs in Hi.
         + by move=> [_ Hscal].
         rewrite Hnull. by rewrite addr0.
-      have Hpos : ('[ \col_i P.`A (specialSimplex cert k) i, col k (witnesses cert)] > 0)%R.
+      have Hpos : ('[ \col_i polytope.`A (specialSimplex cert k) i, col k (witnesses cert)] > 0)%R.
         case: (Hinvert k k).
         + by move=> [_ Hscal].
         + move=> [Habs _]. move/eqP in Habs. by rewrite eqxx in Habs.
@@ -1024,7 +1024,7 @@ Proof.
 Qed.
 
 Lemma exists_special_point :
-  existsSpecialPoint (normalVector P) (set_to_asc (facets cert)).
+  existsSpecialPoint (normalVector polytope) (set_to_asc (facets cert)).
 Proof.
   exists zstar. split.
   - exact: zstar_is_dgeneric.
@@ -1050,38 +1050,41 @@ Section CertificateCorrectness.
 
 Context (d : nat) (R : realFieldType).
 
-Variable (P : 'hpoly[R]_d) (V : {fset 'cV[R]_d}).
+Local Notation Certificate := (Certificate R d).
 
-Local Notation Certificate := (Certificate R d P).
-Local Notation m := (m R d P).
-Local Notation facetsAreDSimplices := (facetsAreDSimplices d R P).
-Local Notation mappingHasImageInPoints := (mappingHasImageInPoints d R P V).
-Local Notation graphVerticesAreFacets := (graphVerticesAreFacets d R P).
-Local Notation graphIsUndirected := (graphIsUndirected d R P).
-Local Notation specialSimplexInSpecialCone := (specialSimplexInSpecialCone d R P).
-Local Notation weightsAreStrictlyPositiveVectors := (weightsAreStrictlyPositiveVectors d R P).
-Local Notation full_dim_check := (full_dim_check d R P).
-Local Notation feasibility_check := (feasibility_check d R P V).
-Local Notation mapping_check := (mapping_check d R P).
-Local Notation graph_check := (graph_check d R P).
-Local Notation inversibility_check := (inversibility_check d R P).
-Local Notation separability_check := (separability_check d R P).
+Variable (cert : Certificate). 
+
+Local Notation polytope := (polytope R d cert).
+Local Notation m := polytope.`c.
+Local Notation points := (points R d cert).
+Local Notation facetsAreDSimplices := (facetsAreDSimplices d R).
+Local Notation mappingHasImageInPoints := (mappingHasImageInPoints d R).
+Local Notation graphVerticesAreFacets := (graphVerticesAreFacets d R ).
+Local Notation graphIsUndirected := (graphIsUndirected d R).
+Local Notation specialSimplexInSpecialCone := (specialSimplexInSpecialCone d R).
+Local Notation weightsAreStrictlyPositiveVectors := (weightsAreStrictlyPositiveVectors d R).
+Local Notation full_dim_check := (full_dim_check d R).
+Local Notation feasibility_check := (feasibility_check d R).
+Local Notation mapping_check := (mapping_check d R).
+Local Notation graph_check := (graph_check d R).
+Local Notation inversibility_check := (inversibility_check d R).
+Local Notation separability_check := (separability_check d R).
 Local Notation normalVector := (normalVector d R).
-Local Notation facets := (facets R d P).
-Local Notation mapping := (mapping R d P).
-Local Notation specialSimplex := (specialSimplex R d P).
-Local Notation odd_covering_theorem := (odd_covering_theorem m d R (normalVector P)).
-Local Notation ridges_have_even_incidence := (ridges_have_even_incidence d R P).
-Local Notation cones_are_pointed := (cones_are_pointed d R P V).
-Local Notation exists_special_point := (exists_special_point d R P V).
-Local Notation dim_cert := (dim_cert d R P).
-Local Notation facets_cert := (facets_cert d R P).
-Local Notation cone_subset_cert := (cone_subset_cert d R P V).
+Local Notation facets := (facets R d).
+Local Notation mapping := (mapping R d).
+Local Notation specialSimplex := (specialSimplex R d).
+Local Notation odd_covering_theorem := (odd_covering_theorem m d R (normalVector polytope)).
+Local Notation ridges_have_even_incidence := (ridges_have_even_incidence d R cert).
+Local Notation cones_are_pointed := (cones_are_pointed d R cert).
+Local Notation exists_special_point := (exists_special_point d R cert).
+Local Notation dim_cert := (dim_cert d R).
+Local Notation facets_cert := (facets_cert d R).
+Local Notation cone_subset_cert := (cone_subset_cert d R).
 
 Hypothesis Hdim : d > 0.
-Hypothesis Hnormals : forall i : 'I_m, (normalVector P i <> 0)%R.
+Hypothesis Hnormals : forall i : 'I_m, (normalVector polytope i <> 0)%R.
 
-Definition well_formedness_check (cert : Certificate) :=
+Definition well_formedness_check :=
   facetsAreDSimplices cert /\ 
   mappingHasImageInPoints cert /\ 
   graphVerticesAreFacets cert /\ 
@@ -1089,8 +1092,8 @@ Definition well_formedness_check (cert : Certificate) :=
   specialSimplexInSpecialCone cert /\
   weightsAreStrictlyPositiveVectors cert.
 
-Definition check_certificate (cert : Certificate) :=
-  well_formedness_check cert /\ 
+Definition check_certificate :=
+  well_formedness_check /\ 
   full_dim_check cert /\ 
   feasibility_check cert /\ 
   mapping_check cert /\ 
@@ -1099,18 +1102,18 @@ Definition check_certificate (cert : Certificate) :=
   separability_check cert.
 
 Theorem certificate_correctness :
-  (exists cert : Certificate, check_certificate cert) -> ((vertex_set '[P]) `<=` V)%fset.
+  check_certificate -> ((vertex_set '[polytope]) `<=` points)%fset.
 Proof.
-  move=> [cert H].
+  move=> H.
   move: H => [Hwell [Hfulldim [Hfeas [Hmapcheck [Hgraph [Hinvert Hsep]]]]]].
   move: Hwell => [Hfacets [Hmappoint [Hvert [Hundir [HspecSimp Hweights]]]]].
   have Hnonemp : facets cert != set0.
     apply/set0Pn. exists (specialSimplex cert @: 'I_d). exact: fst HspecSimp.
   have Hodd := odd_covering_theorem (set_to_asc (facets cert)) (set_to_asc_is_asc (facets cert)) 
   (dim_cert cert Hfacets Hnonemp) (Hnormals)
-  (ridges_have_even_incidence cert Hdim Hfacets Hvert Hgraph Hundir) 
-  (cones_are_pointed cert Hfeas Hfulldim Hfacets Hmappoint Hmapcheck) 
-  (exists_special_point cert Hfacets Hfeas Hmappoint HspecSimp Hweights Hmapcheck Hinvert Hsep).
+  (ridges_have_even_incidence Hdim Hfacets Hvert Hgraph Hundir) 
+  (cones_are_pointed Hfeas Hfulldim Hfacets Hmappoint Hmapcheck) 
+  (exists_special_point Hfacets Hfeas Hmappoint HspecSimp Hweights Hmapcheck Hinvert Hsep).
   apply: covering_criterion.
   - exact: (fst Hfeas).
   - move=> z. have Hoddz := Hodd z. move: Hoddz => [F [HF HzF]]. rewrite (facets_cert cert Hfacets) in HF. 
