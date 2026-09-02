@@ -30,6 +30,8 @@ Record Certificate := {
     specialSimplex : 'I_d -> 'I_m;
     witnesses : 'M[R]_(d,d);
     weights : simplex_m -> 'cV[R]_d;
+    flag_indices : 'cV[R]_d -> 'I_d -> 'I_m;
+    flag_vertices : 'cV[R]_d -> 'I_d -> 'cV[R]_d;
     geom_graph : vertex_graph
 }.
 
@@ -67,6 +69,8 @@ Local Notation specialVertex := (specialVertex R d P cert).
 Local Notation specialSimplex := (specialSimplex R d P cert).
 Local Notation witnesses := (witnesses R d P cert).
 Local Notation weights := (weights R d P cert).
+Local Notation flag_indices := (flag_indices R d P cert).
+Local Notation flag_vertices := (flag_vertices R d P cert).
 Local Notation geom_graph := (geom_graph R d P cert).
 
 (* Well-formedness condition on facets *)
@@ -93,6 +97,14 @@ Definition specialSimplexInSpecialCone :=
 Definition weightsAreStrictlyPositiveVectors :=
   forall f : simplex_m, mapping f = specialVertex
   -> f != specialSimplex @: 'I_d -> (0 <=m (weights f)) /\ (weights f <> 0%R).
+
+(* Well-formedness condition on flag indices *)
+Definition flagIndicesAreInActiveSets :=
+  forall v, v \in V -> forall i, flag_indices v i \in activeSets v.
+
+(* Well-formedness condition on flag vertices *)
+Definition flagVerticesArePoints :=
+  forall v, v \in V -> forall i, flag_vertices v i \in V.
   
 (* Well-formedness condition on the geometric graph *)
 Definition geomGraphVerticesArePoints :=
@@ -136,6 +148,11 @@ Definition separability_check :=
   -> f != specialSimplex @: 'I_d
   -> forall i : 'I_m, i \in f ->
   ('[witnesses *m (weights f) , normalVector P i] <= 0)%R.
+
+(* Condition T6 *)
+Definition flag_check :=
+  forall v, v \in V -> forall k : 'I_d, flag_indices v k \notin activeSets (flag_vertices v k)
+  /\ forall j : 'I_d, j < k -> flag_indices v j \in activeSets (flag_vertices v k).
 
 (* Condition T7 *)
 Definition geom_edge_pairwise_check :=

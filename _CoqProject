@@ -8,5 +8,4 @@ src/CertificateCorrectness.v
 src/RefinementBridges.v
 src/Refinement.v
 src/CertificateSchema.v
-src/CheckCert.v
 src/ExtractChecker.v
