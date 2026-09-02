@@ -738,7 +738,7 @@ Definition graph_check (cert : Certificate) :=
   let graph := graph cert in
   let facets := facets cert in
   let d := dimension cert in
-     (hasBoundedDegree graph d) 
+     (for_all (hasLength d) graph) (* every facet has exactly d ridges *)
   &&  for_alli 
         (fun i adj => 
           let f := description facets.[i] in

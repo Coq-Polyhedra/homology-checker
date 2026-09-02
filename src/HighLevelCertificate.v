@@ -105,8 +105,8 @@ Definition geomGraphIsImageOfGraph :=
 
 (* Full dimension hypothesis *)
 Definition full_dim_check :=
-  full_dim_point \in V
-  /\ (forall i : 'I_d, (full_dim_point + col i full_dim_dir)%R \in V)
+  full_dim_point \in P
+  /\ (forall i : 'I_d, (full_dim_point + col i full_dim_dir)%R \in P)
   /\ forall (i j : 'I_d), (i = j /\ '[col i full_dim_dir, col j full_dim_inv] <> 0)%R
   \/ (i <> j /\ '[col i full_dim_dir, col j full_dim_inv] = 0)%R.
 
@@ -179,7 +179,7 @@ Local Notation mappingHasImageInPoints := (mappingHasImageInPoints d R P V cert)
 Local Notation feasibility_check := (feasibility_check d R P V cert).
 Local Notation inversibility_check := (inversibility_check d R P cert).
 Local Notation graph_check := (graph_check d R P cert).
-Local Notation full_dim_check := (full_dim_check d R P V cert).
+Local Notation full_dim_check := (full_dim_check d R P cert).
 Local Notation mapping_check := (mapping_check d R P cert).
 Local Notation facets := (facets R d P cert).
 Local Notation graph := (graph R d P cert).
@@ -273,15 +273,14 @@ Qed.
 Lemma full_dim_cert :
   feasibility_check -> full_dim_check -> \pdim '[P] = d.+1.
 Proof.
-  move=> [HV _] [Hpoint [Hdir Hinv]].
+  move=> _ [Hpoint [Hdir Hinv]].
   have HpointP : full_dim_point \in '[P].
-    rewrite mem_mk_poly.
-    exact: HV full_dim_point Hpoint.
+    by rewrite mem_mk_poly.
   pose X := [seq (full_dim_point + col i full_dim_dir)%R | i <- enum 'I_d].
   have HXP : {in X, forall x : 'cV_d, x \in '[P]}.
     move=> x Hx.
     rewrite /X in Hx. move/mapP in Hx. move: Hx => [i Hi Hxi].
-    rewrite Hxi. rewrite mem_mk_poly. by exact: HV (Hdir i).
+    rewrite Hxi. rewrite mem_mk_poly. by exact: Hdir i.
   pose A := [affine <<[seq (x - full_dim_point)%R | x <- X]>> & full_dim_point].
   have Hnonemp : [affine0] `<` A. by exact: mk_affine_proper0.
   have HX : [seq (x - full_dim_point)%R | x <- X] = [seq col i full_dim_dir | i <- enum 'I_d].
