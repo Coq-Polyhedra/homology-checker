@@ -2,7 +2,9 @@
 (* Bridges between the vocabulary of the executable checker (LowLevelChecker) *)
 (* and mathcomp: Uint63 <-> nat, iteration <-> folds and quantifiers,         *)
 (* bigZ <-> a realFieldType, arrays <-> vectors, sorted int arrays <-> finite *)
-(* sets, and the merge-based subset/difference/lexicographic tests.           *)
+(* sets, the merge-based subset/difference/lexicographic tests, the binary   *)
+(* search [L.mem_sorted], the BFS behind [L.isConnected], and the [IntList]   *)
+(* tests on strictly decreasing sequences.                                    *)
 (*                                                                            *)
 (* Every lemma has a left-hand side in the low-level vocabulary (int, array,  *)
 (* bigZ, ifold, ...) and a right-hand side in the mathcomp vocabulary (nat,   *)
@@ -99,6 +101,9 @@ Proof. by rewrite nat_of_intE to_Z_0. Qed.
 
 Lemma int_of_nat0 : int_of_nat 0 = 0%uint63.
 Proof. by rewrite -nat_of_int0 nat_of_intK. Qed.
+
+Lemma nat_of_int1 : nat_of_int 1%uint63 = 1%N.
+Proof. by rewrite nat_of_intE. Qed.
 
 Lemma ltb_natE i j : (i <? j)%uint63 = (nat_of_int i < nat_of_int j).
 Proof.
@@ -986,6 +991,14 @@ have h := isStrictlySorted_consecT (k := Ordinal (ltnW hk)) (k' := Ordinal hk) h
 exact: h.
 Qed.
 
+Lemma isStrictlySorted_leq (a : array int) : L.isStrictlySorted Uint63.ltb a ->
+  forall j1 j2, j1 <= j2 -> j2 < alen a ->
+    nat_of_int a.[int_of_nat j1] <= nat_of_int a.[int_of_nat j2].
+Proof.
+move=> hs j1 j2; rewrite leq_eqVlt => /orP[/eqP->|hlt] hj2; first exact: leqnn.
+exact: ltnW (isStrictlySorted_mono hs hlt hj2).
+Qed.
+
 (* A strictly sorted array with entries below [n] enumerates its set without repetition. *)
 Lemma card_set_of_array_sorted n (a : array int) : L.isStrictlySorted Uint63.ltb a ->
   (forall j : 'I_(alen a), nat_of_int (aget a j) < n) -> #|set_of_array n a| = alen a.
@@ -1112,9 +1125,67 @@ Qed.
 Lemma ltb_alenE T (a : array T) i : (i <? alength a)%uint63 = (nat_of_int i < alen a).
 Proof. by rewrite ltb_natE. Qed.
 
+Lemma add1_alenE T (a : array T) (i : int) : (nat_of_int i < alen a)%N ->
+  nat_of_int (i + 1)%uint63 = (nat_of_int i).+1.
+Proof. by rewrite -ltb_alenE; exact: add1_natE. Qed.
+
+Lemma alen_set T (a : array T) (i : int) (x : T) : alen a.[i <- x] = alen a.
+Proof. by rewrite /alen /alength PArray.length_set. Qed.
+
+Lemma alen_make T (k : int) (x : T) :
+  (k <=? PArray.max_length)%uint63 -> alen (PArray.make k x) = nat_of_int k.
+Proof. by move=> h; rewrite /alen /alength PArray.length_make h. Qed.
+
 Lemma foldl_const (A B : Type) (g : A -> A) (x : A) (s : seq B) :
   foldl (fun acc _ => g acc) x s = iter (size s) g x.
 Proof. by elim: s x => [|y s ih] x //=; rewrite ih -iterSr. Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* Generic iteration corollaries: accumulating folds, and [Prop] invariants   *)
+(* carried through [iter] and [L.fold]                                        *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma foldl_cons_rev (I A : Type) (f : I -> A) acc0 (s : seq I) :
+  foldl (fun acc x => f x :: acc) acc0 s = rev (map f s) ++ acc0.
+Proof. by elim: s acc0 => [|x s ih] acc0 //=; rewrite ih rev_cons cat_rcons. Qed.
+
+(* Position [n - j.+1] of the reversed [iota]-map is the image of [j]. *)
+Lemma nth_rev_map_iota (A : Type) (f : nat -> A) x0 n (j : nat) : j < n ->
+  nth x0 (rev [seq f i | i <- iota 0 n]) (n - j.+1) = f j.
+Proof.
+move=> hj; rewrite nth_rev size_map size_iota; last first.
+  by rewrite ltn_subrL /=; exact: leq_ltn_trans (leq0n _) hj.
+rewrite (subnSK hj) subKn ?(ltnW hj) //.
+by rewrite (nth_map 0) ?size_iota // nth_iota // add0n.
+Qed.
+
+(* Accumulating [fold]: the results, most recent first. *)
+Lemma fold_consE (T A : Type) (f : T -> A) (arr : array T) :
+  L.fold (fun x acc => f x :: acc) arr [::]
+  = rev [seq f arr.[int_of_nat j] | j <- iota 0 (alen arr)].
+Proof.
+rewrite /L.fold ifoldE; cbv beta.
+by rewrite (foldl_cons_rev (fun j => f arr.[int_of_nat j])) cats0
+   -[nat_of_int (length arr)]/(alen arr).
+Qed.
+
+Lemma iter_inv (T : Type) (P : T -> Prop) (f : T -> T) (x : T) :
+  P x -> (forall y, P y -> P (f y)) -> forall k, P (iter k f x).
+Proof. by move=> h0 hs; elim=> [|k ih] //=; apply: hs. Qed.
+
+Lemma fold_invariantP (T A : Type) (P : A -> Prop) (f : T -> A -> A) (a : array T) (x : A) :
+  P x -> (forall (i : 'I_(alen a)) (y : A), P y -> P (f (aget a i) y)) ->
+  P (L.fold f a x).
+Proof.
+move=> h0 hs; rewrite /L.fold ifoldE; cbv beta.
+rewrite -[nat_of_int (PArray.length a)]/(alen a).
+have: forall j, j \in iota 0 (alen a) -> (j < alen a)%N.
+  by move=> j; rewrite mem_iota add0n.
+elim: (iota 0 (alen a)) x h0 => [|j js ih] x h0 hall //=.
+apply: ih; last by move=> j' hj'; apply: hall; rewrite inE hj' orbT.
+have hj : (j < alen a)%N by apply: hall; rewrite inE eqxx.
+exact: (hs (Ordinal hj)).
+Qed.
 
 Section SubsetBridge.
 
@@ -1173,9 +1244,9 @@ Lemma live_phi st : live st -> (phi st).+1 <= phi (sstep st).
 Proof.
 case: st => [[i j] ok] /and3P[hia hjb hab]; rewrite /phi /sstep.
 have hSj : nat_of_int (j + 1)%uint63 = (nat_of_int j).+1.
-  by apply: (add1_natE (j := alength b)); rewrite ltb_alenE.
+  by apply: (add1_alenE (a := b)).
 have hSi : nat_of_int (i + 1)%uint63 = (nat_of_int i).+1.
-  by apply: (add1_natE (j := alength a)); rewrite ltb_alenE.
+  by apply: (add1_alenE (a := a)).
 rewrite !ltb_alenE hia hjb (negbTE hab) /=.
 by case: ifP => _ /=; rewrite ?hSi hSj ?addSn addnS ?leqnn ?leqnSn.
 Qed.
@@ -1212,9 +1283,8 @@ Lemma subset_arr_all : L.subset Uint63.ltb a b ->
   forall p, p < la -> exists q, q < lb /\ b.[int_of_nat q] = a.[int_of_nat p].
 Proof.
 rewrite subsetE; set st0 := (0%uint63, 0%uint63, true).
-have hinv k : sinv (iter k sstep st0).
-  elim: k => [|k ih]; last by rewrite iterS; exact: sstep_inv.
-  by split; rewrite ?nat_of_int0 // => p; rewrite ltn0.
+have h00 : sinv st0 by split; rewrite ?nat_of_int0 // => p; rewrite ltn0.
+have hinv := iter_inv h00 sstep_inv.
 case hN: (la + lb)%N => [|N].
   by move/eqP: hN; rewrite addn_eq0 => /andP[/eqP-> _] _ p; rewrite ltn0.
 rewrite iterS; move: (hinv N); case E: (iter N sstep st0) => [[i j] ok] [hi _ hpre] hok p hp.
@@ -1239,8 +1309,26 @@ Qed.
 End SubsetBridge.
 
 (* -------------------------------------------------------------------------- *)
-(* The merge-based difference [L.diff]; only its coverage is needed           *)
+(* The merge-based difference [L.diff]: coverage for arbitrary arrays, and,   *)
+(* for strictly sorted inputs, exact membership and strictly decreasing       *)
+(* output                                                                     *)
 (* -------------------------------------------------------------------------- *)
+
+(* The strictly decreasing order on naturals, the shape of [L.diff] outputs. *)
+Local Notation gtns := (fun x y : nat => (y < x)%N).
+
+Lemma gtns_trans : transitive gtns.
+Proof. by move=> y x z hxy hyz; exact: ltn_trans hyz hxy. Qed.
+
+Lemma gtns_head (x : int) (s : seq int) :
+  sorted gtns (map nat_of_int (x :: s)) ->
+  forall z, z \in map nat_of_int s -> (z < nat_of_int x)%N.
+Proof.
+move=> /= hs z hz.
+have hall : all (gtns (nat_of_int x)) (map nat_of_int s).
+  exact: order_path_min gtns_trans hs.
+exact: (allP hall _ hz).
+Qed.
 
 Section DiffBridge.
 
@@ -1284,7 +1372,7 @@ case: st => [[i j] acc] [hi hj hpre]; rewrite /dstep.
 case: ifP => [hia|_] /=; last by split.
 move: hia; rewrite ltb_alenE => hia.
 have hSi : nat_of_int (i + 1)%uint63 = (nat_of_int i).+1.
-  by apply: (add1_natE (j := alength a)); rewrite ltb_alenE.
+  by apply: (add1_alenE (a := a)).
 have hout p : p < (nat_of_int i).+1 ->
     nat_of_int a.[int_of_nat p] \in map nat_of_int (a.[i] :: acc)
     \/ exists q, q < lb /\ b.[int_of_nat q] = a.[int_of_nat p].
@@ -1294,7 +1382,7 @@ have hout p : p < (nat_of_int i).+1 ->
 case: ifP => [hjb|_] /=; last by split; rewrite ?hSi.
 move: hjb; rewrite ltb_alenE => hjb.
 have hSj : nat_of_int (j + 1)%uint63 = (nat_of_int j).+1.
-  by apply: (add1_natE (j := alength b)); rewrite ltb_alenE.
+  by apply: (add1_alenE (a := b)).
 case: ifP => hab /=; first by split; rewrite ?hSi.
 case: ifP => hba /=; first by split; rewrite ?hSj.
 split; rewrite ?hSi ?hSj // => p; rewrite ltnS leq_eqVlt => /orP[/eqP->|/hpre//].
@@ -1332,9 +1420,8 @@ Lemma diff_arr_all : forall p, p < la ->
   \/ exists q, q < lb /\ b.[int_of_nat q] = a.[int_of_nat p].
 Proof.
 rewrite diffE; set st0 := (0%uint63, 0%uint63, [::] : seq int).
-have hinv k : dinv (iter k dstep st0).
-  elim: k => [|k ih]; last by rewrite iterS; exact: dstep_inv.
-  by split; rewrite ?nat_of_int0 // => p; rewrite ltn0.
+have h00 : dinv st0 by split; rewrite ?nat_of_int0 // => p; rewrite ltn0.
+have hinv := iter_inv h00 dstep_inv.
 move: (hinv (la + lb)%N); case E: (iter _ dstep st0) => [[i j] acc] [hi hj hpre] p hp.
 have hiN : nat_of_int i = la.
   apply/eqP; rewrite eqn_leq hi andTb leqNgt; apply/negP => hia.
@@ -1355,7 +1442,147 @@ left; move: hr hin; case: (L.diff Uint63.ltb a b) => [|x [|y l]] //=.
 by rewrite eqb_natE in_cons in_nil orbF => /eqP -> /eqP.
 Qed.
 
+
+(* With both inputs strictly sorted: every output entry is an entry of [a]
+   absent from [b] ([diff_arr_mem]), the output is strictly decreasing
+   ([diff_sorted]); coverage is [diff_arr_all] above. *)
+#[local] Definition dinv2 (st : int * int * seq int) :=
+  let: (i, j, acc) := st in
+  [/\ nat_of_int i <= la, nat_of_int j <= lb &
+      forall x, x \in map nat_of_int acc ->
+        exists p, p < nat_of_int i /\ nat_of_int a.[int_of_nat p] = x]
+  /\
+  [/\ forall x, x \in map nat_of_int acc ->
+        forall p, nat_of_int i <= p -> p < la -> x < nat_of_int a.[int_of_nat p],
+      forall x, x \in map nat_of_int acc ->
+        forall q, q < lb -> nat_of_int b.[int_of_nat q] <> x,
+      (forall q, q < nat_of_int j ->
+        forall p, nat_of_int i <= p -> p < la ->
+          nat_of_int b.[int_of_nat q] < nat_of_int a.[int_of_nat p]) &
+      sorted gtns (map nat_of_int acc)].
+
+#[local] Lemma dstep_inv2 st :
+  L.isStrictlySorted Uint63.ltb a -> L.isStrictlySorted Uint63.ltb b ->
+  dinv2 st -> dinv2 (dstep st).
+Proof.
+move=> hsa hsb; have hma := isStrictlySorted_mono hsa; have hmb := isStrictlySorted_mono hsb.
+case: st => [[i j] acc] [[hi hj hsrc] [hbelow hnotb hbcons hsorted]]; rewrite /dstep.
+case: ifP => [hia|_] /=; last by split; [split | split].
+move: hia; rewrite ltb_alenE => hia.
+have hSi : nat_of_int (i + 1)%uint63 = (nat_of_int i).+1.
+  by apply: (add1_alenE (a := a)).
+(* [a.[i]], nat-indexed *)
+have hEi : nat_of_int a.[int_of_nat (nat_of_int i)] = nat_of_int a.[i] by rewrite nat_of_intK.
+have hai_lt : forall p, (nat_of_int i < p)%N -> p < la ->
+    (nat_of_int a.[i] < nat_of_int a.[int_of_nat p])%N.
+  by move=> p hip hpla; rewrite -hEi; exact: (hma _ _ hip hpla).
+have hai_le : forall p, nat_of_int i <= p -> p < la ->
+    nat_of_int a.[i] <= nat_of_int a.[int_of_nat p].
+  move=> p hip hpla; rewrite -hEi.
+  by have h := isStrictlySorted_leq hsa hip hpla; exact: h.
+have hbi : forall q, q < nat_of_int j -> (nat_of_int b.[int_of_nat q] < nat_of_int a.[i])%N.
+  by move=> q hq; rewrite -hEi; exact: (hbcons _ hq _ (leqnn _) hia).
+(* obligations shared by the two pushing branches *)
+have hsrc' : forall x, x \in map nat_of_int (a.[i] :: acc) ->
+    exists p, p < (nat_of_int i).+1 /\ nat_of_int a.[int_of_nat p] = x.
+  move=> x; rewrite /= in_cons => /orP[/eqP->|/hsrc [p [hp hpx]]].
+    by exists (nat_of_int i); split; [exact: leqnn | exact: hEi].
+  by exists p; split=> //; rewrite ltnS (ltnW hp).
+have hbelow' : forall x, x \in map nat_of_int (a.[i] :: acc) ->
+    forall p, (nat_of_int i).+1 <= p -> p < la -> (x < nat_of_int a.[int_of_nat p])%N.
+  move=> x; rewrite /= in_cons => /orP[/eqP->|hx] p hip hpla.
+    exact: (hai_lt _ hip hpla).
+  exact: (hbelow _ hx _ (ltnW hip) hpla).
+have hbcons' : forall q, q < nat_of_int j ->
+    forall p, (nat_of_int i).+1 <= p -> p < la ->
+      (nat_of_int b.[int_of_nat q] < nat_of_int a.[int_of_nat p])%N.
+  by move=> q hq p hip hpla; exact: (hbcons _ hq _ (ltnW hip) hpla).
+have hsort' : sorted gtns (map nat_of_int (a.[i] :: acc)).
+  rewrite /=; move: hsorted; case hacc: (map nat_of_int acc) => [|h t] //= hsorted.
+  have hh : h \in map nat_of_int acc by rewrite hacc mem_head.
+  have hlt := hbelow _ hh _ (leqnn _) hia; rewrite hEi in hlt.
+  by rewrite hsorted andbT.
+case: ifP => [hjb|hjb'] /=; last first.
+  (* b exhausted: push a.[i] *)
+  have hjlb : lb <= nat_of_int j.
+    by rewrite leqNgt; apply/negP => h; rewrite ltb_alenE h in hjb'.
+  split; [split; rewrite ?hSi // | split; rewrite ?hSi //] => x hx q hq.
+  move: hx; rewrite /= in_cons => /orP[/eqP->|hx]; last exact: (hnotb _ hx _ hq).
+  by move=> he; have h2 := hbi _ (leq_trans hq hjlb); rewrite he ltnn in h2.
+move: hjb; rewrite ltb_alenE => hjb.
+have hSj : nat_of_int (j + 1)%uint63 = (nat_of_int j).+1.
+  by apply: (add1_alenE (a := b)).
+have hEj : nat_of_int b.[int_of_nat (nat_of_int j)] = nat_of_int b.[j] by rewrite nat_of_intK.
+case: ifP => hab /=.
+  (* a.[i] < b.[j]: push a.[i] *)
+  move: (hab); rewrite ltb_natE => hab'.
+  have hbj_le : forall q, nat_of_int j <= q -> q < lb ->
+      nat_of_int b.[j] <= nat_of_int b.[int_of_nat q].
+    move=> q hjq hqlb; rewrite -hEj.
+    by have h := isStrictlySorted_leq hsb hjq hqlb; exact: h.
+  split; [split; rewrite ?hSi // | split; rewrite ?hSi //] => x hx q hq.
+  move: hx; rewrite /= in_cons => /orP[/eqP->|hx]; last exact: (hnotb _ hx _ hq).
+  move=> he.
+  case hqj: (q < nat_of_int j)%N.
+    by have h2 := hbi _ hqj; rewrite he ltnn in h2.
+  have hjq : nat_of_int j <= q by rewrite leqNgt hqj.
+  by have h2 := leq_trans hab' (hbj_le _ hjq hq); rewrite he ltnn in h2.
+case: ifP => hba /=.
+  (* b.[j] < a.[i]: skip b.[j] *)
+  move: (hba); rewrite ltb_natE => hba'.
+  split; [split; rewrite ?hSj // | split=> //] => q; rewrite hSj ltnS leq_eqVlt.
+  move=> /orP[/eqP->|hq] p hip hpla; last exact: (hbcons _ hq _ hip hpla).
+  by rewrite hEj; exact: leq_trans hba' (hai_le _ hip hpla).
+(* equal heads: skip both *)
+have he : nat_of_int b.[j] = nat_of_int a.[i].
+  by apply/eqP; rewrite eqn_leq leqNgt -ltb_natE hab leqNgt -ltb_natE hba.
+split; [split; rewrite ?hSi ?hSj // | split; rewrite ?hSi ?hSj //].
+- by move=> x /hsrc [p [hp hpx]]; exists p; split=> //; rewrite ltnS (ltnW hp).
+- by move=> x hx p hip hpla; exact: (hbelow _ hx _ (ltnW hip) hpla).
+move=> q; rewrite ltnS leq_eqVlt => /orP[/eqP->|hq] p hip hpla.
+  by rewrite hEj he; exact: (hai_lt _ hip hpla).
+exact: (hbcons _ hq _ (ltnW hip) hpla).
+Qed.
+
+#[local] Lemma dinv2_iter k :
+  L.isStrictlySorted Uint63.ltb a -> L.isStrictlySorted Uint63.ltb b ->
+  dinv2 (iter k dstep (0%uint63, 0%uint63, [::])).
+Proof.
+move=> hsa hsb.
+have h00 : dinv2 (0%uint63, 0%uint63, [::]).
+  split; first by split; rewrite ?nat_of_int0 //=.
+  by split; rewrite ?nat_of_int0 ?ltn0 //=.
+by have h := iter_inv h00 (fun st => dstep_inv2 (st := st) hsa hsb) k; exact: h.
+Qed.
+
+Lemma diff_arr_mem :
+  L.isStrictlySorted Uint63.ltb a -> L.isStrictlySorted Uint63.ltb b ->
+  forall x, x \in map nat_of_int (L.diff Uint63.ltb a b) ->
+    (exists p, p < la /\ nat_of_int a.[int_of_nat p] = x) /\
+    (forall q, q < lb -> nat_of_int b.[int_of_nat q] <> x).
+Proof.
+move=> hsa hsb; rewrite diffE.
+move: (dinv2_iter (la + lb)%N hsa hsb).
+case: (iter _ dstep _) => [[i j] acc] [[hi _ hsrc] [_ hnotb _ _]] x hx.
+split; last exact: (hnotb _ hx).
+have [p [hp hpx]] := hsrc x hx; exists p; split=> //; exact: leq_trans hp hi.
+Qed.
+
+Lemma diff_sorted :
+  L.isStrictlySorted Uint63.ltb a -> L.isStrictlySorted Uint63.ltb b ->
+  sorted gtns (map nat_of_int (L.diff Uint63.ltb a b)).
+Proof.
+move=> hsa hsb; rewrite diffE.
+move: (dinv2_iter (la + lb)%N hsa hsb).
+by case: (iter _ dstep _) => [[i j] acc] [_ [_ _ _ hsorted]].
+Qed.
+
 End DiffBridge.
+
+(* -------------------------------------------------------------------------- *)
+(* Ridges at the set level, and nested traversals                             *)
+(* -------------------------------------------------------------------------- *)
+
 
 Lemma ridge_subset m (a b : array int) (v : int) (i : 'I_m) : nat_of_int v = i ->
   L.isRidgeInFacet a b v -> set_of_array m a :\ i \subset set_of_array m b.
@@ -1387,3 +1614,404 @@ Qed.
 Lemma ifor_all_range0P (f : int -> bool) n :
   reflect (forall i : 'I_(nat_of_int n), f (int_of_nat i)) (L.ifor_all_range0 f n).
 Proof. exact: ifold_andP. Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* The binary search [L.mem_sorted]; only its soundness is needed             *)
+(* -------------------------------------------------------------------------- *)
+
+Section MemSortedBridge.
+
+Context (a : array int) (x : int).
+
+#[local] Definition mstep (st : int * int * bool) : int * int * bool :=
+  let: (lo, hi, found) := st in
+  if found then (lo, hi, found)
+  else if (lo <? hi)%uint63 then
+    let mid := (lo + (hi - lo) / 2)%uint63 in
+    let y := a.[mid] in
+    if (x <? y)%uint63 then (lo, mid, false)
+    else if (y <? x)%uint63 then ((mid + 1)%uint63, hi, false)
+    else (lo, hi, true)
+  else (lo, hi, found).
+
+Lemma mem_sortedE :
+  L.mem_sorted Uint63.ltb a x
+  = (iter (alen a) mstep (0%uint63, alength a, false)).2.
+Proof.
+rewrite /L.mem_sorted; cbv zeta.
+rewrite ifold_from_until_absorbE.
+- by rewrite nat_of_int0 subn0 foldl_const size_iota.
+- move=> j [[lo hi] fnd] hstop j'.
+  case: fnd hstop => hstop; first by [].
+  case/orP: hstop => // hstop.
+  by rewrite /= (negbTE hstop).
+- by rewrite nat_of_int0.
+Qed.
+
+#[local] Definition minv (st : int * int * bool) :=
+  let: (lo, hi, found) := st in
+  nat_of_int hi <= alen a /\
+  (found -> exists p, p < alen a /\ nat_of_int a.[int_of_nat p] = nat_of_int x).
+
+Lemma mid_lt (lo hi : int) : (lo <? hi)%uint63 ->
+  (nat_of_int (lo + (hi - lo) / 2)%uint63 < nat_of_int hi)%N.
+Proof.
+move=> /Uint63.ltbP hlt.
+have [hlo0 hloB] := to_Z_bounded lo; have [hhi0 hhiB] := to_Z_bounded hi.
+have hsub : to_Z (hi - lo)%uint63 = (to_Z hi - to_Z lo)%Z.
+  by rewrite sub_spec Z.mod_small //; lia.
+have h2 : to_Z 2%uint63 = 2%Z by [].
+have hdiv : to_Z ((hi - lo) / 2)%uint63 = ((to_Z hi - to_Z lo) / 2)%Z.
+  by rewrite div_spec hsub h2.
+have hq0 : (0 <= (to_Z hi - to_Z lo) / 2 < to_Z hi - to_Z lo)%Z.
+  by split; [apply: Z.div_pos; lia | apply: Z.div_lt_upper_bound; lia].
+have hmid : to_Z (lo + (hi - lo) / 2)%uint63 = (to_Z lo + (to_Z hi - to_Z lo) / 2)%Z.
+  by rewrite add_spec hdiv Z.mod_small //; lia.
+apply/ssrnat.ltP.
+have e1 := to_Z_nat_of_int (lo + (hi - lo) / 2)%uint63.
+have e2 := to_Z_nat_of_int hi.
+lia.
+Qed.
+
+Lemma mstep_inv st : minv st -> minv (mstep st).
+Proof.
+case: st => [[lo hi] fnd] [hhi hfnd]; rewrite /mstep.
+case: fnd hfnd => hfnd; first by split.
+case hlh: (lo <? hi)%uint63; last by split.
+have hmid := mid_lt hlh.
+have hmlt : nat_of_int (lo + (hi - lo) / 2)%uint63 < alen a := leq_trans hmid hhi.
+case hxa: (x <? a.[(lo + (hi - lo) / 2)%uint63])%uint63.
+  by split; [exact: ltnW hmlt | ].
+case hax: (a.[(lo + (hi - lo) / 2)%uint63] <? x)%uint63.
+  by split; [exact: hhi | ].
+split; [exact: hhi | move=> _].
+exists (nat_of_int (lo + (hi - lo) / 2)%uint63); split; first exact: hmlt.
+rewrite nat_of_intK.
+by apply/eqP; rewrite eqn_leq leqNgt -ltb_natE hxa leqNgt -ltb_natE hax.
+Qed.
+
+Lemma mem_sorted_sound :
+  L.mem_sorted Uint63.ltb a x ->
+  exists p, p < alen a /\ nat_of_int a.[int_of_nat p] = nat_of_int x.
+Proof.
+rewrite mem_sortedE.
+have h00 : minv (0%uint63, alength a, false) by split; [exact: leqnn | ].
+move: (iter_inv h00 mstep_inv (alen a)).
+by case: (iter _ _ _) => [[lo hi] fnd] [_ h2] hfnd; exact: h2 hfnd.
+Qed.
+
+End MemSortedBridge.
+
+(* -------------------------------------------------------------------------- *)
+(* The BFS of [L.isConnected]: the queue model, and reachability of every     *)
+(* vertex index                                                               *)
+(*                                                                            *)
+(* The queue is modelled by its contents [qelems], front first. The loop      *)
+(* invariant [binv] states: the marks array has the graph's length, the       *)
+(* counter [nb_visited] is the cardinal of the marked set, every marked       *)
+(* index is [brel]-reachable from vertex 0, and every queued entry is in      *)
+(* range and reachable. [L.isConnected] makes the final count equal [n], and  *)
+(* a marked set missing an index has cardinal < n, so every index is          *)
+(* reachable ([bfs_reach]). The loop itself is read as [iter] through the     *)
+(* absorbing stop of [ifold_from_until].                                      *)
+(* -------------------------------------------------------------------------- *)
+
+(* Queue contents, front first. *)
+Definition qelems {T : Type} (q : @L.queue T) : seq T :=
+  L.front q ++ rev (L.back q).
+
+Lemma qelems_enqueue (T : Type) (q : @L.queue T) (x : T) :
+  qelems (L.enqueue q x) = qelems q ++ [:: x].
+Proof. by case: q => f b; rewrite /qelems /= rev_cons -cats1 catA. Qed.
+
+Lemma qelems_dequeue (T : Type) (q : @L.queue T) :
+  match L.dequeue q with
+  | Some p => qelems q = p.1 :: qelems p.2
+  | None => qelems q = [::]
+  end.
+Proof.
+rewrite /L.dequeue /L.pull; case: q => [[|x f] b] /=; last by rewrite /qelems.
+case E : (rev b) => [|y f'] /=.
+  by rewrite /qelems /= E.
+by rewrite /qelems /= E cats0.
+Qed.
+
+Section BFSBridge.
+
+Context (g : L.Graph) (n : nat) (hlen : alen g = n) (hn : (0 < n)%N).
+Context (hval : forall (i : 'I_n) (j : 'I_(alen (aget g i))),
+                  (nat_of_int (aget (aget g i) j) < n)%N).
+
+Local Notation i0 := (Ordinal hn).
+
+#[local] Lemma hgn : nat_of_int (PArray.length g) = n.
+Proof. exact: hlen. Qed.
+
+Definition brel : rel 'I_n := fun a b => b \in set_of_array n (aget g a).
+
+#[local] Definition mvis (m : L.marks) : {set 'I_n} :=
+  [set i : 'I_n | PArray.get m (int_of_nat i)].
+
+#[local] Definition qok (e : int * N) : bool :=
+  (nat_of_int e.1 < n)%N && connect brel i0 (insubd i0 (nat_of_int e.1)).
+
+Record binv (st : L.state) : Prop := BInv {
+  bi_len   : alen (L.visited st) = n;
+  bi_card  : nat_of_int (L.nb_visited st) = #|mvis (L.visited st)|;
+  bi_sound : forall i : 'I_n, i \in mvis (L.visited st) -> connect brel i0 i;
+  bi_queue : all qok (qelems (L.to_visit st))
+}.
+
+#[local] Definition oinv (out : L.state * int * N + L.state) : Prop :=
+  match out with
+  | inl p => [/\ binv p.1.1, (nat_of_int p.1.2 < n)%N
+              & connect brel i0 (insubd i0 (nat_of_int p.1.2))]
+  | inr st => binv st
+  end.
+
+#[local] Lemma insubd_ordK (m : nat) (hm : (m < n)%N) : nat_of_ord (insubd i0 m) = m.
+Proof. by rewrite val_insubd hm. Qed.
+
+#[local] Lemma int_insubdK (y : int) (hy : (nat_of_int y < n)%N) :
+  int_of_nat (nat_of_ord (insubd i0 (nat_of_int y))) = y.
+Proof. by rewrite insubd_ordK // nat_of_intK. Qed.
+
+#[local] Lemma insubd0 : insubd i0 (nat_of_int 0%uint63) = i0.
+Proof. by apply: ord_inj; rewrite insubd_ordK ?nat_of_int0. Qed.
+
+#[local] Lemma ordK (i : 'I_n) : nat_of_int (int_of_nat (nat_of_ord i)) = nat_of_ord i.
+Proof.
+apply: (int_of_natK_le (i := PArray.length g)).
+by rewrite hgn; exact: ltnW (ltn_ord i).
+Qed.
+
+#[local] Lemma in_mvis (m : L.marks) (y : int) (hy : (nat_of_int y < n)%N) :
+  (insubd i0 (nat_of_int y) \in mvis m) = PArray.get m y.
+Proof. by rewrite inE int_insubdK. Qed.
+
+#[local] Lemma card_ltn_notin (A : {set 'I_n}) (i : 'I_n) :
+  i \notin A -> (#|A| < n)%N.
+Proof.
+move=> hi.
+have hp : (#|A| < #|[set: 'I_n]|)%N.
+  apply: proper_card; apply/properP.
+  by split; [exact: subsetT | exists i; rewrite ?in_setT].
+by rewrite cardsT card_ord in hp.
+Qed.
+
+#[local] Lemma mvis_setE (m : L.marks) (y : int) (hy : (nat_of_int y < n)%N)
+    (hlm : alen m = n) :
+  mvis m.[y <- true] = insubd i0 (nat_of_int y) |: mvis m.
+Proof.
+apply/setP => i; rewrite !inE.
+case hiy : (i == insubd i0 (nat_of_int y)) => /=.
+  move/eqP: hiy => ->; rewrite int_insubdK // PArray.get_set_same //.
+  by rewrite ltb_natE -[nat_of_int (PArray.length m)]/(alen m) hlm.
+have hne : y <> int_of_nat i.
+  move=> he.
+  have hie : i = insubd i0 (nat_of_int y).
+    by apply: ord_inj; rewrite insubd_ordK // he ordK.
+  by rewrite hie eqxx in hiy.
+by rewrite PArray.get_set_other.
+Qed.
+
+#[local] Lemma mvis_card (m : L.marks) (y : int) (hy : (nat_of_int y < n)%N)
+    (hlm : alen m = n) (hnot : PArray.get m y = false) :
+  #|mvis m.[y <- true]| = #|mvis m|.+1.
+Proof.
+have hnin : insubd i0 (nat_of_int y) \notin mvis m by rewrite in_mvis // hnot.
+by rewrite (mvis_setE hy hlm) cardsU1 hnin.
+Qed.
+
+#[local] Lemma nb_incr (x : int) (hx : (nat_of_int x < n)%N) :
+  nat_of_int (x + 1)%uint63 = (nat_of_int x).+1.
+Proof. by apply: (add1_alenE (a := g)); rewrite hlen. Qed.
+
+#[local] Lemma mark_vertex_inv (st : L.state) (y : int) (k : N) :
+  binv st -> (nat_of_int y < n)%N -> connect brel i0 (insubd i0 (nat_of_int y)) ->
+  binv (L.mark_vertex st y k).
+Proof.
+move=> [hl hc hs hq] hy hcon; rewrite /L.mark_vertex.
+case hvy : (PArray.get (L.visited st) y); first by split.
+have hnin : insubd i0 (nat_of_int y) \notin mvis (L.visited st).
+  by rewrite in_mvis // hvy.
+split => /=.
+- have h : alen ((L.visited st).[y <- true]) = n by rewrite alen_set.
+  exact: h.
+- rewrite (mvis_card hy hl hvy) nb_incr; first by rewrite hc.
+  by rewrite hc (card_ltn_notin hnin).
+- move=> i; rewrite (mvis_setE hy hl) in_setU1 => /orP[/eqP ->|]; first exact: hcon.
+  exact: hs.
+- by rewrite qelems_enqueue all_cat hq /= /qok /= hy hcon.
+Qed.
+
+#[local] Lemma fold_row_inv (st : L.state) (y : int) (k : N)
+    (hy : (nat_of_int y < n)%N) :
+  binv st -> connect brel i0 (insubd i0 (nat_of_int y)) ->
+  binv (L.fold (fun z acc => L.mark_vertex acc z k) (PArray.get g y) st).
+Proof.
+move=> hst hcon.
+have hrow : aget g (insubd i0 (nat_of_int y)) = PArray.get g y.
+  by rewrite /aget int_insubdK.
+rewrite -hrow; apply: fold_invariantP; first exact: hst.
+move=> j st' hst'.
+apply: mark_vertex_inv; [exact: hst' | exact: hval |].
+apply: connect_trans hcon _; apply: connect1.
+apply/in_set_of_array; exists j.
+by rewrite insubd_ordK //; exact: hval.
+Qed.
+
+#[local] Lemma bfs_dequeue_inv (st : L.state) :
+  binv st ->
+  match L.bfs_dequeue st with
+  | Some p => oinv (inl p)
+  | None => binv st
+  end.
+Proof.
+move=> [hl hc hs hq]; rewrite /L.bfs_dequeue.
+have := qelems_dequeue (L.to_visit st).
+case: (L.dequeue (L.to_visit st)) => [[[y k] q']|] hqe; last by split.
+rewrite hqe /= in hq; case/andP: hq => /andP[hy hcon] hq'.
+by split => //=.
+Qed.
+
+#[local] Lemma bfs_step_inv (p : L.state * int * N) :
+  oinv (inl p) -> oinv (L.bfs_step g p).
+Proof.
+case: p => [[st x] k] [hst hx hcon]; rewrite /L.bfs_step /=.
+set st1 := L.fold _ _ _.
+have hst1 : binv st1 by apply: fold_row_inv.
+have := bfs_dequeue_inv hst1.
+by case: (L.bfs_dequeue st1).
+Qed.
+
+#[local] Lemma init_inv : binv (L.init_state (PArray.length g) 0%uint63).
+Proof.
+have hlmk : alen (PArray.make (PArray.length g) false) = n.
+  by rewrite alen_make ?leb_length ?hgn.
+have h0n : (nat_of_int 0%uint63 < n)%N by rewrite nat_of_int0.
+have hms : mvis ((PArray.make (PArray.length g) false).[0%uint63 <- true]) = [set i0].
+  rewrite (mvis_setE h0n hlmk) insubd0.
+  have -> : mvis (PArray.make (PArray.length g) false) = set0.
+    by apply/setP => i; rewrite !inE PArray.get_make.
+  by rewrite setU0.
+split => /=.
+- have h : alen ((PArray.make (PArray.length g) false).[0%uint63 <- true]) = n.
+    by rewrite alen_set hlmk.
+  exact: h.
+- by rewrite hms cards1 nat_of_int1.
+- by move=> i; rewrite hms in_set1 => /eqP ->; exact: connect0.
+- by [].
+Qed.
+
+Lemma bfs_reach : L.isConnected g -> forall j : 'I_n, connect brel i0 j.
+Proof.
+rewrite /L.isConnected.
+have h0f : (PArray.length g =? 0)%uint63 = false.
+  by rewrite eqb_natE nat_of_int0 hgn (gtn_eqF hn).
+rewrite h0f /L.bfs /L.bfs_; cbv zeta.
+rewrite ifold_from_until_absorbE.
+- rewrite nat_of_int0 subn0.
+  rewrite (foldl_const
+    (fun o : L.state * int * BinNums.N + L.state =>
+       if o is inl s then L.bfs_step g s else o)).
+  rewrite size_iota hgn.
+  have hstep : forall out, oinv out ->
+      oinv ((fun o => if o is inl s then L.bfs_step g s else o) out).
+    by case=> [s|s] hs //=; exact: bfs_step_inv hs.
+  have h1 : oinv (L.bfs_step g
+      (L.init_state (PArray.length g) 0%uint63, 0%uint63, BinNums.N0)).
+    apply: bfs_step_inv; split.
+    + exact: init_inv.
+    + by rewrite /= nat_of_int0.
+    + by rewrite /= insubd0; exact: connect0.
+  case E : (iter n (fun o => if o is inl s then L.bfs_step g s else o)
+      (L.bfs_step g (L.init_state (PArray.length g) 0%uint63, 0%uint63, BinNums.N0)))
+    => [s|s].
+    rewrite /= eqb_natE nat_of_int0 hgn.
+    by rewrite eq_sym (gtn_eqF hn).
+  have := iter_inv h1 hstep n; rewrite E => hs.
+  case: hs => hl hc hsound hq.
+  rewrite /= eqb_natE hgn hc => /eqP hcard j.
+  case hjm : (j \in mvis (L.visited s)); first by apply: hsound; rewrite hjm.
+  by have := card_ltn_notin (negbT hjm); rewrite hcard ltnn.
+- by move=> j y hstop j'; move: hstop; case: y.
+- by rewrite nat_of_int0.
+Qed.
+
+End BFSBridge.
+
+(* -------------------------------------------------------------------------- *)
+(* The [IntList] tests, on strictly decreasing sequences (the shape of        *)
+(* [L.diff] outputs)                                                          *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma not_subset_sound (s t : seq int) :
+  sorted gtns (map nat_of_int s) -> sorted gtns (map nat_of_int t) ->
+  L.not_subset s t ->
+  exists x, x \in map nat_of_int s /\ x \notin map nat_of_int t.
+Proof.
+elim: t s => [|y t iht] [|x s] hs ht //=.
+  (* t = [::]: the head of s is missing from t *)
+  by move=> _; exists (nat_of_int x); rewrite /= mem_head.
+case: ifP => [hxy|hxy].
+  (* equal heads: recurse on both tails *)
+  move=> hrec.
+  have hs' : sorted gtns (map nat_of_int s) by move: hs => /=; exact: path_sorted.
+  have ht' : sorted gtns (map nat_of_int t) by move: ht => /=; exact: path_sorted.
+  have [z [hzs hzt]] := iht _ hs' ht' hrec.
+  have hxy' : nat_of_int x = nat_of_int y by apply/eqP; rewrite -eqb_natE.
+  have hzx : (z < nat_of_int x)%N := gtns_head hs hzs.
+  exists z; rewrite /= !in_cons hzs orbT negb_or hzt andbT; split=> //.
+  by rewrite -hxy' ltn_eqF.
+case: ifP => [hlt|hlt] hrec; last first.
+  (* x > y: x is missing from t *)
+  have hyx : (nat_of_int y < nat_of_int x)%N.
+    rewrite ltn_neqAle; apply/andP; split.
+      by apply/eqP => he; move: hxy; rewrite eqb_natE he eqxx.
+    by rewrite leqNgt -ltb_natE hlt.
+  exists (nat_of_int x); rewrite /= mem_head in_cons negb_or; split=> //.
+  apply/andP; split; first by rewrite gtn_eqF.
+  apply/negP => hxt; have := gtns_head ht hxt.
+  by rewrite ltnNge (ltnW hyx).
+(* x < y: drop the head of t *)
+have ht' : sorted gtns (map nat_of_int t) by move: ht => /=; exact: path_sorted.
+have [z [hzs hzt]] := iht _ hs ht' hrec.
+have hxy' : (nat_of_int x < nat_of_int y)%N by rewrite -ltb_natE.
+have hzx : z <= nat_of_int x.
+  move: hzs; rewrite /= in_cons => /orP[/eqP->//|hz].
+  exact: ltnW (gtns_head hs hz).
+exists z; rewrite /= in_cons negb_or hzt andbT; split=> //.
+by rewrite ltn_eqF // (leq_ltn_trans hzx hxy').
+Qed.
+
+Lemma incomparable_sound (s t : seq int) :
+  sorted gtns (map nat_of_int s) -> sorted gtns (map nat_of_int t) ->
+  L.incomparable s t ->
+  (exists x, x \in map nat_of_int s /\ x \notin map nat_of_int t) /\
+  (exists y, y \in map nat_of_int t /\ y \notin map nat_of_int s).
+Proof.
+move=> hs ht /andP[h1 h2].
+by split; [exact: not_subset_sound hs ht h1 | exact: not_subset_sound ht hs h2].
+Qed.
+
+Lemma incomparable_with_allE d ds :
+  L.incomparable_with_all d ds = all (L.incomparable d) ds.
+Proof. by elim: ds => //= e ds ->. Qed.
+
+Lemma pairwise_incomparableE ds :
+  L.pairwise_incomparable ds = pairwise L.incomparable ds.
+Proof. by elim: ds => //= d ds ->; rewrite incomparable_with_allE. Qed.
+
+Lemma incomparable_with_all_nth d ds k :
+  L.incomparable_with_all d ds -> k < size ds -> L.incomparable d (nth [::] ds k).
+Proof. by rewrite incomparable_with_allE => /all_nthP; apply. Qed.
+
+Lemma pairwise_incomparable_nth ds k1 k2 :
+  L.pairwise_incomparable ds -> k1 < k2 -> k2 < size ds ->
+  L.incomparable (nth [::] ds k1) (nth [::] ds k2).
+Proof.
+rewrite pairwise_incomparableE => /(pairwiseP [::]) h hk12 hk2.
+by apply: h => //=; exact: ltn_trans hk12 hk2.
+Qed.
+

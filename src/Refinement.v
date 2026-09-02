@@ -5,7 +5,9 @@
 (* Built on the generic bridges of RefinementBridges.v; this file interprets  *)
 (* a low-level certificate as a high-level one ([interp_cert]) and proves     *)
 (* that every check of [VtxContainment.check_certificate] implies its         *)
-(* high-level counterpart, up to [vertex_containment] at the end.             *)
+(* high-level counterpart, up to [vertex_containment] at the end; the         *)
+(* [GraphEquality] checks are discharged separately, into the geometric-graph *)
+(* conditions of the spec ([graph_equality_correct]).                         *)
 (* -------------------------------------------------------------------------- *)
 
 From Coq Require Import Uint63 PArray ZArith Lia.
@@ -40,7 +42,7 @@ Unset Printing Implicit Defensive.
 (* -------------------------------------------------------------------------- *)
 
 (* The shape of the &&-trees of [LowLevelChecker] is known here and in the
-   three selector lemmas only; everything else goes through named fields. *)
+   four selector lemmas only; everything else goes through named fields. *)
 Record wf_data (c : L.Certificate) : Prop := WfData {
   wf_ineq  : L.areInequalitiesWellFormed c;
   wf_pts   : L.arePointsWellFormed c;
@@ -76,6 +78,15 @@ Lemma certP (c : L.Certificate) : L.VtxContainment.check_certificate c ->
 Proof.
 rewrite /L.VtxContainment.check_certificate.
 by move=> /andP[/andP[/andP[/andP[/andP[hwf h1] h2] h3] hr] hfd]; split.
+Qed.
+
+Lemma geqP (c : L.Certificate) : L.GraphEquality.check_certificate c ->
+  [/\ L.isGeomGraphWellFormed c, L.areGeomEdgeSourcesWellFormed c
+    & L.areGeomEdgeLocalTargetsWellFormed c] /\
+  [/\ L.graph_image_check c, L.geom_edge_pairwise_check c & L.connectivity_check c].
+Proof.
+rewrite /L.GraphEquality.check_certificate /L.GraphEquality.well_formedness_check.
+by move=> /andP[/andP[/andP[/andP[/andP[hg hsrc] htgt] himg] hpair] hconn].
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -254,6 +265,24 @@ rewrite succ_mk_graph; last by apply/imfsetP; exists k0.
 by rewrite in_fsetD1 in_fset inE.
 Qed.
 
+(* The geometric graph: certified points are adjacent when some pair of vertex
+   indices carrying them is adjacent in the certificate's geometric graph. *)
+Definition geom_nbrs (v : 'I_nv) : {set 'I_nv} := set_of_array nv (aget (L.geom_graph c) v).
+Definition pedge (x y : 'cV[R]_d) : bool :=
+  [exists v : 'I_nv, [exists w : 'I_nv,
+     [&& point_of_vertex v == x, point_of_vertex w == y & w \in geom_nbrs v]]].
+Definition geom_graph_of : graph [choiceType of 'cV[R]_d] := mk_graph points_of pedge.
+
+Lemma vtx_geom_graph_of : vertices geom_graph_of = points_of.
+Proof. exact: vtx_mk_graph. Qed.
+
+Lemma in_succ_geom (x y : 'cV[R]_d) : x \in points_of ->
+  (y \in successors geom_graph_of x) = [&& y != x, y \in points_of & pedge x y].
+Proof.
+move=> hx; rewrite succ_mk_graph //.
+by rewrite in_fsetD1 in_fset inE.
+Qed.
+
 (* The root: special simplex, special vertex and witnesses. Witnesses are
    negated, like the polytope's [A]: with [A = -normals] this is what makes the
    high-level T4/T5 inner products equal to the checker's <n_i, W_j>. *)
@@ -387,16 +416,14 @@ Lemma col_full_dim_inv_of (j : 'I_d) : col j full_dim_inv_of = vec_of_array R d 
 Proof. by apply/colP => k; rewrite !mxE. Qed.
 
 (* [hm : 0 < m] inhabits 'I_m for [specialSimplex_of] (out-of-range entries,
-   excluded by well-formedness, fall back to that inhabitant). All fields but
-   one carry interpreted data; only the geometric graph is a placeholder (it
-   belongs to the GraphEquality checker). *)
+   excluded by well-formedness, fall back to that inhabitant). *)
 Definition interp_cert (hm : (0 < m)%N) : H.Certificate R d hpoly_of :=
   @H.Build_Certificate R d hpoly_of
     full_dim_point_of full_dim_dir_of full_dim_inv_of
     activeSets_of facets_of mapping_of
     graph_of                       (* graph *)
     specialVertex_of (specialSimplex_of hm) witnesses_of weights_of
-    (graph0 _).                    (* geom_graph *)
+    geom_graph_of.                 (* geom_graph *)
 
 (* -------------------------------------------------------------------------- *)
 (* Index well-formedness, in bridge form                                      *)
@@ -522,6 +549,132 @@ rewrite /L.areActiveSetsWellFormed; cbv zeta => /andP[_ hB].
 by have h2 := allInRange_ordP (k := v) hm hB; exact: h2.
 Qed.
 
+(* The same for the geometric graph, whose rows are indexed by vertices. *)
+Lemma geom_graph_len : L.isGeomGraphWellFormed c -> alen (L.geom_graph c) = nv.
+Proof.
+rewrite /L.isGeomGraphWellFormed; cbv zeta => /andP[/andP[/andP[hl _] _] _].
+by rewrite eqb_natE in hl; move/eqP: hl => hl; exact: hl.
+Qed.
+
+Lemma geom_nbrs_ord (hg : L.isGeomGraphWellFormed c) (v : 'I_nv)
+    (j : 'I_(alen (aget (L.geom_graph c) v))) :
+  (nat_of_int (aget (aget (L.geom_graph c) v) j) < nv)%N.
+Proof.
+have hlen := geom_graph_len hg.
+have h0 : (0 < alen (L.geom_graph c))%N.
+  by rewrite hlen; exact: leq_ltn_trans (leq0n _) (ltn_ord v).
+move: hg; rewrite /L.isGeomGraphWellFormed; cbv zeta => /andP[/andP[/andP[_ hv] _] _].
+move: hv; rewrite /L.for_all_matrix => /(for_allP _ hlen)/(_ v)/for_all_alenP/(_ j).
+rewrite /L.isVertex /L.isValidIndex => h.
+have h2 : (nat_of_int (aget (aget (L.geom_graph c) v) j) < alen (L.geom_graph c))%N
+  := inRangeP h0 h.
+by rewrite hlen in h2.
+Qed.
+
+Lemma geom_nbrs_irrefl (hg : L.isGeomGraphWellFormed c) (v : 'I_nv) : v \notin geom_nbrs v.
+Proof.
+have hlen := geom_graph_len hg; move: hg.
+rewrite /L.isGeomGraphWellFormed /L.isSimpleGraph; cbv zeta
+  => /andP[/andP[_ /andP[_ hnl]] _].
+move: hnl; rewrite /L.hasNoLoops => /(for_alliP _ hlen)/(_ v); cbv beta.
+rewrite /L.hasLocallyNoLoop /L.mem; apply: contra; rewrite /geom_nbrs
+  => /in_set_of_array[j hj].
+apply/exist_alenP; exists j; cbv beta; rewrite eqb_natE hj.
+by rewrite (int_of_natK_le (i := alength (L.vertices c)) (ltnW (ltn_ord v))) eqxx.
+Qed.
+
+Lemma geom_nbrs_sym (hg : L.isGeomGraphWellFormed c) (v w : 'I_nv) :
+  w \in geom_nbrs v -> v \in geom_nbrs w.
+Proof.
+have hlen := geom_graph_len hg; move: hg.
+rewrite /L.isGeomGraphWellFormed; cbv zeta => /andP[_ hu].
+move: hu; rewrite /L.isUndirected => /(for_alliP _ hlen)/(_ v); cbv beta.
+rewrite /L.isLocallyUndirected /L.mem => /for_all_alenP hk /in_set_of_array[j hj].
+have hw : aget (L.geom_graph c) w
+          = PArray.get (L.geom_graph c) (aget (aget (L.geom_graph c) v) j).
+  by rewrite /aget -hj nat_of_intK.
+have := hk j; cbv beta => /exist_alenP[p hp].
+rewrite /geom_nbrs hw; apply/in_set_of_array; exists p.
+move: hp; cbv beta; rewrite eqb_natE => /eqP <-.
+exact: int_of_natK_le (ltnW (ltn_ord v)).
+Qed.
+
+(* Adjacency of certified points is symmetric. *)
+Lemma geom_edges_sym (hg : L.isGeomGraphWellFormed c) (x y : 'cV[R]_d) :
+  edges geom_graph_of x y -> edges geom_graph_of y x.
+Proof.
+move=> he.
+have hx : x \in points_of by have := edge_vtxl he; rewrite vtx_geom_graph_of.
+have hy : y \in points_of by have := edge_vtxr he; rewrite vtx_geom_graph_of.
+move: he; rewrite /geom_graph_of !edge_mk_graph // => /andP[hne hpe].
+rewrite eq_sym hne /=.
+move: hpe => /existsP[v1 /existsP[w1 /and3P[hp1 hpw hnb]]].
+apply/existsP; exists w1; apply/existsP; exists v1.
+by rewrite hpw hp1 (geom_nbrs_sym hg hnb).
+Qed.
+
+
+(* The source / local-target tables describing each geometric edge's preimage. *)
+Lemma geom_src_len : L.areGeomEdgeSourcesWellFormed c -> alen (L.geom_edge_sources c) = nv.
+Proof.
+rewrite /L.areGeomEdgeSourcesWellFormed; cbv zeta => /andP[/andP[hl _] _].
+by rewrite eqb_natE in hl; move/eqP: hl => hl; exact: hl.
+Qed.
+
+Lemma geom_src_row_len (hs : L.areGeomEdgeSourcesWellFormed c) (v : 'I_nv) :
+  alen (aget (L.geom_edge_sources c) v) = alen (aget (L.geom_graph c) v).
+Proof.
+have hlen := geom_src_len hs; move: hs.
+rewrite /L.areGeomEdgeSourcesWellFormed; cbv zeta => /andP[/andP[_ hrow] _].
+move: hrow => /(for_alliP _ hlen)/(_ v); cbv beta => /hasLengthP h.
+by rewrite h.
+Qed.
+
+Lemma geom_src_range (hnf : (0 < nf)%N) (hs : L.areGeomEdgeSourcesWellFormed c) (v : 'I_nv)
+    (j : 'I_(alen (aget (L.geom_edge_sources c) v))) :
+  (nat_of_int (aget (aget (L.geom_edge_sources c) v) j) < nf)%N.
+Proof.
+have hlen := geom_src_len hs; move: hs.
+rewrite /L.areGeomEdgeSourcesWellFormed; cbv zeta => /andP[_ hr].
+move: hr => /(for_allP _ hlen)/(_ v); cbv beta; rewrite /L.allInRange => /for_all_alenP/(_ j) h.
+by have h2 := inRangeP hnf h; exact: h2.
+Qed.
+
+Lemma geom_tgt_len :
+  L.areGeomEdgeLocalTargetsWellFormed c -> alen (L.geom_edge_local_targets c) = nv.
+Proof.
+rewrite /L.areGeomEdgeLocalTargetsWellFormed; cbv zeta => /andP[/andP[hl _] _].
+by rewrite eqb_natE in hl; move/eqP: hl => hl; exact: hl.
+Qed.
+
+Lemma geom_tgt_row_len (ht : L.areGeomEdgeLocalTargetsWellFormed c) (v : 'I_nv) :
+  alen (aget (L.geom_edge_local_targets c) v) = alen (aget (L.geom_graph c) v).
+Proof.
+have hlen := geom_tgt_len ht; move: ht.
+rewrite /L.areGeomEdgeLocalTargetsWellFormed; cbv zeta => /andP[/andP[_ hrow] _].
+move: hrow => /(for_alliP _ hlen)/(_ v); cbv beta => /hasLengthP h.
+by rewrite h.
+Qed.
+
+Lemma geom_tgt_range (ht : L.areGeomEdgeLocalTargetsWellFormed c) (v : 'I_nv)
+    (j : 'I_(alen (aget (L.geom_edge_local_targets c) v))) :
+  (0 < alen (PArray.get (L.graph c)
+        (PArray.get (aget (L.geom_edge_sources c) v) (int_of_nat j))))%N ->
+  (nat_of_int (aget (aget (L.geom_edge_local_targets c) v) j)
+   < alen (PArray.get (L.graph c)
+        (PArray.get (aget (L.geom_edge_sources c) v) (int_of_nat j))))%N.
+Proof.
+move=> h0; have hlen := geom_tgt_len ht; move: ht.
+rewrite /L.areGeomEdgeLocalTargetsWellFormed; cbv zeta => /andP[_ hr].
+move: hr => /for_alli_matrixP h.
+have hh := h (cast_ord (esym hlen) v) j.
+have hin : L.inRange Uint63.leb 0%uint63
+    (length (PArray.get (L.graph c)
+       (PArray.get (aget (L.geom_edge_sources c) v) (int_of_nat j))) - 1)%uint63
+    (aget (aget (L.geom_edge_local_targets c) v) j) := hh.
+by have h2 := inRangeP h0 hin; exact: h2.
+Qed.
+
 (* -------------------------------------------------------------------------- *)
 (* The feasibility check, per vertex                                          *)
 (* -------------------------------------------------------------------------- *)
@@ -607,6 +760,20 @@ have h := sorted_sets_inj (g := L.description) (s := L.facets c) (n := m) huniq
 exact: h.
 Qed.
 
+Lemma facet_of_ord (i : int) (hi : (nat_of_int i < nf)%N) :
+  facet_of (Ordinal hi) = PArray.get (L.facets c) i.
+Proof. by rewrite /facet_of /aget nat_of_intK. Qed.
+
+Lemma mapping_of_desc (hm : (0 < m)%N) (k : 'I_nf) :
+  L.areDescriptionsWellFormed c -> L.areFacetsUnique c ->
+  mapping_of (desc_of k) = point_at (L.mapping (facet_of k)).
+Proof.
+move=> hdesc hfu; rewrite /mapping_of.
+case: pickP => [k' /eqP /(desc_of_inj hm hdesc hfu) ->|/(_ k)] //.
+by rewrite eqxx.
+Qed.
+
+
 Lemma activeSet_of_inj (hm : (0 < m)%N) :
   L.areActiveSetsWellFormed c -> L.areActiveSetsUnique c -> injective activeSet_of.
 Proof.
@@ -622,6 +789,74 @@ Lemma point_of_vertex_inj (hm : (0 < m)%N) :
 Proof.
 move=> hineq hpts hact hasu hfeas v1 v2 heq; apply: (activeSet_of_inj hm hact hasu).
 by rewrite !(activeSet_ofE hineq hpts hact hfeas) heq.
+Qed.
+
+(* At a certified point, the high-level active set is the vertex's. *)
+Lemma activeSets_of_vertex (hm : (0 < m)%N) :
+  L.areInequalitiesWellFormed c -> L.arePointsWellFormed c -> L.areActiveSetsWellFormed c ->
+  L.areActiveSetsUnique c -> L.feasibility_check c ->
+  forall v : 'I_nv, activeSets_of (point_of_vertex v) = activeSet_of v.
+Proof.
+move=> hineq hpts hact hasu hfeas v; rewrite /activeSets_of.
+rewrite (eq_bigl (pred1 v)) ?big_pred1_eq // => v' /=.
+apply/idP/idP => [/eqP he|/eqP ->]; last exact: eqxx.
+by apply/eqP; apply: (point_of_vertex_inj hm hineq hpts hact hasu hfeas); exact: he.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* Active-set differences: the [L.diff] list read at the set level            *)
+(* -------------------------------------------------------------------------- *)
+
+(* Every index the diff produces is an index of [v]'s active set, hence < m. *)
+Lemma diff_lt_m (hm : (0 < m)%N) (v w : 'I_nv) : L.areActiveSetsWellFormed c ->
+  forall x, x \in map nat_of_int
+      (L.diff Uint63.ltb (L.activeSet (vertex_of v)) (L.activeSet (vertex_of w))) ->
+    (x < m)%N.
+Proof.
+move=> hact x hx.
+have [[p [hp hpx]] _] := diff_arr_mem (activeSet_sorted v hact) (activeSet_sorted w hact) hx.
+have h2 := activeSet_range hm hact (v := v) (Ordinal hp).
+by rewrite -hpx; exact: h2.
+Qed.
+
+(* A nonempty active-set difference refutes inclusion of the active sets. *)
+Lemma diff_ne_subset (hm : (0 < m)%N) (v w : 'I_nv) : L.areActiveSetsWellFormed c ->
+  L.diff Uint63.ltb (L.activeSet (vertex_of v)) (L.activeSet (vertex_of w)) <> [::] ->
+  ~~ (activeSet_of v \subset activeSet_of w).
+Proof.
+move=> hact hne; case E: (L.diff _ _ _) hne => [|x0 l] hne; first by have := hne (erefl _).
+have hx0 : nat_of_int x0 \in map nat_of_int
+    (L.diff Uint63.ltb (L.activeSet (vertex_of v)) (L.activeSet (vertex_of w))).
+  by rewrite E mem_head.
+have [hsrc hnotb] := diff_arr_mem (activeSet_sorted v hact) (activeSet_sorted w hact) hx0.
+have [p [hp hpx]] := hsrc.
+have hlt : (nat_of_int x0 < m)%N := diff_lt_m hm hact hx0.
+apply/subsetPn; exists (Ordinal hlt).
+  by apply/in_set_of_array; exists (Ordinal hp); exact: hpx.
+apply/negP => /in_set_of_array[q hq].
+by have := hnotb q (ltn_ord q); rewrite hq.
+Qed.
+
+(* The diff list computes exactly the set difference of the active sets. *)
+Lemma diff_seq_setE (hm : (0 < m)%N) (v w : 'I_nv) : L.areActiveSetsWellFormed c ->
+  forall x : 'I_m,
+    (nat_of_ord x \in map nat_of_int
+       (L.diff Uint63.ltb (L.activeSet (vertex_of v)) (L.activeSet (vertex_of w))))
+    = (x \in activeSet_of v :\: activeSet_of w).
+Proof.
+move=> hact x; apply/idP/idP => [hx|].
+  have [hsrc hnotb] := diff_arr_mem (activeSet_sorted v hact) (activeSet_sorted w hact) hx.
+  rewrite in_setD; apply/andP; split.
+    apply/negP => /in_set_of_array[q hq].
+    by have := hnotb q (ltn_ord q); rewrite hq.
+  have [p [hp hpx]] := hsrc.
+  by apply/in_set_of_array; exists (Ordinal hp); exact: hpx.
+rewrite in_setD => /andP[hnb /in_set_of_array[p hp]].
+have hda := @diff_arr_all (L.activeSet (vertex_of v)) (L.activeSet (vertex_of w)).
+have [hin|[q [hq hqx]]] := hda _ (ltn_ord p).
+  by rewrite -hp; exact: hin.
+exfalso; move/negP: hnb; apply; apply/in_set_of_array; exists (Ordinal hq).
+by rewrite /aget hqx; exact: hp.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -850,7 +1085,7 @@ exact/eqP.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
-(* T5: separability                                                           *)
+(* Support for T5 and the weight positivity: the separability fold            *)
 (* -------------------------------------------------------------------------- *)
 
 (* The check performed on a visited facet [k], with the counter at [r]. *)
@@ -902,6 +1137,10 @@ have hinv0 : INV5 0 (true, 0%uint63).
 have := foldl_sstep5_inv (m := nf) (k := 0) (acc := (true, 0%uint63)) (leqnn _) hinv0.
 by rewrite add0n => -[_ h1] hok k hq; exact: h1 hok k (ltn_ord k) hq.
 Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* T5: separability                                                           *)
+(* -------------------------------------------------------------------------- *)
 
 Theorem separability_check_correct (hm : (0 < m)%N) :
   L.areInequalitiesWellFormed c ->
@@ -1018,8 +1257,7 @@ move=> hsi hdesc huniq; have hk := kstar_ord hnf hsi.
 rewrite /H.specialSimplexInSpecialCone /interp_cert /H.specialSimplex /H.facets /H.mapping
   /H.specialVertex (specialSimplex_img hm hk hdesc); split.
   by apply/imsetP; exists (Ordinal hk); rewrite ?in_setT.
-rewrite /mapping_of; case: pickP => [k' /eqP heq|/(_ (Ordinal hk))]; last by rewrite eqxx.
-by rewrite (desc_of_inj hm hdesc huniq heq) (facet_of_kstar hk).
+by rewrite (mapping_of_desc hm _ hdesc huniq) (facet_of_kstar hk).
 Qed.
 
 Lemma weightsAreStrictlyPositiveVectors_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N)
@@ -1121,6 +1359,400 @@ move: hfeas; rewrite /L.full_dim_feasibility_check; cbv zeta => /andP[hf1 hf2]; 
     by apply/val_inj/eqP.
   - move/eqP => h0; right; split; last exact: h0.
     by move=> heq; rewrite heq eqxx in hij.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* The geometric graph: high-level conditions (GraphEquality checker)         *)
+(* -------------------------------------------------------------------------- *)
+
+(* -------------------------------------------------------------------------- *)
+(* [geomGraphVerticesArePoints]: the vertices are the certified points        *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma geomGraphVerticesArePoints_correct (hm : (0 < m)%N) :
+  @H.geomGraphVerticesArePoints d R hpoly_of points_of (interp_cert hm).
+Proof.
+by rewrite /H.geomGraphVerticesArePoints /interp_cert /H.geom_graph vtx_geom_graph_of.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* [geomGraphIsImageOfGraph], with the corrective premise [v <> w]            *)
+(* -------------------------------------------------------------------------- *)
+
+(* As stated upstream the iff is false whenever a facet edge collapses under
+   [mapping] -- with [v = w] the common image point, the RHS holds but a simple
+   graph has no loop.  Once the premise is added upstream, drop this and use
+   [H.geomGraphIsImageOfGraph] directly. *)
+Definition geomGraphIsImageOfGraph_ne (hm : (0 < m)%N) : Prop :=
+    forall v w : 'cV[R]_d,
+    v \in vertices (@H.geom_graph R d hpoly_of (interp_cert hm)) ->
+    w \in vertices (@H.geom_graph R d hpoly_of (interp_cert hm)) ->
+    v <> w ->
+    (w \in successors (@H.geom_graph R d hpoly_of (interp_cert hm)) v <->
+     exists fv fw : {set 'I_m},
+       fv \in vertices (@H.graph R d hpoly_of (interp_cert hm))
+       /\ fw \in successors (@H.graph R d hpoly_of (interp_cert hm)) fv
+       /\ @H.mapping R d hpoly_of (interp_cert hm) fv = v
+       /\ @H.mapping R d hpoly_of (interp_cert hm) fw = w).
+
+Lemma geomGraphIsImageOfGraph_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N)
+    (hnf : (0 < nf)%N) (hd : (0 < d)%N) :
+  L.isGraphWellFormed c -> L.areDescriptionsWellFormed c -> L.isMappingWellFormed c ->
+  L.areFacetsUnique c ->
+  L.for_all (L.hasLength (L.dimension c)) (L.graph c) ->
+  L.isGeomGraphWellFormed c -> L.areGeomEdgeSourcesWellFormed c ->
+  L.areGeomEdgeLocalTargetsWellFormed c -> L.graph_image_check c ->
+  geomGraphIsImageOfGraph_ne hm.
+Proof.
+move=> hgf hdesc hmapwf hfu hreg hg hsrc htgt himg.
+have hdinj := desc_of_inj hm hdesc hfu.
+have hGE : @H.geom_graph R d hpoly_of (interp_cert hm) = geom_graph_of by [].
+have hGR : @H.graph R d hpoly_of (interp_cert hm) = graph_of by [].
+have hMA : @H.mapping R d hpoly_of (interp_cert hm) = mapping_of by [].
+move: himg; rewrite /L.graph_image_check; cbv zeta => /andP[himg1 himg2].
+move=> v w; rewrite hGE hGR hMA vtx_geom_graph_of vtx_graph_of => hv hw hvw; split.
+- (* a geometric edge is the image of the facet edge its tables name *)
+  rewrite in_succ_geom // => /and3P[_ _ /existsP[v1 /existsP[w1 /and3P[/eqP hp1 /eqP hpw hnb]]]].
+  move: hnb => /in_set_of_array[j hj].
+  pose SRC := PArray.get (aget (L.geom_edge_sources c) v1) (int_of_nat j).
+  pose TJI := PArray.get (aget (L.geom_edge_local_targets c) v1) (int_of_nat j).
+  have hjs : (j < alen (aget (L.geom_edge_sources c) v1))%N.
+    by rewrite (geom_src_row_len hsrc); exact: ltn_ord.
+  have hjt : (j < alen (aget (L.geom_edge_local_targets c) v1))%N.
+    by rewrite (geom_tgt_row_len htgt); exact: ltn_ord.
+  have hsF : (nat_of_int SRC < nf)%N := geom_src_range hnf hsrc (Ordinal hjs).
+  have hrowE : aget (L.graph c) (Ordinal hsF) = PArray.get (L.graph c) SRC.
+    by rewrite /aget nat_of_intK.
+  have h0 : (0 < alen (PArray.get (L.graph c) SRC))%N.
+    by rewrite -hrowE (row_len hgf _ hreg); exact: hd.
+  have htF0 : (nat_of_int TJI < alen (PArray.get (L.graph c) SRC))%N
+    := geom_tgt_range (j := Ordinal hjt) htgt h0.
+  have htji : (nat_of_int TJI < alen (aget (L.graph c) (Ordinal hsF)))%N.
+    by rewrite hrowE; exact: htF0.
+  have htE : aget (aget (L.graph c) (Ordinal hsF)) (Ordinal htji)
+             = PArray.get (PArray.get (L.graph c) SRC) TJI.
+    exact: eq_trans
+      (congr1 (fun a : array int => PArray.get a (int_of_nat (nat_of_int TJI))) hrowE)
+      (congr1 (PArray.get (PArray.get (L.graph c) SRC)) (nat_of_intK TJI)).
+  have htF : (nat_of_int (PArray.get (PArray.get (L.graph c) SRC) TJI) < nf)%N.
+    by rewrite -htE; exact: (nbrs_ord hgf (Ordinal htji)).
+  have hnbr : Ordinal htF \in nbrs (Ordinal hsF).
+    by apply/in_set_of_array; exists (Ordinal htji); rewrite htE.
+  move: himg2 => /for_alli_matrixP hcell.
+  have hij := hcell (cast_ord (esym (geom_graph_len hg)) v1) j.
+  have hcE : (int_of_nat v1 =? L.mapping (PArray.get (L.facets c) SRC))%uint63
+             && (aget (aget (L.geom_graph c) v1) j
+                 =? L.mapping (PArray.get (L.facets c)
+                      (PArray.get (PArray.get (L.graph c) SRC) TJI)))%uint63 := hij.
+  case/andP: hcE => hc1 hc2.
+  move: hc1; rewrite eqb_natE (int_of_natK_le (ltnW (ltn_ord v1))) => /eqP hc1.
+  move: hc2; rewrite eqb_natE hj => /eqP hc2.
+  have hbv : (nat_of_int (L.mapping (PArray.get (L.facets c) SRC)) < nv)%N.
+    by rewrite -hc1; exact: ltn_ord.
+  have hbw : (nat_of_int (L.mapping (PArray.get (L.facets c)
+                (PArray.get (PArray.get (L.graph c) SRC) TJI))) < nv)%N.
+    by rewrite -hc2; exact: ltn_ord.
+  exists (desc_of (Ordinal hsF)), (desc_of (Ordinal htF)); split; [|split; [|split]].
+  + by apply/imfsetP; exists (Ordinal hsF).
+  + rewrite in_succ_of; apply/and3P; split.
+    * apply/eqP => he.
+      have hwk : Ordinal htF = Ordinal hsF by apply: hdinj.
+      by move: (nbrs_irrefl hgf (Ordinal hsF)); rewrite -{1}hwk hnbr.
+    * by apply/imfsetP; exists (Ordinal htF).
+    * apply/existsP; exists (Ordinal hsF); apply/existsP; exists (Ordinal htF).
+      by rewrite !eqxx hnbr.
+  + rewrite (mapping_of_desc hm _ hdesc hfu) (facet_of_ord hsF) (point_at_ord hbv) -hp1.
+    by congr point_of_vertex; apply: val_inj; rewrite /= -hc1.
+  + rewrite (mapping_of_desc hm _ hdesc hfu) (facet_of_ord htF) (point_at_ord hbw) -hpw.
+    by congr point_of_vertex; apply: val_inj; rewrite /= -hc2.
+- (* a facet edge maps onto a geometric edge (or collapses, excluded by v <> w) *)
+  case=> fv [fw [hfv [hfw [hmv hmw]]]].
+  case/imfsetP: hfv hfw hmv => [k _ ->] hfw hmv.
+  move: hfw; rewrite in_succ_of
+    => /and3P[_ _ /existsP[k' /existsP[w' /and3P[/eqP hdk' /eqP hdw' hnb]]]].
+  have hkk : k' = k by apply: hdinj.
+  rewrite hkk in hnb; rewrite -hdw' in hmw.
+  have hb1 := mapping_ord hnv k hmapwf.
+  have hb2 := mapping_ord hnv w' hmapwf.
+  move: hmv; rewrite (mapping_of_desc hm _ hdesc hfu) (point_at_ord hb1) => hpv.
+  move: hmw; rewrite (mapping_of_desc hm _ hdesc hfu) (point_at_ord hb2) => hpw'.
+  move: hnb => /in_set_of_array[p hp].
+  move: himg1 => /for_alli_matrixP hcell.
+  have hij := hcell (cast_ord (esym (graph_len hgf)) k) p.
+  have hcE : (L.mapping (facet_of k)
+              =? L.mapping (PArray.get (L.facets c) (aget (aget (L.graph c) k) p)))%uint63
+             || L.mem_sorted Uint63.ltb
+                  (PArray.get (L.geom_graph c) (L.mapping (facet_of k)))
+                  (L.mapping (PArray.get (L.facets c) (aget (aget (L.graph c) k) p))) := hij.
+  have hfwE : PArray.get (L.facets c) (aget (aget (L.graph c) k) p) = facet_of w'.
+    by rewrite /facet_of /aget -hp nat_of_intK.
+  rewrite hfwE in hcE.
+  case/orP: hcE => [heq|hmem].
+    move: heq; rewrite eqb_natE => /eqP heq.
+    exfalso; apply: hvw; rewrite -hpv -hpw'; congr point_of_vertex.
+    by apply: val_inj; rewrite /= heq.
+  have [q [hq hqv]] := mem_sorted_sound hmem.
+  have hrowg : aget (L.geom_graph c) (Ordinal hb1)
+               = PArray.get (L.geom_graph c) (L.mapping (facet_of k)).
+    by rewrite /aget nat_of_intK.
+  rewrite -hrowg in hq.
+  rewrite in_succ_geom //; apply/and3P; split.
+  + by apply/eqP => he; apply: hvw; rewrite he.
+  + exact: hw.
+  + apply/existsP; exists (Ordinal hb1); apply/existsP; exists (Ordinal hb2).
+    apply/and3P; split; [by rewrite hpv|by rewrite hpw'|].
+    apply/in_set_of_array; exists (Ordinal hq).
+    have hqE := congr1 (fun a : array int => nat_of_int (PArray.get a (int_of_nat q))) hrowg.
+    exact: eq_trans hqE hqv.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* Support for T7 and T9: the diff list along a neighbour row                 *)
+(* -------------------------------------------------------------------------- *)
+
+(* The active-set differences the checker builds along [v]'s neighbour row,
+   in the reversed order its [fold] produces them. *)
+#[local] Definition geom_diffs (v : 'I_nv) : seq (seq int) :=
+  rev [seq L.diff Uint63.ltb (L.activeSet (vertex_of v))
+             (L.activeSet (PArray.get (L.vertices c)
+                (PArray.get (aget (L.geom_graph c) v) (int_of_nat j))))
+      | j <- iota 0 (alen (aget (L.geom_graph c) v))].
+
+Lemma geom_diffs_size (v : 'I_nv) : size (geom_diffs v) = alen (aget (L.geom_graph c) v).
+Proof. by rewrite /geom_diffs size_rev size_map size_iota. Qed.
+
+Lemma geom_diffs_nth (v : 'I_nv) (j : 'I_(alen (aget (L.geom_graph c) v))) :
+  nth [::] (geom_diffs v) (alen (aget (L.geom_graph c) v) - j.+1)
+  = L.diff Uint63.ltb (L.activeSet (vertex_of v))
+      (L.activeSet (PArray.get (L.vertices c)
+         (PArray.get (aget (L.geom_graph c) v) (int_of_nat j)))).
+Proof. exact: (@nth_rev_map_iota _ _ [::] _ _ (ltn_ord j)). Qed.
+
+Lemma geom_diffs_index (v : 'I_nv) (j : 'I_(alen (aget (L.geom_graph c) v))) :
+  (alen (aget (L.geom_graph c) v) - j.+1 < size (geom_diffs v))%N.
+Proof.
+by rewrite geom_diffs_size ltn_subrL /=; exact: leq_ltn_trans (leq0n _) (ltn_ord j).
+Qed.
+
+(* The per-vertex content of [geom_edge_pairwise_check]. *)
+Lemma geom_check_at (hchk : L.geom_edge_pairwise_check c) :
+  forall v : 'I_nv,
+  all (fun d => if d is [::] then false else true) (geom_diffs v)
+  && L.pairwise_incomparable (geom_diffs v).
+Proof.
+move=> v; move: hchk; rewrite /L.geom_edge_pairwise_check; cbv zeta.
+move=> /for_alli_alenP/(_ v); cbv beta zeta.
+by rewrite fold_consE => h; exact: h.
+Qed.
+
+Lemma geom_diff_ne (hchk : L.geom_edge_pairwise_check c) (v : 'I_nv)
+    (j : 'I_(alen (aget (L.geom_graph c) v))) :
+  L.diff Uint63.ltb (L.activeSet (vertex_of v))
+    (L.activeSet (PArray.get (L.vertices c)
+       (PArray.get (aget (L.geom_graph c) v) (int_of_nat j)))) <> [::].
+Proof.
+have /andP[hall _] := geom_check_at hchk v.
+have := all_nthP [::] hall _ (geom_diffs_index j).
+by rewrite geom_diffs_nth; case: (L.diff _ _ _).
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* T7: geometric-edge incomparability                                         *)
+(* -------------------------------------------------------------------------- *)
+
+(* Adjacent certified points have incomparable active sets. *)
+Lemma geom_edge_pairwise_correct (hm : (0 < m)%N) :
+  L.areInequalitiesWellFormed c -> L.arePointsWellFormed c -> L.areActiveSetsWellFormed c ->
+  L.areActiveSetsUnique c -> L.feasibility_check c ->
+  L.isGeomGraphWellFormed c -> L.geom_edge_pairwise_check c ->
+  @H.geom_edge_pairwise_check d R hpoly_of (interp_cert hm).
+Proof.
+move=> hineq hpts hact hasu hfeas hg hchk.
+have hAS := activeSets_of_vertex hm hineq hpts hact hasu hfeas.
+rewrite /H.geom_edge_pairwise_check /interp_cert /H.geom_graph /H.activeSets vtx_geom_graph_of.
+move=> x hx w /=; rewrite in_succ_geom // => /and3P[hne hwp hpe].
+move: hpe => /existsP[v1 /existsP[w1 /and3P[/eqP hp1 /eqP hpw hnb]]].
+rewrite -hp1 -hpw !hAS /H.incomparable.
+(* one direction per orientation of the geometric edge *)
+have hdir : forall (a b : 'I_nv), b \in geom_nbrs a ->
+    ~~ (activeSet_of a \subset activeSet_of b).
+  move=> a b /in_set_of_array[j hj].
+  have hvw : PArray.get (L.vertices c)
+               (PArray.get (aget (L.geom_graph c) a) (int_of_nat j)) = vertex_of b.
+    by rewrite /vertex_of /aget -hj nat_of_intK.
+  have hdne := geom_diff_ne hchk (v := a) (j := j).
+  rewrite hvw in hdne; exact: diff_ne_subset hm a b hact hdne.
+by apply/andP; split; [exact: hdir hnb | exact: hdir (geom_nbrs_sym hg hnb)].
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* T8: connectivity                                                           *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma connect_geom_path (u v : 'I_nv) :
+  connect (@brel (L.geom_graph c) nv) u v ->
+  has_path geom_graph_of (point_of_vertex u) (point_of_vertex v).
+Proof.
+move=> /connectP[p hp hl].
+elim: p u hp hl => [|a p ihp] u /=.
+  move=> _ ->; apply: has_pathxx.
+  by rewrite vtx_geom_graph_of; apply/in_points_of; exists u.
+move=> /andP[hab hp] hl.
+have hab' : a \in geom_nbrs u := hab.
+have hup : point_of_vertex u \in points_of by apply/in_points_of; exists u.
+have hap : point_of_vertex a \in points_of by apply/in_points_of; exists a.
+case: (altP (point_of_vertex a =P point_of_vertex u)) => [heq|hne].
+  by rewrite -heq; exact: ihp _ hp hl.
+have hedge : edges geom_graph_of (point_of_vertex u) (point_of_vertex a).
+  rewrite /geom_graph_of edge_mk_graph //.
+  apply/andP; split.
+    by apply/eqP => he; move: hne; rewrite he eqxx.
+  apply/existsP; exists u; apply/existsP; exists a.
+  by rewrite !eqxx hab'.
+exact: has_path_trans (has_path_edge hedge) (ihp _ hp hl).
+Qed.
+
+(* The BFS visit count certifies connectivity of the geometric graph. *)
+Lemma connectivity_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) :
+  L.isGeomGraphWellFormed c -> L.connectivity_check c ->
+  @H.connectivity_check d R hpoly_of (interp_cert hm).
+Proof.
+move=> hg hchk.
+rewrite /H.connectivity_check /interp_cert /H.geom_graph.
+have hrev : forall x y, has_path geom_graph_of x y -> has_path geom_graph_of y x.
+  move=> x y hp.
+  have hx : x \in vertices geom_graph_of.
+    by case: hp => ep [hsrc _]; rewrite -hsrc; exact: mem_src.
+  move: y hp; apply: has_pathW; first exact: has_pathxx hx.
+  move=> S x1 hSP _ hSx1 y1 hy1.
+  have h1 : has_path geom_graph_of y1 x1.
+    by apply: has_path_edge; apply: geom_edges_sym.
+  exact: has_path_trans h1 (hSP _ hSx1).
+have hval : forall (i : 'I_nv) (j : 'I_(alen (aget (L.geom_graph c) i))),
+    (nat_of_int (aget (aget (L.geom_graph c) i) j) < nv)%N
+  := fun i j => geom_nbrs_ord hg j.
+move: hchk; rewrite /L.connectivity_check; cbv zeta => hchk.
+have hreach := bfs_reach (geom_graph_len hg) hnv hval hchk.
+have hpath0 : forall w : 'I_nv,
+    has_path geom_graph_of (point_of_vertex (Ordinal hnv)) (point_of_vertex w).
+  move=> w.
+  by apply: connect_geom_path; exact: hreach.
+move=> x y hxv hyv.
+rewrite vtx_geom_graph_of in hxv hyv.
+case/imfsetP: hxv => [u _ hxe]; case/imfsetP: hyv => [w _ hye].
+rewrite hxe hye.
+exact: has_path_trans (hrev _ _ (hpath0 u)) (hpath0 w).
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* T9: active-set difference incomparability                                  *)
+(* -------------------------------------------------------------------------- *)
+
+(* Distinct neighbours cut incomparable slices out of the active set. *)
+Lemma geom_edge_difference_pairwise_correct (hm : (0 < m)%N) :
+  L.areInequalitiesWellFormed c -> L.arePointsWellFormed c -> L.areActiveSetsWellFormed c ->
+  L.areActiveSetsUnique c -> L.feasibility_check c -> L.geom_edge_pairwise_check c ->
+  @H.geom_edge_difference_pairwise_check d R hpoly_of (interp_cert hm).
+Proof.
+move=> hineq hpts hact hasu hfeas hchk.
+have hAS := activeSets_of_vertex hm hineq hpts hact hasu hfeas.
+have hinj := point_of_vertex_inj hm hineq hpts hact hasu hfeas.
+rewrite /H.geom_edge_difference_pairwise_check /interp_cert /H.geom_graph /H.activeSets
+  vtx_geom_graph_of.
+move=> x hx w w' [hw hw'] hne.
+move: hw; rewrite in_succ_geom //.
+move=> /and3P[_ _ /existsP[v1 /existsP[w1 /and3P[/eqP hp1 /eqP hpw1 hnb1]]]].
+move: hw'; rewrite in_succ_geom //.
+move=> /and3P[_ _ /existsP[v2 /existsP[w2 /and3P[/eqP hp2 /eqP hpw2 hnb2]]]].
+have hv12 : v2 = v1 by apply: hinj; rewrite hp2 hp1.
+rewrite hv12 in hnb2.
+move: hnb1 => /in_set_of_array[j1 hj1]; move: hnb2 => /in_set_of_array[j2 hj2].
+have hw12 : nat_of_ord w1 <> nat_of_ord w2.
+  by move=> he; apply: hne; rewrite -hpw1 -hpw2; congr point_of_vertex; apply/val_inj.
+have hj12 : j1 <> j2.
+  by move=> he; apply: hw12; rewrite -hj1 -hj2 he.
+(* the checker's pairwise incomparability, at two distinct row positions *)
+have hpair : forall jA jB : 'I_(alen (aget (L.geom_graph c) v1)), (jA < jB)%N ->
+    L.incomparable
+      (L.diff Uint63.ltb (L.activeSet (vertex_of v1))
+        (L.activeSet (PArray.get (L.vertices c)
+           (PArray.get (aget (L.geom_graph c) v1) (int_of_nat jB)))))
+      (L.diff Uint63.ltb (L.activeSet (vertex_of v1))
+        (L.activeSet (PArray.get (L.vertices c)
+           (PArray.get (aget (L.geom_graph c) v1) (int_of_nat jA))))).
+  move=> jA jB hAB.
+  have /andP[_ hpw] := geom_check_at hchk v1.
+  have hk12 : (alen (aget (L.geom_graph c) v1) - jB.+1
+               < alen (aget (L.geom_graph c) v1) - jA.+1)%N.
+    by apply: ltn_sub2l; [exact: leq_ltn_trans hAB (ltn_ord jB) | exact: hAB].
+  have := pairwise_incomparable_nth hpw hk12 (geom_diffs_index jA).
+  by rewrite !geom_diffs_nth.
+(* row entries carry w1 and w2 *)
+have hvw1 : PArray.get (L.vertices c)
+              (PArray.get (aget (L.geom_graph c) v1) (int_of_nat j1)) = vertex_of w1.
+  by rewrite /vertex_of /aget -hj1 nat_of_intK.
+have hvw2 : PArray.get (L.vertices c)
+              (PArray.get (aget (L.geom_graph c) v1) (int_of_nat j2)) = vertex_of w2.
+  by rewrite /vertex_of /aget -hj2 nat_of_intK.
+have hinc : L.incomparable
+    (L.diff Uint63.ltb (L.activeSet (vertex_of v1)) (L.activeSet (vertex_of w1)))
+    (L.diff Uint63.ltb (L.activeSet (vertex_of v1)) (L.activeSet (vertex_of w2))).
+  case hlt: (j1 < j2)%N.
+    have h := hpair j1 j2 hlt; rewrite hvw1 hvw2 in h.
+    by move: h => /andP[h21 h12]; apply/andP; split; [exact: h12 | exact: h21].
+  have hlt2 : (j2 < j1)%N.
+    rewrite ltn_neqAle; apply/andP; split.
+      by apply/eqP => he; apply: hj12; apply/val_inj; exact: esym he.
+    by rewrite leqNgt hlt.
+  by have h := hpair j2 j1 hlt2; rewrite hvw1 hvw2 in h.
+have hsorted1 := diff_sorted (activeSet_sorted v1 hact) (activeSet_sorted w1 hact).
+have hsorted2 := diff_sorted (activeSet_sorted v1 hact) (activeSet_sorted w2 hact).
+have [[y1 [hy1 hy1']] [y2 [hy2 hy2']]] := incomparable_sound hsorted1 hsorted2 hinc.
+rewrite -hp1 -hpw1 -hpw2 !hAS /H.incomparable.
+have hy1m : (y1 < m)%N := diff_lt_m hm hact hy1.
+have hy2m : (y2 < m)%N := diff_lt_m hm hact hy2.
+apply/andP; split; apply/subsetPn.
+  exists (Ordinal hy1m).
+    by rewrite -(diff_seq_setE hm v1 w1 hact (Ordinal hy1m)); exact: hy1.
+  apply/negP; rewrite -(diff_seq_setE hm v1 w2 hact (Ordinal hy1m)) => hin2.
+  by rewrite hin2 in hy1'.
+exists (Ordinal hy2m).
+  by rewrite -(diff_seq_setE hm v1 w2 hact (Ordinal hy2m)); exact: hy2.
+apply/negP; rewrite -(diff_seq_setE hm v1 w1 hact (Ordinal hy2m)) => hin1.
+by rewrite hin1 in hy2'.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* Assembly: the GraphEquality checker                                        *)
+(* -------------------------------------------------------------------------- *)
+
+(* The five geometric-graph conditions follow from the two checker bundles;
+   the image condition comes in its corrected form
+   ([geomGraphIsImageOfGraph_ne]). *)
+Theorem graph_equality_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) (hnf : (0 < nf)%N)
+    (hd : (0 < d)%N) :
+  L.VtxContainment.check_certificate c -> L.GraphEquality.check_certificate c ->
+  [/\ @H.geomGraphVerticesArePoints d R hpoly_of points_of (interp_cert hm),
+      geomGraphIsImageOfGraph_ne hm,
+      @H.geom_edge_pairwise_check d R hpoly_of (interp_cert hm),
+      @H.connectivity_check d R hpoly_of (interp_cert hm) &
+      @H.geom_edge_difference_pairwise_check d R hpoly_of (interp_cert hm)].
+Proof.
+move=> /certP[/wfP hwf hfeas _ hgraph _] /geqP[[hg hsrc htgt] [himg hpair hconn]].
+move: hgraph; rewrite /L.graph_check; cbv zeta => /andP[hreg _].
+split.
+- exact: (geomGraphVerticesArePoints_correct hm).
+- have h := geomGraphIsImageOfGraph_correct (hm := hm) hnv hnf hd (wf_graph hwf) (wf_desc hwf)
+              (wf_map hwf) (wf_fu hwf) hreg hg hsrc htgt himg.
+  exact: h.
+- have h := geom_edge_pairwise_correct (hm := hm) (wf_ineq hwf) (wf_pts hwf) (wf_act hwf)
+              (wf_asu hwf) hfeas hg hpair.
+  exact: h.
+- have h := connectivity_correct (hm := hm) hnv hg hconn.
+  exact: h.
+- have h := geom_edge_difference_pairwise_correct (hm := hm) (wf_ineq hwf) (wf_pts hwf)
+              (wf_act hwf) (wf_asu hwf) hfeas hpair.
+  exact: h.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
