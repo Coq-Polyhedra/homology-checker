@@ -30,6 +30,46 @@ Extract Constant PArray.get => "Native_array.get".
 Extract Constant PArray.length => "Native_array.length".
 
 (**
+  [BigArray.array] (see BigArray.v) is the chunked two-level array holding the
+  two per-facet tables: [BigArray.get] is a [PArray] get on the chunk row
+  followed by a [PArray] get inside that row, and the shape invariant [wf] --
+  a [Prop] field of the record, erased by extraction -- guarantees
+  ceil(n / 2^21) rows, every row full but the last, and the empty row as the
+  outer default.  OCaml native arrays reach 2^54 entries, far beyond
+  [BigArray.max_length] = 2^43 - 2^21, so the chunking is only needed on the
+  Coq side: the two big tables are realized FLAT, by the very arrays that
+  already realize [PArray].
+
+  Observable behavior is preserved by the flattening [Mk cs n _ |-> a], where
+  [a] is the [Native_array.t] whose [data] are [rget cs 0], ..., [rget cs (n-1)]
+  and whose [default] is [PArray.default (PArray.default cs)]:
+  - [BigArray.length (Mk cs n _)] is [n], which is [Native_array.length a];
+  - for [i < n], [BigArray.get (Mk cs n _) i = rget cs i = a.data.(i)], which is
+    what [Native_array.get] returns in bounds;
+  - for [i >= n], [BigArray.get_out_of_bounds] gives [BigArray.default], that is
+    [PArray.default (PArray.default cs)] -- exactly the [a.default] returned by
+    [Native_array.get] out of bounds.  Both notions of "out of bounds" agree:
+    [Native_array.get] also rejects the Uint63 values in [2^62, 2^63), which are
+    negative as OCaml ints, and those are past [n] for any representable [n].
+  The loader already builds flat native arrays for [graph] and [facets], so the
+  extracted [bGraph] and [bFacets] are literally the flat
+  [Uint63.t Native_array.t Native_array.t] and [facet Native_array.t] it
+  produces; the nested tuple consumed by [build_cert] is unchanged.
+
+  Only [get] and [length] are reachable from the three entry points: [make] and
+  [set] are used by the Coq-side decoder alone, and the BFS -- realized whole by
+  [Native_graph.bfs] -- runs on the [PArray]-backed [geom_graph].  The
+  constructor therefore needs no realization, and is mapped to a deliberately
+  undefined OCaml identifier: should a future revision make [BigArray.Mk]
+  reachable, the extracted code fails to compile instead of silently building a
+  mis-shaped value.
+*)
+Extract Inductive BigArray.array => "Native_array.t"
+  [ "bigarray_constructor_is_not_realized" ].
+Extract Constant BigArray.get => "Native_array.get".
+Extract Constant BigArray.length => "Native_array.length".
+
+(**
   The proof-oriented definition of [ifold_] is a depth-63 binary recursion.
   Its extracted form allocates and destructures an [(index, accumulator)] pair
   at every logical iteration.  A Uint63 loop can reach every final index in at

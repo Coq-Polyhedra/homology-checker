@@ -235,9 +235,9 @@ Qed.
 
 (* Facets: the certificate's descriptions, as sets of inequality indices.
    Vertex indices are dereferenced directly. *)
-Local Notation nf := (alen (L.facets c)).
+Local Notation nf := (balen (L.facets c)).
 
-Definition facet_of (k : 'I_nf) : L.Facet := aget (L.facets c) k.
+Definition facet_of (k : 'I_nf) : L.Facet := baget (L.facets c) k.
 Definition desc_of (k : 'I_nf) : {set 'I_m} := set_of_array m (L.description (facet_of k)).
 Definition facets_of : {set {set 'I_m}} := [set desc_of k | k : 'I_nf].
 Definition point_at (i : int) : 'cV[R]_d := point_of R d (L.point (PArray.get (L.vertices c) i)).
@@ -248,7 +248,7 @@ by rewrite /point_of_vertex /vertex_of /aget -[nat_of_ord (Ordinal hx)]/(nat_of_
 Qed.
 
 (* The facet graph: the descriptions of adjacent facet indices are adjacent. *)
-Definition nbrs (k : 'I_nf) : {set 'I_nf} := set_of_array nf (aget (L.graph c) k).
+Definition nbrs (k : 'I_nf) : {set 'I_nf} := set_of_array nf (baget (L.graph c) k).
 Definition gedge (f f' : {set 'I_m}) : bool :=
   [exists k : 'I_nf, [exists w : 'I_nf, [&& desc_of k == f, desc_of w == f' & w \in nbrs k]]].
 Definition gvertices : {fset {set 'I_m}} := [fset desc_of k | k : 'I_nf]%fset.
@@ -288,7 +288,7 @@ Qed.
    high-level T4/T5 inner products equal to the checker's <n_i, W_j>. *)
 Local Notation root := (L.root c).
 Local Notation kstar := (L.simplexIndex root).
-Local Notation fstar := (PArray.get (L.facets c) kstar).
+Local Notation fstar := (BigArray.get (L.facets c) kstar).
 Local Notation vstar := (L.mapping fstar).
 Local Notation dstar := (L.description fstar).
 Local Notation astar := (L.activeSet (PArray.get (L.vertices c) vstar)).
@@ -325,7 +325,7 @@ Local Notation Wt := (L.weights root).
    special vertex; [rank k] is the checker's running counter when it visits k. *)
 Definition qual (k : nat) : bool :=
   ~~ (int_of_nat k =? kstar)%uint63
-  && (L.mapping (PArray.get (L.facets c) (int_of_nat k)) =? vstar)%uint63.
+  && (L.mapping (BigArray.get (L.facets c) (int_of_nat k)) =? vstar)%uint63.
 Definition rank (k : nat) : nat := count qual (iota 0 k).
 
 Lemma rankS k : rank k.+1 = (rank k + qual k)%N.
@@ -345,7 +345,7 @@ Definition weights_of (f : {set 'I_m}) : 'cV[R]_d :=
 Lemma weight_rank_lt (k : 'I_nf) : L.areWeightsWellFormed c -> qual k -> (rank k < alen Wt)%N.
 Proof.
 move=> hwt hq.
-move: hwt; rewrite /L.areWeightsWellFormed; cbv zeta => /andP[]; rewrite eqb_natE countiE.
+move: hwt; rewrite /L.areWeightsWellFormed; cbv zeta => /andP[]; rewrite eqb_natE bcountiE.
 rewrite -[nat_of_int (length Wt)]/(alen Wt) => /eqP -> _.
 have hsplit : forall n, (k <= n)%N ->
     count qual (iota 0 n) = (count qual (iota 0 k) + count qual (iota k (n - k)))%N.
@@ -436,14 +436,14 @@ Definition interp_cert (hm : (0 < m)%N) : H.Certificate R d :=
 Lemma mapping_ord (hnv : (0 < nv)%N) (k : 'I_nf) :
   L.isMappingWellFormed c -> (nat_of_int (L.mapping (facet_of k)) < nv)%N.
 Proof.
-rewrite /L.isMappingWellFormed; cbv zeta => /for_all_compose_alenP/(_ k) h.
+rewrite /L.isMappingWellFormed; cbv zeta => /bfor_all_compose_balenP/(_ k) h.
 by have h2 := inRangeP hnv h; exact: h2.
 Qed.
 
 Lemma desc_len (k : 'I_nf) : L.areDescriptionsWellFormed c -> alen (L.description (facet_of k)) = d.
 Proof.
 rewrite /L.areDescriptionsWellFormed; cbv zeta.
-by move=> /andP[_ /for_all_compose_alenP/(_ k)/hasLengthP].
+by move=> /andP[_ /bfor_all_compose_balenP/(_ k)/hasLengthP].
 Qed.
 
 Lemma desc_range (hm : (0 < m)%N) (k : 'I_nf) : L.areDescriptionsWellFormed c ->
@@ -451,14 +451,14 @@ Lemma desc_range (hm : (0 < m)%N) (k : 'I_nf) : L.areDescriptionsWellFormed c ->
     (nat_of_int (aget (L.description (facet_of k)) p) < m)%N.
 Proof.
 rewrite /L.areDescriptionsWellFormed; cbv zeta => /andP[/andP[_ hB] _].
-by have h2 := allInRange_ordP (k := k) hm hB; exact: h2.
+by have h2 := ballInRange_ordP (k := k) hm hB; exact: h2.
 Qed.
 
 Lemma desc_sorted (k : 'I_nf) : L.areDescriptionsWellFormed c ->
   L.isStrictlySorted Uint63.ltb (L.description (facet_of k)).
 Proof.
 rewrite /L.areDescriptionsWellFormed; cbv zeta.
-by move=> /andP[/andP[/for_all_compose_alenP/(_ k) h _] _].
+by move=> /andP[/andP[/bfor_all_compose_balenP/(_ k) h _] _].
 Qed.
 
 Lemma kstar_ord (hnf : (0 < nf)%N) : L.isSimplexIndexWellFormed c -> (nat_of_int kstar < nf)%N.
@@ -468,7 +468,7 @@ by have h2 := inRangeP hnf h; exact: h2.
 Qed.
 
 Lemma facet_of_kstar (hk : (nat_of_int kstar < nf)%N) : facet_of (Ordinal hk) = fstar.
-Proof. by rewrite /facet_of /aget -[nat_of_ord (Ordinal hk)]/(nat_of_int kstar) nat_of_intK. Qed.
+Proof. by rewrite /facet_of /baget -[nat_of_ord (Ordinal hk)]/(nat_of_int kstar) nat_of_intK. Qed.
 
 (* The special simplex is the root facet's description. *)
 Lemma specialSimplex_img (hm : (0 < m)%N) (hk : (nat_of_int kstar < nf)%N)
@@ -489,54 +489,51 @@ have hj' : (nat_of_int (aget dstar (cast_ord hlen j)) < m)%N := hrange j.
 by apply/val_inj; rewrite /specialSimplex_of val_insubd hj' /= -hj.
 Qed.
 
-Lemma graph_len : L.isGraphWellFormed c -> alen (L.graph c) = nf.
+Lemma graph_len : L.isGraphWellFormed c -> balen (L.graph c) = nf.
 Proof.
 rewrite /L.isGraphWellFormed; cbv zeta => /andP[/andP[/andP[hl _] _] _].
-by rewrite eqb_natE in hl; move/eqP: hl => hl; exact: hl.
+by rewrite eqb_balenE in hl; move/eqP: hl => hl; exact: hl.
 Qed.
 
-Lemma nbrs_ord (hg : L.isGraphWellFormed c) (k : 'I_nf) (j : 'I_(alen (aget (L.graph c) k))) :
-  (nat_of_int (aget (aget (L.graph c) k) j) < nf)%N.
+Lemma nbrs_ord (hg : L.isGraphWellFormed c) (k : 'I_nf) (j : 'I_(alen (baget (L.graph c) k))) :
+  (nat_of_int (aget (baget (L.graph c) k) j) < nf)%N.
 Proof.
 have hlen := graph_len hg; have hnf : (0 < nf)%N := leq_ltn_trans (leq0n _) (ltn_ord k).
-have h0 : (0 < alen (L.graph c))%N by rewrite hlen.
 move: hg; rewrite /L.isGraphWellFormed; cbv zeta => /andP[/andP[/andP[_ hv] _] _].
-move: hv; rewrite /L.for_all_matrix => /(for_allP _ hlen)/(_ k)/for_all_alenP/(_ j).
-rewrite /L.isVertex /L.isValidIndex => h.
-have h2 : (nat_of_int (aget (aget (L.graph c) k) j) < alen (L.graph c))%N := inRangeP h0 h.
-by rewrite hlen in h2.
+have h2 := bvertex_matrixP hlen hnf hv; exact: (h2 k j).
 Qed.
 
 (* Every adjacency row has exactly [d] entries (first conjunct of [L.graph_check]):
    one neighbour per ridge of the facet. *)
 Lemma row_len (hg : L.isGraphWellFormed c) (k : 'I_nf) :
-  L.for_all (L.hasLength (L.dimension c)) (L.graph c) -> alen (aget (L.graph c) k) = d.
+  L.bfor_all (L.hasLength (L.dimension c)) (L.graph c) -> alen (baget (L.graph c) k) = d.
 Proof.
-by move=> /(for_allP _ (graph_len hg))/(_ k)/hasLengthP.
+by move=> /(bfor_allP _ (graph_len hg))/(_ k)/hasLengthP.
 Qed.
 
 Lemma nbrs_len (hg : L.isGraphWellFormed c) (k : 'I_nf) :
-  L.for_all (L.hasLength (L.dimension c)) (L.graph c) -> (alen (aget (L.graph c) k) <= d)%N.
+  L.bfor_all (L.hasLength (L.dimension c)) (L.graph c) -> (alen (baget (L.graph c) k) <= d)%N.
 Proof. by move/(row_len hg k) => ->. Qed.
 
 Lemma nbrs_irrefl (hg : L.isGraphWellFormed c) (k : 'I_nf) : k \notin nbrs k.
 Proof.
 have hlen := graph_len hg; move: hg.
 rewrite /L.isGraphWellFormed; cbv zeta => /andP[/andP[_ hnl] _].
-move: hnl; rewrite /L.hasNoLoops => /(for_alliP _ hlen)/(_ k); cbv beta.
-rewrite /L.hasLocallyNoLoop /L.mem; apply: contra; rewrite /nbrs => /in_set_of_array[j hj].
+move: hnl => /(bhasNoLoopsP hlen)/(_ k).
+rewrite /L.bhasLocallyNoLoop bagetE /L.mem; apply: contra.
+rewrite /nbrs => /in_set_of_array[j hj].
 apply/exist_alenP; exists j; cbv beta; rewrite eqb_natE hj.
-by rewrite (int_of_natK_le (i := alength (L.facets c)) (ltnW (ltn_ord k))) eqxx.
+by rewrite (int_of_natK_le (i := blength (L.facets c)) (ltnW (ltn_ord k))) eqxx.
 Qed.
 
 Lemma nbrs_sym (hg : L.isGraphWellFormed c) (k w : 'I_nf) : w \in nbrs k -> k \in nbrs w.
 Proof.
 have hlen := graph_len hg; move: hg.
 rewrite /L.isGraphWellFormed; cbv zeta => /andP[_ hu].
-move: hu; rewrite /L.isUndirected => /(for_alliP _ hlen)/(_ k); cbv beta.
-rewrite /L.isLocallyUndirected => /for_all_alenP hk /in_set_of_array[j hj].
-have hw : aget (L.graph c) w = PArray.get (L.graph c) (aget (aget (L.graph c) k) j).
-  by rewrite /aget -hj nat_of_intK.
+move: hu => /(bisUndirectedP hlen)/(_ k).
+rewrite /L.bisLocallyUndirected bagetE => /for_all_alenP hk /in_set_of_array[j hj].
+have hw : baget (L.graph c) w = BigArray.get (L.graph c) (aget (baget (L.graph c) k) j).
+  by rewrite /baget -hj nat_of_intK.
 have := hk j; cbv beta; rewrite /L.mem => /exist_alenP[p hp].
 rewrite /nbrs hw; apply/in_set_of_array; exists p.
 move: hp; cbv beta; rewrite eqb_natE => /eqP <-.
@@ -660,10 +657,10 @@ Qed.
 
 Lemma geom_tgt_range (ht : L.areGeomEdgeLocalTargetsWellFormed c) (v : 'I_nv)
     (j : 'I_(alen (aget (L.geom_edge_local_targets c) v))) :
-  (0 < alen (PArray.get (L.graph c)
+  (0 < alen (BigArray.get (L.graph c)
         (PArray.get (aget (L.geom_edge_sources c) v) (int_of_nat j))))%N ->
   (nat_of_int (aget (aget (L.geom_edge_local_targets c) v) j)
-   < alen (PArray.get (L.graph c)
+   < alen (BigArray.get (L.graph c)
         (PArray.get (aget (L.geom_edge_sources c) v) (int_of_nat j))))%N.
 Proof.
 move=> h0; have hlen := geom_tgt_len ht; move: ht.
@@ -671,7 +668,7 @@ rewrite /L.areGeomEdgeLocalTargetsWellFormed; cbv zeta => /andP[_ hr].
 move: hr => /for_alli_matrixP h.
 have hh := h (cast_ord (esym hlen) v) j.
 have hin : L.inRange Uint63.leb 0%uint63
-    (length (PArray.get (L.graph c)
+    (length (BigArray.get (L.graph c)
        (PArray.get (aget (L.geom_edge_sources c) v) (int_of_nat j))) - 1)%uint63
     (aget (aget (L.geom_edge_local_targets c) v) j) := hh.
 by have h2 := inRangeP h0 hin; exact: h2.
@@ -757,14 +754,14 @@ Lemma desc_of_inj (hm : (0 < m)%N) :
   L.areDescriptionsWellFormed c -> L.areFacetsUnique c -> injective desc_of.
 Proof.
 move=> hdesc huniq.
-have h := sorted_sets_inj (g := L.description) (s := L.facets c) (n := m) huniq
+have h := bsorted_sets_inj (g := L.description) (s := L.facets c) (n := m) huniq
             (fun k => desc_sorted k hdesc) (fun k => desc_range hm hdesc (k := k)).
 exact: h.
 Qed.
 
 Lemma facet_of_ord (i : int) (hi : (nat_of_int i < nf)%N) :
-  facet_of (Ordinal hi) = PArray.get (L.facets c) i.
-Proof. by rewrite /facet_of /aget nat_of_intK. Qed.
+  facet_of (Ordinal hi) = BigArray.get (L.facets c) i.
+Proof. by rewrite /facet_of /baget nat_of_intK. Qed.
 
 Lemma mapping_of_desc (hm : (0 < m)%N) (k : 'I_nf) :
   L.areDescriptionsWellFormed c -> L.areFacetsUnique c ->
@@ -964,7 +961,7 @@ Qed.
 Theorem mapping_check_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) :
   L.isMappingWellFormed c -> L.mapping_check c -> @H.mapping_check d R (interp_cert hm).
 Proof.
-move=> hmapwf; rewrite /L.mapping_check; cbv zeta => /for_all_alenP hchk.
+move=> hmapwf; rewrite /L.mapping_check; cbv zeta => /bfor_all_balenP hchk.
 rewrite /H.mapping_check /interp_cert /H.facets /H.mapping /H.activeSets.
 move=> f /imsetP[k _ ->]; rewrite /mapping_of.
 case: pickP => [k' /eqP <-|/(_ k)]; last by rewrite eqxx.
@@ -992,19 +989,19 @@ split.
     move: hE => /existsP[k /existsP[w /and3P[/eqP hk /eqP hw hnb]]].
     by rewrite -hw; apply: imset_f; rewrite -(hinj _ _ hk).
   apply: (leq_trans (subset_leq_card hsub)); apply: (leq_trans (leq_imset_card desc_of (nbrs k0))).
-  have h := leq_trans (card_set_of_array nf (aget (L.graph c) k0)) (nbrs_len hg k0 hreg).
+  have h := leq_trans (card_set_of_array nf (baget (L.graph c) k0)) (nbrs_len hg k0 hreg).
   exact: h.
 - move=> i /in_set_of_array[j hj].
   have hd := desc_len k0 hdesc; have hr := row_len hg k0 hreg.
-  have hj' : (j < alen (aget (L.graph c) k0))%N by rewrite hr -hd.
-  pose w_int := aget (aget (L.graph c) k0) (Ordinal hj').
+  have hj' : (j < alen (baget (L.graph c) k0))%N by rewrite hr -hd.
+  pose w_int := aget (baget (L.graph c) k0) (Ordinal hj').
   have hw : (nat_of_int w_int < nf)%N := nbrs_ord hg (Ordinal hj').
   pose w : 'I_nf := Ordinal hw.
   have hwn : w \in nbrs k0 by apply/in_set_of_array; exists (Ordinal hj').
-  have hfw : facet_of w = PArray.get (L.facets c) w_int by rewrite -(nat_of_intK w_int).
+  have hfw : facet_of w = BigArray.get (L.facets c) w_int by rewrite -(nat_of_intK w_int).
   have hri : L.isRidgeInFacet (L.description (facet_of k0)) (L.description (facet_of w))
                (aget (L.description (facet_of k0)) j).
-    rewrite hfw; move: hridge => /(for_alliP _ (graph_len hg))/(_ k0); cbv beta zeta.
+    rewrite hfw; move: hridge => /(bfor_alliP _ (graph_len hg))/(_ k0); cbv beta zeta.
     by move=> /(for_alliP _ erefl)/(_ (Ordinal hj')); cbv beta zeta.
   exists (desc_of w); split.
     rewrite in_succ_of; apply/and3P; split; last first.
@@ -1044,7 +1041,7 @@ have hval : nat_of_ord (specialSimplex_of hm i) = nat_of_int (aget dstar i).
 have hineq_sp : ineq_of (specialSimplex_of hm i) = PArray.get (L.inequalities c) (aget dstar i).
   by rewrite /ineq_of {1}/aget hval nat_of_intK.
 have hsubset : L.subset Uint63.ltb dstar astar.
-  move: hmap; rewrite /L.mapping_check; cbv zeta => /for_all_alenP/(_ k0).
+  move: hmap; rewrite /L.mapping_check; cbv zeta => /bfor_all_balenP/(_ k0).
   by cbv beta; rewrite -/(facet_of k0) hf0.
 have [q [hq hqi]] := subset_arr_all hsubset hdi.
 rewrite (sp_AI_entry j hineq hai hw hsp hspc (ex_intro _ q (conj hq hqi)) hrange).
@@ -1095,7 +1092,7 @@ Qed.
   L.for_all (fun i =>
       L.isSparseVectorPositive (PArray.get Wt r)
       && (L.sparse_array_bigZ_dot (PArray.get Wt r) (PArray.get SP (PArray.get AI i)) <=? 0)%bigZ)
-    (L.description (PArray.get (L.facets c) (int_of_nat k))).
+    (L.description (BigArray.get (L.facets c) (int_of_nat k))).
 
 (* One step of the separability fold, as produced by [ifoldE]. *)
 #[local] Definition sstep5 (acc : bool * int) (k : nat) : bool * int :=
@@ -1112,8 +1109,8 @@ move=> hk; case: acc => [b r]; rewrite /INV5 /sstep5 rankS /= => -[h2 h1]; case 
     by rewrite hq' in hq.
   exact: h1.
 rewrite addn1; split.
-  rewrite h2; apply: (int_of_natS (M := alength (L.facets c))).
-  by rewrite -[nat_of_int (alength _)]/(alen (L.facets c)); exact: rank_lt_nf.
+  rewrite h2; apply: (int_of_natS (M := BigArray.length (L.facets c))).
+  by rewrite balenE; exact: rank_lt_nf.
 move=> /andP[hacc hw] k'; rewrite ltnS leq_eqVlt => /orP[/eqP->|hk'] hq'; last exact: h1.
 by rewrite -h2.
 Qed.
@@ -1132,8 +1129,7 @@ Lemma separabilityP : L.separability_check c ->
   forall k : 'I_nf, qual k -> wcheck k (int_of_nat (rank k)).
 Proof.
 have -> : L.separability_check c = (foldl sstep5 (true, 0%uint63) (iota 0 nf)).1.
-  rewrite /L.separability_check; cbv zeta; rewrite /L.foldi ifoldE; cbv beta.
-  by rewrite -[nat_of_int (length (L.facets c))]/(alen (L.facets c)).
+  by rewrite /L.separability_check; cbv zeta; rewrite bfoldiE; cbv beta.
 have hinv0 : INV5 0 (true, 0%uint63).
   by split; [rewrite /rank /= int_of_nat0 | move=> _ k'; rewrite ltn0].
 have := foldl_sstep5_inv (m := nf) (k := 0) (acc := (true, 0%uint63)) (leqnn _) hinv0.
@@ -1171,7 +1167,7 @@ have hle : bigZ2R R (L.sparse_array_bigZ_dot w (PArray.get SP (PArray.get AI x))
 have hmk : L.mapping (facet_of k) = vstar.
   by move: hq => /andP[_ hq']; exact: Uint63.eqb_correct.
 have hsubset : L.subset Uint63.ltb (L.description (facet_of k)) astar.
-  move: hmap; rewrite /L.mapping_check; cbv zeta => /for_all_alenP/(_ k); cbv beta.
+  move: hmap; rewrite /L.mapping_check; cbv zeta => /bfor_all_balenP/(_ k); cbv beta.
   by rewrite -/(facet_of k) -[(facet_of k).2]/(L.mapping (facet_of k)) hmk.
 have [q [hq' hqx]] := subset_arr_all hsubset (ltn_ord p).
 (* dimension 0: nothing to prove *)
@@ -1401,7 +1397,7 @@ Lemma geomGraphIsImageOfGraph_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N)
     (hnf : (0 < nf)%N) (hd : (0 < d)%N) :
   L.isGraphWellFormed c -> L.areDescriptionsWellFormed c -> L.isMappingWellFormed c ->
   L.areFacetsUnique c ->
-  L.for_all (L.hasLength (L.dimension c)) (L.graph c) ->
+  L.bfor_all (L.hasLength (L.dimension c)) (L.graph c) ->
   L.isGeomGraphWellFormed c -> L.areGeomEdgeSourcesWellFormed c ->
   L.areGeomEdgeLocalTargetsWellFormed c -> L.graph_image_check c ->
   geomGraphIsImageOfGraph_ne hm.
@@ -1423,36 +1419,36 @@ move=> v w; rewrite hGE hGR hMA vtx_geom_graph_of vtx_graph_of => hv hw hvw; spl
   have hjt : (j < alen (aget (L.geom_edge_local_targets c) v1))%N.
     by rewrite (geom_tgt_row_len htgt); exact: ltn_ord.
   have hsF : (nat_of_int SRC < nf)%N := geom_src_range hnf hsrc (Ordinal hjs).
-  have hrowE : aget (L.graph c) (Ordinal hsF) = PArray.get (L.graph c) SRC.
-    by rewrite /aget nat_of_intK.
-  have h0 : (0 < alen (PArray.get (L.graph c) SRC))%N.
+  have hrowE : baget (L.graph c) (Ordinal hsF) = BigArray.get (L.graph c) SRC.
+    by rewrite /baget nat_of_intK.
+  have h0 : (0 < alen (BigArray.get (L.graph c) SRC))%N.
     by rewrite -hrowE (row_len hgf _ hreg); exact: hd.
-  have htF0 : (nat_of_int TJI < alen (PArray.get (L.graph c) SRC))%N
+  have htF0 : (nat_of_int TJI < alen (BigArray.get (L.graph c) SRC))%N
     := geom_tgt_range (j := Ordinal hjt) htgt h0.
-  have htji : (nat_of_int TJI < alen (aget (L.graph c) (Ordinal hsF)))%N.
+  have htji : (nat_of_int TJI < alen (baget (L.graph c) (Ordinal hsF)))%N.
     by rewrite hrowE; exact: htF0.
-  have htE : aget (aget (L.graph c) (Ordinal hsF)) (Ordinal htji)
-             = PArray.get (PArray.get (L.graph c) SRC) TJI.
+  have htE : aget (baget (L.graph c) (Ordinal hsF)) (Ordinal htji)
+             = PArray.get (BigArray.get (L.graph c) SRC) TJI.
     exact: eq_trans
       (congr1 (fun a : array int => PArray.get a (int_of_nat (nat_of_int TJI))) hrowE)
-      (congr1 (PArray.get (PArray.get (L.graph c) SRC)) (nat_of_intK TJI)).
-  have htF : (nat_of_int (PArray.get (PArray.get (L.graph c) SRC) TJI) < nf)%N.
+      (congr1 (PArray.get (BigArray.get (L.graph c) SRC)) (nat_of_intK TJI)).
+  have htF : (nat_of_int (PArray.get (BigArray.get (L.graph c) SRC) TJI) < nf)%N.
     by rewrite -htE; exact: (nbrs_ord hgf (Ordinal htji)).
   have hnbr : Ordinal htF \in nbrs (Ordinal hsF).
     by apply/in_set_of_array; exists (Ordinal htji); rewrite htE.
   move: himg2 => /for_alli_matrixP hcell.
   have hij := hcell (cast_ord (esym (geom_graph_len hg)) v1) j.
-  have hcE : (int_of_nat v1 =? L.mapping (PArray.get (L.facets c) SRC))%uint63
+  have hcE : (int_of_nat v1 =? L.mapping (BigArray.get (L.facets c) SRC))%uint63
              && (aget (aget (L.geom_graph c) v1) j
-                 =? L.mapping (PArray.get (L.facets c)
-                      (PArray.get (PArray.get (L.graph c) SRC) TJI)))%uint63 := hij.
+                 =? L.mapping (BigArray.get (L.facets c)
+                      (PArray.get (BigArray.get (L.graph c) SRC) TJI)))%uint63 := hij.
   case/andP: hcE => hc1 hc2.
   move: hc1; rewrite eqb_natE (int_of_natK_le (ltnW (ltn_ord v1))) => /eqP hc1.
   move: hc2; rewrite eqb_natE hj => /eqP hc2.
-  have hbv : (nat_of_int (L.mapping (PArray.get (L.facets c) SRC)) < nv)%N.
+  have hbv : (nat_of_int (L.mapping (BigArray.get (L.facets c) SRC)) < nv)%N.
     by rewrite -hc1; exact: ltn_ord.
-  have hbw : (nat_of_int (L.mapping (PArray.get (L.facets c)
-                (PArray.get (PArray.get (L.graph c) SRC) TJI))) < nv)%N.
+  have hbw : (nat_of_int (L.mapping (BigArray.get (L.facets c)
+                (PArray.get (BigArray.get (L.graph c) SRC) TJI))) < nv)%N.
     by rewrite -hc2; exact: ltn_ord.
   exists (desc_of (Ordinal hsF)), (desc_of (Ordinal htF)); split; [|split; [|split]].
   + by apply/imfsetP; exists (Ordinal hsF).
@@ -1479,15 +1475,15 @@ move=> v w; rewrite hGE hGR hMA vtx_geom_graph_of vtx_graph_of => hv hw hvw; spl
   move: hmv; rewrite (mapping_of_desc hm _ hdesc hfu) (point_at_ord hb1) => hpv.
   move: hmw; rewrite (mapping_of_desc hm _ hdesc hfu) (point_at_ord hb2) => hpw'.
   move: hnb => /in_set_of_array[p hp].
-  move: himg1 => /for_alli_matrixP hcell.
+  move: himg1 => /bfor_alli_matrix_balenP hcell.
   have hij := hcell (cast_ord (esym (graph_len hgf)) k) p.
   have hcE : (L.mapping (facet_of k)
-              =? L.mapping (PArray.get (L.facets c) (aget (aget (L.graph c) k) p)))%uint63
+              =? L.mapping (BigArray.get (L.facets c) (aget (baget (L.graph c) k) p)))%uint63
              || L.mem_sorted Uint63.ltb
                   (PArray.get (L.geom_graph c) (L.mapping (facet_of k)))
-                  (L.mapping (PArray.get (L.facets c) (aget (aget (L.graph c) k) p))) := hij.
-  have hfwE : PArray.get (L.facets c) (aget (aget (L.graph c) k) p) = facet_of w'.
-    by rewrite /facet_of /aget -hp nat_of_intK.
+                  (L.mapping (BigArray.get (L.facets c) (aget (baget (L.graph c) k) p))) := hij.
+  have hfwE : BigArray.get (L.facets c) (aget (baget (L.graph c) k) p) = facet_of w'.
+    by rewrite /facet_of /baget -hp nat_of_intK.
   rewrite hfwE in hcE.
   case/orP: hcE => [heq|hmem].
     move: heq; rewrite eqb_natE => /eqP heq.
@@ -1828,7 +1824,7 @@ Context (R : realFieldType) (c : L.Certificate).
 Local Notation m := (nat_of_int (L.nb_inequalities c)).
 Local Notation d := (nat_of_int (L.dimension c)).
 Local Notation nv := (alen (L.vertices c)).
-Local Notation nf := (alen (L.facets c)).
+Local Notation nf := (balen (L.facets c)).
 
 Corollary vertex_containment (hm : (0 < m)%N) (hnv : (0 < nv)%N) (hnf : (0 < nf)%N)
     (hd : (0 < d)%N) :

@@ -1,5 +1,6 @@
 -Q src Cert
 
+src/BigArray.v
 src/LowLevelChecker.v
 src/OddCoveringTheorem.v
 src/HighLevelCertificate.v

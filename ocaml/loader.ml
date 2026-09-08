@@ -116,6 +116,37 @@ let array element = {
     Native_array.init length (fun _ -> element.read reader) default);
 }
 
+(* Capacity of the Coq-side [BigArray.array] (src/BigArray.v):
+   2^21 * (2^22 - 1) = 2^43 - 2^21. *)
+let big_max_length = Uint63.of_int 8796090925056
+
+(* The element combinator for the two tables the Coq certificate stores in a
+   [BigArray.array].  The wire format is exactly the one read by [array] above,
+   and by [read_big_array] / [big_array] in src/CertificateSchema.v: the same
+   length word, the same leading element supplying the array default, then the
+   same element stream in the same order, aborting on the same failures.  Only
+   two things differ.  The bound is [BigArray.max_length] rather than
+   [PArray.max_length]; that capacity is itself far below
+   [Sys.max_array_length] = 2^54 - 1 on a 64-bit runtime, so the flat OCaml
+   array is the looser of the two limits.  And the backing array is built here
+   rather than through [Native_array.init], which enforces the [PArray] bound;
+   the record produced is the same {data; default} that [Native_array.init]
+   would return, with [Array.init] applying its function to 0, 1, ..., n-1 in
+   that order, exactly as [Native_array.init] does. *)
+let big_array element = {
+  descriptor = Array element.descriptor;
+  read = (fun reader ->
+    let length = read_uint63 reader in
+    if not (Uint63.le length big_max_length) then
+      malformed reader "big-array length exceeds BigArray.max_length";
+    let default = element.read reader in
+    let count = Native_array.int_of_uint63 length in
+    {
+      Native_array.data = Array.init count (fun _ -> element.read reader);
+      Native_array.default = default;
+    });
+}
+
 let rec expect_descriptor reader = function
   | Int63 -> expect_tag reader 0L
   | BigN -> expect_tag reader 1L
@@ -144,7 +175,12 @@ let point = named "point" (pair z_array big_n)
 let flag = named "flag" (pair int_array int_array)
 let item = named "vertex" (pair int_array (pair point flag))
 let facet = named "facet" (pair int_array int63)
-let simplex_graph = named "simplex graph" (pair int_matrix (array facet))
+(* [graph] and [facets] -- LowLevelChecker's [BGraph] and [BFacets] -- are the
+   only two tables held in a [BigArray.array]; their inner rows and every other
+   table stay on the [PArray]-capped [array], mirroring the split made on the
+   Coq side in src/CertificateSchema.v. *)
+let simplex_graph =
+  named "simplex graph" (pair (big_array int_array) (big_array facet))
 let geom = named "geometric graph" (pair int_matrix (pair int_matrix int_matrix))
 let full_dim = named "full-dimensional witness" (pair point (pair z_matrix z_matrix))
 let sparse_entry = named "sparse entry" (pair int63 big_z)

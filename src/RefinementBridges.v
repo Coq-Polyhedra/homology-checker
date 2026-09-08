@@ -3,7 +3,8 @@
 (* and mathcomp: Uint63 <-> nat, iteration <-> folds and quantifiers,         *)
 (* bigZ <-> a realFieldType, arrays <-> vectors, sorted int arrays <-> finite *)
 (* sets, the merge-based subset/difference/lexicographic tests, the binary   *)
-(* search [L.mem_sorted], the BFS behind [L.isConnected], and the [IntList]   *)
+(* search [L.mem_sorted], the two-level [BigArray] tables of the per-facet    *)
+(* certificate data, the BFS behind [L.isConnected], and the [IntList]        *)
 (* tests on strictly decreasing sequences.                                    *)
 (*                                                                            *)
 (* Every lemma has a left-hand side in the low-level vocabulary (int, array,  *)
@@ -16,7 +17,7 @@ From Coq Require Import Uint63 PArray ZArith Lia.
 From Bignums Require Import BigZ BigN.
 From mathcomp Require Import all_ssreflect all_algebra.
 From Polyhedra Require Import inner_product.
-From Cert Require LowLevelChecker.
+From Cert Require BigArray LowLevelChecker.
 
 Module L := LowLevelChecker.
 
@@ -1614,6 +1615,275 @@ Qed.
 Lemma ifor_all_range0P (f : int -> bool) n :
   reflect (forall i : 'I_(nat_of_int n), f (int_of_nat i)) (L.ifor_all_range0 f n).
 Proof. exact: ifold_andP. Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* The two-level arrays [BigArray.array]: the per-facet tables                 *)
+(*                                                                            *)
+(* The certificate stores [facets] and [graph] as [BigArray.array]; the       *)
+(* checker iterates over them with the index-based [b*] combinators, which    *)
+(* are [ifold]/[ifor_all_range0] over [BigArray.length]/[BigArray.get]. Every *)
+(* bridge below therefore reduces to the corresponding [ifold] bridge above,  *)
+(* and its statement mirrors the [PArray] one with [balen]/[baget] on the     *)
+(* outer table. Inner rows stay [PArray] arrays, hence keep [alen]/[aget].    *)
+(*                                                                            *)
+(* [BigArray.array] lives at the single declared universe [barr], so the      *)
+(* anchoring discipline behind [alength]/[alen] is not needed here; the same  *)
+(* wrapper style is kept for uniformity (and so that lengths are read as      *)
+(* naturals everywhere).                                                      *)
+(* -------------------------------------------------------------------------- *)
+
+Section BigArrayBridge.
+
+Definition blength {T} (t : BigArray.array T) : int := BigArray.length t.
+Arguments blength : simpl never.
+Definition balen {T} (t : BigArray.array T) : nat := nat_of_int (blength t).
+Arguments balen : simpl never.
+
+(* Unlike [aget], indexed by naturals: the ordinal is recovered by the
+   coercion at every use site ([baget t i] for [i : 'I_(balen t)]), and the
+   [nat_of_int] spelling of a checker index stays readable. *)
+Definition baget {T} (t : BigArray.array T) (i : nat) : T := BigArray.get t (int_of_nat i).
+
+Lemma blengthE T (t : BigArray.array T) : BigArray.length t = blength t.
+Proof. by []. Qed.
+
+Lemma balenE T (t : BigArray.array T) : nat_of_int (BigArray.length t) = balen t.
+Proof. by []. Qed.
+
+Lemma bagetE T (t : BigArray.array T) (i : nat) : BigArray.get t (int_of_nat i) = baget t i.
+Proof. by []. Qed.
+
+Lemma baget_natE T (t : BigArray.array T) (x : int) : baget t (nat_of_int x) = BigArray.get t x.
+Proof. by rewrite /baget nat_of_intK. Qed.
+
+(* Arithmetic on big lengths, as for [alen] (bound: [2^43 - 2^21]). *)
+Lemma balen_bound T (t : BigArray.array T) :
+  (Z.of_nat (balen t) <= to_Z BigArray.max_length)%Z.
+Proof. by rewrite /balen -to_Z_nat_of_int; apply/Uint63.lebP; exact: BigArray.leb_length. Qed.
+
+Lemma ltb_balenE T (t : BigArray.array T) i : (i <? blength t)%uint63 = (nat_of_int i < balen t).
+Proof. by rewrite ltb_natE. Qed.
+
+Lemma add1_balenE T (t : BigArray.array T) (i : int) : (nat_of_int i < balen t)%N ->
+  nat_of_int (i + 1)%uint63 = (nat_of_int i).+1.
+Proof. by rewrite -ltb_balenE; exact: add1_natE. Qed.
+
+(* Spelled with [BigArray.length] on the left: this is the form the checker's
+   length conjuncts have. *)
+Lemma eqb_balenE T1 T2 (t1 : BigArray.array T1) (t2 : BigArray.array T2) :
+  (BigArray.length t1 =? BigArray.length t2)%uint63 = (balen t1 == balen t2).
+Proof. by rewrite eqb_natE !balenE. Qed.
+
+Lemma balen_set T (t : BigArray.array T) (i : int) (x : T) :
+  balen (BigArray.set t i x) = balen t.
+Proof. by rewrite /balen /blength BigArray.length_set. Qed.
+
+Lemma balen_make T (k : int) (x : T) :
+  (k <=? BigArray.max_length)%uint63 -> balen (BigArray.make k x) = nat_of_int k.
+Proof. by move=> h; rewrite /balen /blength BigArray.length_make h. Qed.
+
+(* Iteration bridges: the exact counterparts of [for_allP]/[for_alliP]. *)
+Lemma bfor_allP T (f : T -> bool) (t : BigArray.array T) n : balen t = n ->
+  reflect (forall i : 'I_n, f (baget t i)) (L.bfor_all f t).
+Proof.
+move=> <-; rewrite /balen /L.bfor_all /L.ifor_all_range0 ifoldE /= foldl_andb /=.
+exact: all_iotaP.
+Qed.
+
+Lemma bfor_alliP T (f : int -> T -> bool) (t : BigArray.array T) n : balen t = n ->
+  reflect (forall i : 'I_n, f (int_of_nat i) (baget t i)) (L.bfor_alli f t).
+Proof.
+move=> <-; rewrite /balen /L.bfor_alli /L.ifor_all_range0 ifoldE /= foldl_andb /=.
+exact: all_iotaP.
+Qed.
+
+Lemma bfor_all_composeP A B (f : B -> bool) (g : A -> B) (t : BigArray.array A) n :
+  balen t = n -> reflect (forall i : 'I_n, f (g (baget t i))) (L.bfor_all_compose f g t).
+Proof. move=> h; have h2 := bfor_allP (Basics.compose f g) h; exact: h2. Qed.
+
+(* Outer big, inner [PArray]: the inner quantification keeps [alen]/[aget]. *)
+Lemma bfor_all_matrixP T (f : T -> bool) (t : BigArray.array (array T)) n : balen t = n ->
+  reflect (forall (i : 'I_n) (j : 'I_(alen (baget t i))), f (aget (baget t i) j))
+          (L.bfor_all_matrix f t).
+Proof.
+move=> hn; rewrite /L.bfor_all_matrix.
+apply: (iffP (bfor_allP _ hn)) => h i; have := h i; cbv beta.
+  by move/for_all_alenP.
+by move=> hi; apply/for_all_alenP.
+Qed.
+
+Lemma bfor_alli_matrixP T (f : int -> int -> T -> bool) (t : BigArray.array (array T)) n :
+  balen t = n ->
+  reflect (forall (i : 'I_n) (j : 'I_(alen (baget t i))),
+             f (int_of_nat i) (int_of_nat j) (aget (baget t i) j))
+          (L.bfor_alli_matrix f t).
+Proof.
+move=> hn; rewrite /L.bfor_alli_matrix.
+apply: (iffP (bfor_alliP _ hn)) => h i; have := h i; cbv beta.
+  by move/for_alli_alenP.
+by move=> hi; apply/for_alli_alenP.
+Qed.
+
+(* The same reflections with the length pre-instantiated to [balen t]. *)
+Lemma bfor_all_balenP T (f : T -> bool) (t : BigArray.array T) :
+  reflect (forall i : 'I_(balen t), f (baget t i)) (L.bfor_all f t).
+Proof. by apply: bfor_allP. Qed.
+
+Lemma bfor_alli_balenP T (f : int -> T -> bool) (t : BigArray.array T) :
+  reflect (forall i : 'I_(balen t), f (int_of_nat i) (baget t i)) (L.bfor_alli f t).
+Proof. by apply: bfor_alliP. Qed.
+
+Lemma bfor_all_compose_balenP A B (f : B -> bool) (g : A -> B) (t : BigArray.array A) :
+  reflect (forall i : 'I_(balen t), f (g (baget t i))) (L.bfor_all_compose f g t).
+Proof. by apply: bfor_all_composeP. Qed.
+
+Lemma bfor_all_matrix_balenP T (f : T -> bool) (t : BigArray.array (array T)) :
+  reflect (forall (i : 'I_(balen t)) (j : 'I_(alen (baget t i))), f (aget (baget t i) j))
+          (L.bfor_all_matrix f t).
+Proof. by apply: bfor_all_matrixP. Qed.
+
+Lemma bfor_alli_matrix_balenP T (f : int -> int -> T -> bool) (t : BigArray.array (array T)) :
+  reflect (forall (i : 'I_(balen t)) (j : 'I_(alen (baget t i))),
+             f (int_of_nat i) (int_of_nat j) (aget (baget t i) j))
+          (L.bfor_alli_matrix f t).
+Proof. by apply: bfor_alli_matrixP. Qed.
+
+(* Folds and the counter, as [foldl]/[count] over [iota 0 (balen t)]. *)
+Lemma bfoldE T A (f : T -> A -> A) (t : BigArray.array T) (x0 : A) :
+  L.bfold f t x0 = foldl (fun acc j => f (baget t j) acc) x0 (iota 0 (balen t)).
+Proof. by rewrite /L.bfold ifoldE. Qed.
+
+Lemma bfoldiE T A (f : int -> T -> A -> A) (t : BigArray.array T) (x0 : A) :
+  L.bfoldi f t x0 = foldl (fun acc j => f (int_of_nat j) (baget t j) acc) x0 (iota 0 (balen t)).
+Proof. by rewrite /L.bfoldi ifoldE. Qed.
+
+Lemma bcountiE T (P : int -> T -> bool) (t : BigArray.array T) :
+  nat_of_int (L.bcounti P t)
+  = count (fun j => P (int_of_nat j) (baget t j)) (iota 0 (balen t)).
+Proof.
+rewrite /L.bcounti bfoldiE (@foldl_count_int _ _ _ (blength t)) ?nat_of_int0 ?add0n //.
+by rewrite size_iota -[nat_of_int (blength t)]/(balen t) leqnn.
+Qed.
+
+(* Strict sortedness of a big table, consecutive entries first. *)
+Lemma bisStrictlySorted_consecT T (ltT : T -> T -> bool) (t : BigArray.array T) :
+  L.bisStrictlySorted ltT t ->
+  forall (k k' : 'I_(balen t)), k' = k.+1 :> nat -> ltT (baget t k) (baget t k').
+Proof.
+rewrite /L.bisStrictlySorted => /bfor_alli_balenP h k k' hk'.
+have hk : k.+1 < balen t by rewrite -hk'; exact: ltn_ord.
+have hkk : nat_of_int (int_of_nat k) = k.
+  by apply: (int_of_natK_le (i := blength t)); exact: ltnW.
+have := h k; cbv beta; rewrite /L.bcompareConsecutive leb_natE hkk.
+rewrite sub1_natE; last by exact: leq_ltn_trans hk.
+rewrite balenE leqNgt ltn_predRL hk /= (int_of_natS (ltnW hk)).
+by rewrite /baget hk'.
+Qed.
+
+Lemma bisStrictlySorted_mono (t : BigArray.array int) : L.bisStrictlySorted Uint63.ltb t ->
+  forall j1 j2, j1 < j2 -> j2 < balen t ->
+    nat_of_int (baget t j1) < nat_of_int (baget t j2).
+Proof.
+move=> hs; apply: (consec_chain (R := fun x y : nat => (x < y)%N)
+                                (E := fun k => nat_of_int (baget t k))
+                                (fun x y z => @ltn_trans y x z)).
+move=> k hk; cbv beta; rewrite -ltb_natE.
+have h := bisStrictlySorted_consecT (k := Ordinal (ltnW hk)) (k' := Ordinal hk) hs erefl.
+exact: h.
+Qed.
+
+Lemma bisStrictlySorted_leq (t : BigArray.array int) : L.bisStrictlySorted Uint63.ltb t ->
+  forall j1 j2, j1 <= j2 -> j2 < balen t ->
+    nat_of_int (baget t j1) <= nat_of_int (baget t j2).
+Proof.
+move=> hs j1 j2; rewrite leq_eqVlt => /orP[/eqP->|hlt] hj2; first exact: leqnn.
+exact: ltnW (bisStrictlySorted_mono hs hlt hj2).
+Qed.
+
+(* The big counterpart of [sorted_sets_inj]: a big table of records whose
+   [PArray] descriptions are strictly sorted and lexicographically increasing
+   has pairwise distinct sets of entries. *)
+Lemma bsorted_sets_inj T (g : T -> array int) (s : BigArray.array T) n :
+  L.bisStrictlySorted (fun x y => L.ltbArray Uint63.eqb Uint63.ltb (g x) (g y)) s ->
+  (forall k : 'I_(balen s), L.isStrictlySorted Uint63.ltb (g (baget s k))) ->
+  (forall (k : 'I_(balen s)) (j : 'I_(alen (g (baget s k)))),
+     nat_of_int (aget (g (baget s k)) j) < n) ->
+  injective (fun k : 'I_(balen s) => set_of_array n (g (baget s k))).
+Proof.
+move=> huniq hsort hrange.
+suff hlt : forall k1 k2 : 'I_(balen s), k1 < k2 ->
+    set_of_array n (g (baget s k1)) <> set_of_array n (g (baget s k2)).
+  move=> k1 k2 heq; apply/val_inj/eqP; rewrite eqn_leq (leqNgt k1 k2) (leqNgt k2 k1).
+  apply/andP; split; apply/negP => h.
+    by move/hlt: h => h; apply: h; exact: esym heq.
+  by move/hlt: h => h; apply: h.
+move=> k1 k2 hk12 heq.
+pose E (k : nat) := g (baget s k).
+pose Rl (x y : array int) :=
+  lexlt (fun j => nat_of_int x.[int_of_nat j]) (alen x) (fun j => nat_of_int y.[int_of_nat j]) (alen y).
+have hcons k : k.+1 < balen s -> Rl (E k) (E k.+1).
+  move=> hk; have hk' : k < balen s := ltnW hk.
+  have hl := bisStrictlySorted_consecT (k := Ordinal hk') (k' := Ordinal hk) huniq erefl.
+  cbv beta in hl; have hl2 := ltbArray_lexlt hl; exact: hl2.
+have hR := consec_chain (R := Rl) (E := E) (fun x y z hxy hyz => lexlt_trans hxy hyz)
+             hcons hk12 (ltn_ord k2).
+exact: lexlt_sorted_neq (hsort k1) (hsort k2) (hrange k1) (hrange k2) hR heq.
+Qed.
+
+(* Entries of a family of [PArray] rows hanging under a big table, all within
+   [0, n): the big counterpart of [allInRange_ordP]. *)
+Lemma ballInRange_ordP T (g : T -> array int) (s : BigArray.array T) (n : int)
+    (k : 'I_(balen s)) :
+  (0 < nat_of_int n)%N ->
+  L.bfor_all_compose (L.allInRange Uint63.leb 0%uint63 (n - 1)%uint63) g s ->
+  forall p : 'I_(alen (g (baget s k))), (nat_of_int (aget (g (baget s k)) p) < nat_of_int n)%N.
+Proof.
+move=> hn /bfor_all_compose_balenP/(_ k) hB p; move: hB.
+rewrite /L.allInRange => /for_all_alenP/(_ p) h; exact: inRangeP hn h.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* The big-graph predicates                                                   *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma bisValidIndexP T (t : BigArray.array T) (x : int) :
+  (0 < balen t)%N -> L.bisValidIndex t x -> (nat_of_int x < balen t)%N.
+Proof. by move=> h0 h; have h2 := inRangeP (n := blength t) h0 h; exact: h2. Qed.
+
+Lemma bisVertexP (g : L.BGraph) (x : int) :
+  (0 < balen g)%N -> L.bisVertex g x -> (nat_of_int x < balen g)%N.
+Proof. exact: bisValidIndexP. Qed.
+
+(* Every neighbour listed in a row of a big graph is a vertex index. *)
+Lemma bvertex_matrixP (g : L.BGraph) n : balen g = n -> (0 < n)%N ->
+  L.bfor_all_matrix (L.bisVertex g) g ->
+  forall (i : 'I_n) (j : 'I_(alen (baget g i))), (nat_of_int (aget (baget g i) j) < n)%N.
+Proof.
+move=> hn h0 /(bfor_all_matrixP _ hn) hv i j.
+have hb : (0 < balen g)%N by rewrite hn.
+by have h2 := bisVertexP hb (hv i j); rewrite hn in h2.
+Qed.
+
+(* The predicate is passed by name: leaving it to higher-order unification
+   makes the [reflect] statement's [?f (int_of_nat i) (baget g i)] pattern
+   ambiguous against the row occurrences inside the graph predicates. *)
+Lemma bhasNoLoopsP (g : L.BGraph) n : balen g = n ->
+  reflect (forall i : 'I_n, L.bhasLocallyNoLoop g (int_of_nat i)) (L.bhasNoLoops g).
+Proof.
+move=> hn; rewrite /L.bhasNoLoops.
+have h := bfor_alliP (fun (i : int) (_ : array int) => L.bhasLocallyNoLoop g i) hn.
+exact: h.
+Qed.
+
+Lemma bisUndirectedP (g : L.BGraph) n : balen g = n ->
+  reflect (forall i : 'I_n, L.bisLocallyUndirected g (int_of_nat i)) (L.bisUndirected g).
+Proof.
+move=> hn; rewrite /L.bisUndirected.
+have h := bfor_alliP (fun (i : int) (_ : array int) => L.bisLocallyUndirected g i) hn.
+exact: h.
+Qed.
+
+End BigArrayBridge.
 
 (* -------------------------------------------------------------------------- *)
 (* The binary search [L.mem_sorted]; only its soundness is needed             *)

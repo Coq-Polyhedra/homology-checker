@@ -1,9 +1,115 @@
-From Coq Require Import PArray Uint63.
+From Coq Require Import BinNums PArray Uint63.
 From Bignums Require Import BigN BigZ.
 From BinReader Require Import BinReader.
+From Cert Require BigArray.
 
 Open Scope array_scope.
 Open Scope uint63_scope.
+
+(* -------------------------------------------------------------------------- *)
+(* Support: decoding a table into [BigArray.array]                            *)
+(*                                                                            *)
+(* [read_big_array] mirrors [Packed.read_array] (Packed.v, lines 457-528)     *)
+(* byte for byte.  THE WIRE FORMAT IS UNCHANGED: the same length word, then   *)
+(* the same single leading element -- decoded only to supply the array        *)
+(* default, never stored -- then the same [length] elements in the same       *)
+(* order, each written at the next index.  [big_array] even emits the very    *)
+(* same descriptor constructor [Packed.DArray] as [Packed.array], so existing *)
+(* certificate files and the writer (lrs-postprocess) are untouched.          *)
+(*                                                                            *)
+(* Only the materialization differs: [BigArray.make] / [BigArray.set] instead *)
+(* of [PArray.make] / [PArray.set], and the capacity bound is                 *)
+(* [BigArray.max_length] = 2^43 - 2^21 instead of [PArray.max_length].  A     *)
+(* declared length above that bound is rejected LOUDLY -- the decoder returns *)
+(* [None] -- rather than silently clamped by [make] and then truncated by     *)
+(* out-of-range [set]s.                                                       *)
+(* -------------------------------------------------------------------------- *)
+
+Record big_array_state (A : Type) := BigArrayState {
+  big_array_index : int;
+  big_array_value : BigArray.array A;
+  big_array_position : Packed.cursor
+}.
+
+Arguments BigArrayState {A} _ _ _.
+
+Definition big_array_step {A : Type} (element : Packed.decoder A)
+    (input : Packed.bytes) (state : big_array_state A)
+    : option (big_array_state A) :=
+  match element input (big_array_position A state) with
+  | Some (value, position') =>
+    Some (BigArrayState
+      (big_array_index A state + 1)
+      (BigArray.set (big_array_value A state) (big_array_index A state) value)
+      position')
+  | None => None
+  end.
+
+(** Repeat [big_array_step] in the same binary divide-and-conquer traversal as
+    [Packed.array_fill_positive]: the recursion is structural on the binary
+    counter, and a malformed element aborts immediately instead of running the
+    remaining iterations on [None]. *)
+Fixpoint big_array_fill_positive {A : Type} (element : Packed.decoder A)
+    (input : Packed.bytes) (count : positive) (state : big_array_state A)
+    : option (big_array_state A) :=
+  match count with
+  | xH => big_array_step element input state
+  | xO count' =>
+    match big_array_fill_positive element input count' state with
+    | Some state' => big_array_fill_positive element input count' state'
+    | None => None
+    end
+  | xI count' =>
+    match big_array_fill_positive element input count' state with
+    | Some state' =>
+      match big_array_fill_positive element input count' state' with
+      | Some state'' => big_array_step element input state''
+      | None => None
+      end
+    | None => None
+    end
+  end.
+
+Definition big_array_fill {A : Type} (element : Packed.decoder A)
+    (input : Packed.bytes) (count : N) (state : big_array_state A)
+    : option (big_array_state A) :=
+  match count with
+  | N0 => Some state
+  | Npos count' => big_array_fill_positive element input count' state
+  end.
+
+Definition read_big_array {A : Type} (element : Packed.decoder A)
+    : Packed.decoder (BigArray.array A) :=
+  fun input position =>
+    match Packed.read_word input position with
+    | Some (length, position1) =>
+      if length <=? BigArray.max_length then
+        match element input position1 with
+        | Some (default, position2) =>
+          let value := BigArray.make length default in
+          if BigArray.length value =? length then
+            let count := Packed.uint63_to_N length in
+            match big_array_fill element input count
+                    (BigArrayState 0 value position2) with
+            | Some state =>
+              Some (big_array_value A state, big_array_position A state)
+            | None => None
+            end
+          else None
+        | None => None
+        end
+      else None
+    | None => None
+    end.
+
+Definition big_array {A : Type} (element : Packed.schema A)
+    : Packed.schema (BigArray.array A) :=
+  Packed.Schema (Packed.DArray (Packed.schema_descriptor element))
+    (read_big_array (Packed.schema_value element)).
+
+(* -------------------------------------------------------------------------- *)
+(* The certificate schema                                                     *)
+(* -------------------------------------------------------------------------- *)
 
 Definition int_array_schema :=
   Packed.array Packed.int63.
@@ -33,8 +139,10 @@ Definition item_schema :=
 Definition facet_schema :=
   Packed.pair int_array_schema Packed.int63.
 
+(** The two per-facet tables are the ones allowed past [PArray.max_length]:
+    the outer arrays are big, every inner row stays a plain [PArray]. *)
 Definition simplex_graph_schema :=
-  Packed.pair int_matrix_schema (Packed.array facet_schema).
+  Packed.pair (big_array int_array_schema) (big_array facet_schema).
 
 Definition geom_schema :=
   Packed.pair int_matrix_schema
