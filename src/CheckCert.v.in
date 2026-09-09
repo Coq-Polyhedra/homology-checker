@@ -4,23 +4,27 @@ From Cert Require Import LowLevelChecker CertificateSchema.
 
 Section Benchmark.
 
+Definition decode cert := Packed.decode certificate_wire_schema cert.
+
 Definition decode_and_apply f cert :=
-  match Packed.decode certificate_wire_schema cert with
+  match decode cert with
   | Some cert => f (build_cert cert)
   | None => false
   end.
 
-Ltac2 Eval printf "Instance: @INSTANCE@".
-Ltac2 Eval printf "Certificate loading:".
-Time LoadDataPacked "../lrs-postprocess/data/@INSTANCE@-cert.bin" As cert.
+Ltac2 Eval printf "certificate loading:".
+Time LoadDataPacked "@CERT@" As cert.
 
-Ltac2 Eval printf "Vertex containment checking:".
+Ltac2 Eval printf "certificate decoding:".
+Time Eval vm_compute in match decode cert with Some _ => true | None => false end.
+
+Ltac2 Eval printf "vertex containment:".
 Time Eval vm_compute in decode_and_apply VtxContainment.check_certificate cert.
 
-Ltac2 Eval printf "Vertex equality checking:".
+Ltac2 Eval printf "vertex equality:".
 Time Eval vm_compute in decode_and_apply VtxEquality.check_certificate cert.
 
-Ltac2 Eval printf "Graph equality checking:".
+Ltac2 Eval printf "graph equality:".
 Time Eval vm_compute in decode_and_apply GraphEquality.check_certificate cert.
 
 End Benchmark.
