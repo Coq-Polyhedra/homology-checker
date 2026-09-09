@@ -114,9 +114,6 @@ Definition big_array {A : Type} (element : Packed.schema A)
 Definition int_array_schema :=
   Packed.array Packed.int63.
 
-Definition int_matrix_schema :=
-  Packed.array int_array_schema.
-
 Definition z_array_schema :=
   Packed.array Packed.bigZ.
 
@@ -139,14 +136,16 @@ Definition item_schema :=
 Definition facet_schema :=
   Packed.pair int_array_schema Packed.int63.
 
-(** The two per-facet tables are the ones allowed past [PArray.max_length]:
-    the outer arrays are big, every inner row stays a plain [PArray]. *)
+(** The per-facet tables are indexed by facets and outgrow [PArray]: the
+    outer arrays are big, every inner row stays a plain [PArray]. *)
 Definition simplex_graph_schema :=
   Packed.pair (big_array int_array_schema) (big_array facet_schema).
 
+(** The geometric graph and the two edge tables are indexed by vertices and
+    outgrow [PArray] as well; here too only the outer arrays are big. *)
 Definition geom_schema :=
-  Packed.pair int_matrix_schema
-    (Packed.pair int_matrix_schema int_matrix_schema).
+  Packed.pair (big_array int_array_schema)
+    (Packed.pair (big_array int_array_schema) (big_array int_array_schema)).
 
 Definition full_dim_schema :=
   Packed.pair point_schema
@@ -165,9 +164,12 @@ Definition root_schema :=
         (Packed.pair z_matrix_schema
           (Packed.array sparse_vector_schema)))).
 
+(** The vertex table is indexed by vertices, hence big; the inequality table
+    is indexed by inequalities and stays a plain [PArray], as does [weights]
+    inside [root_schema]. *)
 Definition certificate_payload_schema :=
   Packed.pair (Packed.array inequality_schema)
-    (Packed.pair (Packed.array item_schema)
+    (Packed.pair (big_array item_schema)
       (Packed.pair simplex_graph_schema
         (Packed.pair geom_schema
           (Packed.pair full_dim_schema root_schema)))).

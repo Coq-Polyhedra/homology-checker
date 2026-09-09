@@ -391,10 +391,13 @@ End Queue.
 
 Section Graph.
 
+(* [Graph] is kept for the upstream API: since the combinatorial and the
+ * geometric graphs are both big, it has no user left in this file. *)
 Definition Graph := array (array int).
 
-(* the combinatorial graph is indexed by facets, hence too large for [PArray]:
- * only the outer array is big, the adjacency rows remain [PArray] arrays *)
+(* the combinatorial graph is indexed by facets and the geometric one by
+ * vertices, hence both too large for [PArray]: only the outer array is big,
+ * the adjacency rows remain [PArray] arrays *)
 Definition BGraph := BigArray.array (array int).
 
 Definition isVertex (g : Graph) (x : int) :=
@@ -442,6 +445,12 @@ Definition bhasLocallyNoLoop (g : BGraph) (x : int) :=
 Definition bhasNoLoops (g : BGraph) :=
   bfor_alli (fun i _ => bhasLocallyNoLoop g i) g.
 
+Definition bhasSimpleEdges (g : BGraph) :=
+  bfor_all (isStrictlySorted Uint63.ltb) g.
+
+Definition bisSimpleGraph (g : BGraph) :=
+  (bhasSimpleEdges g) && (bhasNoLoops g).
+
 End Graph.
 
 Section BFS.
@@ -450,7 +459,10 @@ Arguments queue T : clear implicits.
 Arguments empty T : clear implicits.
 
 Definition bfsqueue := queue (int * N)%type.
-Definition marks := array bool.
+
+(* the marks are indexed by the vertices of the geometric graph, hence too
+ * large for [PArray]; the queue stays seq-based *)
+Definition marks := BigArray.array bool.
 
 Record state := State {
   nb_visited : int;
@@ -460,13 +472,13 @@ Record state := State {
 
 Definition init_state (n : int) (y : int) :=
   {| nb_visited  := 1%uint63;
-      visited  := (PArray.make n false).[y <- true]; 
+      visited  := BigArray.set (BigArray.make n false) y true;
       to_visit    := empty _; |}.
 
 Definition mark_vertex (st : state) (y : int) (k : N) :=
-  if st.(visited).[y] then st else
+  if BigArray.get st.(visited) y then st else
     {| nb_visited := (st.(nb_visited)+1)%uint63;
-        visited := st.(visited).[y <- true]; 
+        visited := BigArray.set st.(visited) y true;
         to_visit := enqueue st.(to_visit) (y, k); |}.
 
 Definition bfs_dequeue (st : state) :=
@@ -478,29 +490,30 @@ Definition bfs_dequeue (st : state) :=
     |} in Some (st, y, k)
   else None.
 
-Definition bfs_step (g : Graph) (st : state * int * N) :=
+Definition bfs_step (g : BGraph) (st : state * int * N) :=
   let: (st, x, k) := st in
   let: st :=
-    fold (fun y acc => mark_vertex acc y (N.succ k)) g.[x] st
+    fold (fun y acc => mark_vertex acc y (N.succ k)) (BigArray.get g x) st
   in
   match bfs_dequeue st with
   | Some st => inl st
   | None    => inr st
   end.
 
-Definition bfs_ (g : Graph) (x : int) :=
-  let out := bfs_step g (init_state (length g) x, x, 0%N) in
+Definition bfs_ (g : BGraph) (x : int) :=
+  let out := bfs_step g (init_state (BigArray.length g) x, x, 0%N) in
   let out := ifold_from_until (fun _ out => if out is inl s then bfs_step g s else out)
-  0%uint63 (length g)%uint63 (fun _ out => if out is inr _ then true else false) out
+  0%uint63 (BigArray.length g)%uint63 (fun _ out => if out is inr _ then true else false) out
   in if out is inr v then Some v else None.
 
-(* This function returns the number of vertices visited by a BFS starting 
+(* This function returns the number of vertices visited by a BFS starting
 from vertex 0 in an undirected graph. *)
-Definition bfs (g : Graph) (x : int) :=
+Definition bfs (g : BGraph) (x : int) :=
   odflt 0%uint63 (omap (fun x => x.(nb_visited)) (bfs_ g x)).
 
-Definition isConnected (g : Graph) :=
-  if (length g =? 0)%uint63 then true else (bfs g (0%uint63) =? length g)%uint63.
+Definition isConnected (g : BGraph) :=
+  if (BigArray.length g =? 0)%uint63 then true else
+    (bfs g (0%uint63) =? BigArray.length g)%uint63.
 
 End BFS.
 
@@ -531,6 +544,9 @@ Definition ActiveSet := array int.
 Definition Flag := (array int * array int)%type.
 Definition Vertex := (ActiveSet * (Point * Flag))%type.
 Definition Vertices := array Vertex.
+(* the vertex table outgrows [PArray]: only the table itself is big, all the
+ * fields of a [Vertex] (active set, point, flag rows) remain [PArray] arrays *)
+Definition BVertices := BigArray.array Vertex.
 
 Definition Mapping := int.
 Definition Description := array int. 
@@ -552,12 +568,12 @@ Record Certificate := {
   nb_inequalities : int;
   dimension : int;
   inequalities : Inequalities;
-  vertices : Vertices;
+  vertices : BVertices;
   graph : BGraph;
   facets : BFacets;
-  geom_graph : Graph;
-  geom_edge_sources : array (array int);
-  geom_edge_local_targets : array (array int);
+  geom_graph : BGraph;
+  geom_edge_sources : BigArray.array (array int);
+  geom_edge_local_targets : BigArray.array (array int);
   full_dim : FullDim;
   root : Root
 }.
@@ -612,19 +628,19 @@ Definition areInequalitiesWellFormed (cert : Certificate) :=
 
 Definition arePointsWellFormed (cert : Certificate) :=
   let vertices := vertices cert in
-  (for_all_compose (fun x => ~~(x =? 0)%bigN) (compose commonDenominator point) vertices)
-  && (for_all_compose (hasLength (dimension cert)) (compose numerators point) vertices).
+  (bfor_all_compose (fun x => ~~(x =? 0)%bigN) (compose commonDenominator point) vertices)
+  && (bfor_all_compose (hasLength (dimension cert)) (compose numerators point) vertices).
 
 Definition areActiveSetsWellFormed (cert : Certificate) :=
   let m := nb_inequalities cert in
   let vertices := vertices cert in
-  (for_all_compose (isStrictlySorted Uint63.ltb) activeSet vertices)
-  && (for_all_compose (allInRange Uint63.leb (0%uint63) (m-1)%uint63) activeSet vertices).
+  (bfor_all_compose (isStrictlySorted Uint63.ltb) activeSet vertices)
+  && (bfor_all_compose (allInRange Uint63.leb (0%uint63) (m-1)%uint63) activeSet vertices).
 
 Definition areFlagsWellFormed (cert : Certificate) :=
   let d := dimension cert in
   let vertices := vertices cert in
-  (for_all 
+  (bfor_all
     (fun v =>
          let nb_active := length (activeSet v) in
          let '(ineq, witness) := flag v in
@@ -658,7 +674,7 @@ Definition areDescriptionsWellFormed (cert : Certificate) :=
   && (bfor_all_compose (hasLength d) description facets).
 
 Definition isMappingWellFormed (cert : Certificate) :=
-  let nbVertices := length (vertices cert) in
+  let nbVertices := BigArray.length (vertices cert) in
   let facets := facets cert in
   bfor_all_compose (inRange Uint63.leb (0%uint63) (nbVertices-1)%uint63) mapping facets.
 
@@ -668,31 +684,31 @@ Definition areFacetsWellFormed (cert : Certificate) :=
 
 Definition isGeomGraphWellFormed (cert : Certificate) :=
   let geom_graph := geom_graph cert in
-  let nbVertices := length (vertices cert) in
-  (length geom_graph =? nbVertices)%uint63 
-  && (for_all_matrix (isVertex geom_graph) geom_graph) (* see remark above *)
-  && (isSimpleGraph geom_graph)
-  && (isUndirected geom_graph). (* the undirectness should be a consequence of graph_image_check below *)
+  let nbVertices := BigArray.length (vertices cert) in
+  (BigArray.length geom_graph =? nbVertices)%uint63
+  && (bfor_all_matrix (bisVertex geom_graph) geom_graph) (* see remark above *)
+  && (bisSimpleGraph geom_graph)
+  && (bisUndirected geom_graph). (* the undirectness should be a consequence of graph_image_check below *)
 
 Definition areGeomEdgeSourcesWellFormed (cert : Certificate) :=
   let geom_graph := geom_graph cert in
   let geom_edge_sources := geom_edge_sources cert in
-  let nbVertices := length (vertices cert) in
+  let nbVertices := BigArray.length (vertices cert) in
   let nbFacets := BigArray.length (facets cert) in
-  (length geom_edge_sources =? nbVertices)%uint63
-  && for_alli (fun i l => hasLength (length geom_graph.[i]) l) geom_edge_sources
-  && for_all (allInRange Uint63.leb (0%uint63) (nbFacets-1)%uint63) geom_edge_sources.
+  (BigArray.length geom_edge_sources =? nbVertices)%uint63
+  && bfor_alli (fun i l => hasLength (length (BigArray.get geom_graph i)) l) geom_edge_sources
+  && bfor_all (allInRange Uint63.leb (0%uint63) (nbFacets-1)%uint63) geom_edge_sources.
 
 Definition areGeomEdgeLocalTargetsWellFormed (cert : Certificate) :=
   let graph := graph cert in
   let geom_graph := geom_graph cert in
   let geom_edge_local_targets := geom_edge_local_targets cert in
   let geom_edge_sources := geom_edge_sources cert in
-  let nbVertices := length (vertices cert) in
-  (length geom_edge_local_targets =? nbVertices)%uint63
-  && for_alli (fun i l => hasLength (length geom_graph.[i]) l) geom_edge_local_targets
-  && for_alli_matrix (fun i j v => inRange Uint63.leb (0%uint63)
-  (length(BigArray.get graph geom_edge_sources.[i].[j])-1)%uint63 v) geom_edge_local_targets.
+  let nbVertices := BigArray.length (vertices cert) in
+  (BigArray.length geom_edge_local_targets =? nbVertices)%uint63
+  && bfor_alli (fun i l => hasLength (length (BigArray.get geom_graph i)) l) geom_edge_local_targets
+  && bfor_alli_matrix (fun i j v => inRange Uint63.leb (0%uint63)
+  (length(BigArray.get graph (BigArray.get geom_edge_sources i).[j])-1)%uint63 v) geom_edge_local_targets.
 
 Definition isFullDimPointWellFormed (cert : Certificate) :=
   let fullDimPoint := fullDimPoint (full_dim cert) in
@@ -724,7 +740,7 @@ Definition isActiveInverseWellFormed (cert : Certificate) :=
   let vertices := vertices cert in
   let vstar := mapping (BigArray.get (facets cert) (simplexIndex (root cert))) in
   (length activeInverse =? nb_inequalities cert)%uint63
-  && for_alli (fun i k => (activeInverse.[k] =? i)%uint63) (activeSet vertices.[vstar]).
+  && for_alli (fun i k => (activeInverse.[k] =? i)%uint63) (activeSet (BigArray.get vertices vstar)).
 
 (* witnesses = vectors f_j *)
 Definition areWitnessesWellFormed (cert : Certificate) :=
@@ -739,7 +755,7 @@ Definition areScalarProductsWellFormed (cert : Certificate) :=
   let scalarProducts := (scalarProducts (root cert)) in
   let simplexIndex := (simplexIndex (root cert)) in
   let vertices := vertices cert in
-  (length scalarProducts =? length (activeSet vertices.[mapping (BigArray.get facets simplexIndex)]))%uint63
+  (length scalarProducts =? length (activeSet (BigArray.get vertices (mapping (BigArray.get facets simplexIndex)))))%uint63
   && (for_all (hasLength d) scalarProducts).
 
 Definition isSparseVectorWellFormed d (w : Weight) :=
@@ -831,7 +847,7 @@ Definition graph_check (cert : Certificate) :=
 Definition mapping_check (cert : Certificate) :=
   let facets := facets cert in
   let vertices := vertices cert in
-  bfor_all (fun f => subset Uint63.ltb f.1 (activeSet vertices.[f.2])) facets.
+  bfor_all (fun f => subset Uint63.ltb f.1 (activeSet (BigArray.get vertices f.2))) facets.
 
 Definition scalarProducts_check (cert : Certificate) :=
   let inequalities := inequalities cert in
@@ -840,7 +856,7 @@ Definition scalarProducts_check (cert : Certificate) :=
   let scalarProducts := scalarProducts (root cert) in
   let vstar := mapping (BigArray.get (facets cert) (simplexIndex (root cert))) in
   for_alli_matrix (fun i j x => (x =? array_bigZ_dot (normal 
-  (inequalities.[(activeSet vertices.[vstar]).[i]])) witnesses.[j])%bigZ) scalarProducts.
+  (inequalities.[(activeSet (BigArray.get vertices vstar)).[i]])) witnesses.[j])%bigZ) scalarProducts.
 
 Definition inversibility_check (cert : Certificate) :=
   let d := dimension cert in
@@ -913,7 +929,7 @@ Definition geom_edge_pairwise_check (cert : Certificate) :=
     let diffs :=
       fold
         (fun w acc =>
-           diff Uint63.ltb (activeSet v) (activeSet vertices.[w]) :: acc)
+           diff Uint63.ltb (activeSet v) (activeSet (BigArray.get vertices w)) :: acc)
         neighbors
         [::]
     in
@@ -933,9 +949,9 @@ Definition flag_check (cert : Certificate) :=
     let '(ineqs, witness) := flag v in
     for_alli 
       (fun i w =>
-        let diff := diff Uint63.ltb active_set (activeSet vertices.[w]) in
+        let diff := diff Uint63.ltb active_set (activeSet (BigArray.get vertices w)) in
           (for_all_range0 (fun ineq => ~~ (mem_intlist active_set.[ineq] diff)) ineqs i) 
-        && ~~ (mem_sorted Uint63.ltb (activeSet vertices.[w]) active_set.[ineqs.[i]]))
+        && ~~ (mem_sorted Uint63.ltb (activeSet (BigArray.get vertices w)) active_set.[ineqs.[i]]))
       witness) vertices.
 
 Definition full_dim_feasibility_check (cert : Certificate) :=

@@ -3,9 +3,9 @@
 (* and mathcomp: Uint63 <-> nat, iteration <-> folds and quantifiers,         *)
 (* bigZ <-> a realFieldType, arrays <-> vectors, sorted int arrays <-> finite *)
 (* sets, the merge-based subset/difference/lexicographic tests, the binary   *)
-(* search [L.mem_sorted], the two-level [BigArray] tables of the per-facet    *)
-(* certificate data, the BFS behind [L.isConnected], and the [IntList]        *)
-(* tests on strictly decreasing sequences.                                    *)
+(* search [L.mem_sorted], the two-level [BigArray] tables holding the         *)
+(* index-keyed certificate data, the BFS behind [L.isConnected], and the      *)
+(* [IntList] tests on strictly decreasing sequences.                          *)
 (*                                                                            *)
 (* Every lemma has a left-hand side in the low-level vocabulary (int, array,  *)
 (* bigZ, ifold, ...) and a right-hand side in the mathcomp vocabulary (nat,   *)
@@ -1174,6 +1174,10 @@ Lemma iter_inv (T : Type) (P : T -> Prop) (f : T -> T) (x : T) :
   P x -> (forall y, P y -> P (f y)) -> forall k, P (iter k f x).
 Proof. by move=> h0 hs; elim=> [|k ih] //=; apply: hs. Qed.
 
+Lemma iter_ind (T : Type) (P : nat -> T -> Prop) (f : T -> T) (x : T) :
+  P 0 x -> (forall k y, P k y -> P k.+1 (f y)) -> forall k, P k (iter k f x).
+Proof. by move=> h0 hs; elim=> [|k ih] //=; apply: hs. Qed.
+
 Lemma fold_invariantP (T A : Type) (P : A -> Prop) (f : T -> A -> A) (a : array T) (x : A) :
   P x -> (forall (i : 'I_(alen a)) (y : A), P y -> P (f (aget a i) y)) ->
   P (L.fold f a x).
@@ -1616,15 +1620,23 @@ Lemma ifor_all_range0P (f : int -> bool) n :
   reflect (forall i : 'I_(nat_of_int n), f (int_of_nat i)) (L.ifor_all_range0 f n).
 Proof. exact: ifold_andP. Qed.
 
+Lemma for_all_range0P T (f : T -> bool) (a : array T) (n : int) :
+  reflect (forall i : 'I_(nat_of_int n), f (aget a i)) (L.for_all_range0 f a n).
+Proof. rewrite /L.for_all_range0; exact: ifor_all_range0P. Qed.
+
 (* -------------------------------------------------------------------------- *)
-(* The two-level arrays [BigArray.array]: the per-facet tables                 *)
+(* The two-level arrays [BigArray.array]: the index-keyed tables              *)
 (*                                                                            *)
-(* The certificate stores [facets] and [graph] as [BigArray.array]; the       *)
-(* checker iterates over them with the index-based [b*] combinators, which    *)
-(* are [ifold]/[ifor_all_range0] over [BigArray.length]/[BigArray.get]. Every *)
-(* bridge below therefore reduces to the corresponding [ifold] bridge above,  *)
-(* and its statement mirrors the [PArray] one with [balen]/[baget] on the     *)
-(* outer table. Inner rows stay [PArray] arrays, hence keep [alen]/[aget].    *)
+(* The certificate stores every table whose length is a number of facets or   *)
+(* of vertices ([facets], [graph], [vertices], [geom_graph], the geometric    *)
+(* edge tables) as a [BigArray.array], since those can exceed                 *)
+(* [PArray.max_length]; the BFS marks are a [BigArray.array bool] for the     *)
+(* same reason. The checker iterates over them with the index-based [b*]      *)
+(* combinators, which are [ifold]/[ifor_all_range0] over                      *)
+(* [BigArray.length]/[BigArray.get]. Every bridge below therefore reduces to  *)
+(* the corresponding [ifold] bridge above, and its statement mirrors the      *)
+(* [PArray] one with [balen]/[baget] on the outer table. Inner rows stay      *)
+(* [PArray] arrays, hence keep [alen]/[aget].                                 *)
 (*                                                                            *)
 (* [BigArray.array] lives at the single declared universe [barr], so the      *)
 (* anchoring discipline behind [alength]/[alen] is not needed here; the same  *)
@@ -1883,6 +1895,31 @@ have h := bfor_alliP (fun (i : int) (_ : array int) => L.bisLocallyUndirected g 
 exact: h.
 Qed.
 
+(* Simple edges: every adjacency row of a big graph is strictly sorted, hence
+   (with [bisStrictlySorted_mono] on the row) repetition-free. *)
+Lemma bhasSimpleEdgesP (g : L.BGraph) n : balen g = n ->
+  reflect (forall i : 'I_n, L.isStrictlySorted Uint63.ltb (baget g i))
+          (L.bhasSimpleEdges g).
+Proof.
+move=> hn; rewrite /L.bhasSimpleEdges.
+have h := bfor_allP (L.isStrictlySorted Uint63.ltb) hn.
+exact: h.
+Qed.
+
+Lemma bhasSimpleEdges_balenP (g : L.BGraph) :
+  reflect (forall i : 'I_(balen g), L.isStrictlySorted Uint63.ltb (baget g i))
+          (L.bhasSimpleEdges g).
+Proof. by apply: bhasSimpleEdgesP. Qed.
+
+(* [L.bisSimpleGraph], as its two conjuncts. *)
+Lemma bisSimpleGraph_edges (g : L.BGraph) :
+  L.bisSimpleGraph g -> L.bhasSimpleEdges g.
+Proof. by case/andP. Qed.
+
+Lemma bisSimpleGraph_loops (g : L.BGraph) :
+  L.bisSimpleGraph g -> L.bhasNoLoops g.
+Proof. by case/andP. Qed.
+
 End BigArrayBridge.
 
 (* -------------------------------------------------------------------------- *)
@@ -1970,23 +2007,117 @@ move: (iter_inv h00 mstep_inv (alen a)).
 by case: (iter _ _ _) => [[lo hi] fnd] [_ h2] hfnd; exact: h2 hfnd.
 Qed.
 
+Lemma mid_ge (lo hi : int) : (lo <? hi)%uint63 ->
+  (nat_of_int lo <= nat_of_int (lo + (hi - lo) / 2)%uint63)%N.
+Proof.
+move=> /Uint63.ltbP hlt.
+have [hlo0 hloB] := to_Z_bounded lo; have [hhi0 hhiB] := to_Z_bounded hi.
+have hsub : to_Z (hi - lo)%uint63 = (to_Z hi - to_Z lo)%Z.
+  by rewrite sub_spec Z.mod_small //; lia.
+have h2 : to_Z 2%uint63 = 2%Z by [].
+have hdiv : to_Z ((hi - lo) / 2)%uint63 = ((to_Z hi - to_Z lo) / 2)%Z.
+  by rewrite div_spec hsub h2.
+have hq0 : (0 <= (to_Z hi - to_Z lo) / 2 < to_Z hi - to_Z lo)%Z.
+  by split; [apply: Z.div_pos; lia | apply: Z.div_lt_upper_bound; lia].
+have hmid : to_Z (lo + (hi - lo) / 2)%uint63
+            = (to_Z lo + (to_Z hi - to_Z lo) / 2)%Z.
+  by rewrite add_spec hdiv Z.mod_small //; lia.
+apply/ssrnat.leP.
+have e1 := to_Z_nat_of_int (lo + (hi - lo) / 2)%uint63.
+have e2 := to_Z_nat_of_int lo.
+lia.
+Qed.
+
+(* Completeness of the binary search on a strictly sorted array: the target
+   position stays inside [lo, hi), and that interval shrinks at every step,
+   so [alen a] iterations end on [found]. *)
+Lemma mem_sorted_complete :
+  L.isStrictlySorted Uint63.ltb a ->
+  forall p, (p < alen a)%N -> nat_of_int a.[int_of_nat p] = nat_of_int x ->
+  L.mem_sorted Uint63.ltb a x.
+Proof.
+move=> hs p hp hpx; rewrite mem_sortedE.
+pose Q := fun (k : nat) (st : int * int * bool) =>
+  let: (lo, hi, fnd) := st in
+  fnd || [&& nat_of_int lo <= p, p < nat_of_int hi, nat_of_int hi <= alen a
+          & nat_of_int hi + k <= alen a + nat_of_int lo].
+have hQ : forall k, Q k (iter k mstep (0%uint63, alength a, false)).
+  apply: (iter_ind (P := Q)).
+    apply/orP; right; apply/and4P; split.
+    - by rewrite nat_of_int0 leq0n.
+    - exact: hp.
+    - exact: leqnn.
+    - by rewrite nat_of_int0 !addn0; exact: leqnn.
+  move=> k [[lo hi] fnd]; case: fnd => //= /and4P[h1 h2 h3 h4].
+  rewrite /mstep.
+  have hlh : (lo <? hi)%uint63.
+    by rewrite ltb_natE; exact: leq_ltn_trans h1 h2.
+  rewrite hlh.
+  have hmlt := mid_lt hlh; have hmge := mid_ge hlh.
+  have hmal : (nat_of_int (lo + (hi - lo) / 2)%uint63 < alen a)%N.
+    exact: leq_trans hmlt h3.
+  set mid := (lo + (hi - lo) / 2)%uint63.
+  have hmidE : nat_of_int a.[int_of_nat (nat_of_int mid)] = nat_of_int a.[mid].
+    by rewrite nat_of_intK.
+  case hxa : (x <? a.[mid])%uint63.
+    (* the target is strictly below [a.[mid]]: it lies in [lo, mid) *)
+    apply/orP; right; apply/and4P.
+    have hpm : (p < nat_of_int mid)%N.
+      rewrite ltnNge; apply/negP => hmp.
+      have h := isStrictlySorted_leq hs hmp hp.
+      rewrite hmidE hpx in h.
+      by move: hxa; rewrite ltb_natE ltnNge h.
+    split.
+    - exact: h1.
+    - exact: hpm.
+    - exact: ltnW hmal.
+    - rewrite addnS -addSn; apply: (leq_trans _ h4).
+      by rewrite leq_add2r.
+  case hax : (a.[mid] <? x)%uint63.
+    (* the target is strictly above [a.[mid]]: it lies in [mid+1, hi) *)
+    apply/orP; right; apply/and4P.
+    have hmp : (nat_of_int mid < p)%N.
+      rewrite ltnNge; apply/negP => hpm.
+      have h := isStrictlySorted_leq hs hpm hmal.
+      rewrite hmidE hpx in h.
+      by move: hax; rewrite ltb_natE ltnNge h.
+    have hS : nat_of_int (mid + 1)%uint63 = (nat_of_int mid).+1.
+      exact: (add1_alenE (a := a) hmal).
+    split.
+    - by rewrite hS.
+    - exact: h2.
+    - exact: h3.
+    - rewrite hS addnS !addnS ltnS.
+      apply: (leq_trans h4); rewrite leq_add2l.
+      exact: hmge.
+  by [].
+move: (hQ (alen a)).
+case: (iter _ _ _) => [[lo hi] fnd] /=.
+case: fnd => //= /and4P[h1 h2 h3 h4].
+have hle : (nat_of_int hi <= nat_of_int lo)%N.
+  by rewrite -(leq_add2l (alen a)) addnC.
+by move: (leq_ltn_trans h1 h2); rewrite ltnNge hle.
+Qed.
+
 End MemSortedBridge.
 
 (* -------------------------------------------------------------------------- *)
 (* The BFS of [L.isConnected]: the queue model, and reachability of every     *)
 (* vertex index                                                               *)
 (*                                                                            *)
-(* The queue is modelled by its contents [qelems], front first. The loop      *)
-(* invariant [binv] states: the marks array has the graph's length, the       *)
+(* The graph is a [L.BGraph] and the marks a [BigArray.array bool], while the *)
+(* queue stays [seq]-based and each adjacency row stays a [PArray] array. The *)
+(* queue is modelled by its contents [qelems], front first. The loop          *)
+(* invariant [binv] states: the marks table has the graph's length, the       *)
 (* counter [nb_visited] is the cardinal of the marked set, every marked       *)
 (* index is [brel]-reachable from vertex 0, and every queued entry is in      *)
-(* range and reachable. [L.isConnected] makes the final count equal [n], and  *)
-(* a marked set missing an index has cardinal < n, so every index is          *)
+(* range and reachable. [L.isConnected] makes the final count equal [n],      *)
+(* and a marked set missing an index has cardinal < n, so every index is      *)
 (* reachable ([bfs_reach]). The loop itself is read as [iter] through the     *)
 (* absorbing stop of [ifold_from_until].                                      *)
 (* -------------------------------------------------------------------------- *)
 
-(* Queue contents, front first. *)
+(* Queue contents, front first. The queue itself is [seq]-based. *)
 Definition qelems {T : Type} (q : @L.queue T) : seq T :=
   L.front q ++ rev (L.back q).
 
@@ -2008,25 +2139,25 @@ Qed.
 
 Section BFSBridge.
 
-Context (g : L.Graph) (n : nat) (hlen : alen g = n) (hn : (0 < n)%N).
-Context (hval : forall (i : 'I_n) (j : 'I_(alen (aget g i))),
-                  (nat_of_int (aget (aget g i) j) < n)%N).
+Context (g : L.BGraph) (n : nat) (hlen : balen g = n) (hn : (0 < n)%N).
+Context (hval : forall (i : 'I_n) (j : 'I_(alen (baget g i))),
+                  (nat_of_int (aget (baget g i) j) < n)%N).
 
 Local Notation i0 := (Ordinal hn).
 
-#[local] Lemma hgn : nat_of_int (PArray.length g) = n.
+#[local] Lemma hgn : nat_of_int (blength g) = n.
 Proof. exact: hlen. Qed.
 
-Definition brel : rel 'I_n := fun a b => b \in set_of_array n (aget g a).
+Definition brel : rel 'I_n := fun a b => b \in set_of_array n (baget g a).
 
 #[local] Definition mvis (m : L.marks) : {set 'I_n} :=
-  [set i : 'I_n | PArray.get m (int_of_nat i)].
+  [set i : 'I_n | BigArray.get m (int_of_nat i)].
 
 #[local] Definition qok (e : int * N) : bool :=
   (nat_of_int e.1 < n)%N && connect brel i0 (insubd i0 (nat_of_int e.1)).
 
 Record binv (st : L.state) : Prop := BInv {
-  bi_len   : alen (L.visited st) = n;
+  bi_len   : balen (L.visited st) = n;
   bi_card  : nat_of_int (L.nb_visited st) = #|mvis (L.visited st)|;
   bi_sound : forall i : 'I_n, i \in mvis (L.visited st) -> connect brel i0 i;
   bi_queue : all qok (qelems (L.to_visit st))
@@ -2051,12 +2182,12 @@ Proof. by apply: ord_inj; rewrite insubd_ordK ?nat_of_int0. Qed.
 
 #[local] Lemma ordK (i : 'I_n) : nat_of_int (int_of_nat (nat_of_ord i)) = nat_of_ord i.
 Proof.
-apply: (int_of_natK_le (i := PArray.length g)).
+apply: (int_of_natK_le (i := blength g)).
 by rewrite hgn; exact: ltnW (ltn_ord i).
 Qed.
 
 #[local] Lemma in_mvis (m : L.marks) (y : int) (hy : (nat_of_int y < n)%N) :
-  (insubd i0 (nat_of_int y) \in mvis m) = PArray.get m y.
+  (insubd i0 (nat_of_int y) \in mvis m) = BigArray.get m y.
 Proof. by rewrite inE int_insubdK. Qed.
 
 #[local] Lemma card_ltn_notin (A : {set 'I_n}) (i : 'I_n) :
@@ -2069,25 +2200,31 @@ have hp : (#|A| < #|[set: 'I_n]|)%N.
 by rewrite cardsT card_ord in hp.
 Qed.
 
+(* [BigArray.set]/[BigArray.get] have the same unconditional specification as
+   their [PArray] counterparts, so the three marks lemmas below are the ones
+   from the flat development, with [balen] in place of [alen]. *)
 #[local] Lemma mvis_setE (m : L.marks) (y : int) (hy : (nat_of_int y < n)%N)
-    (hlm : alen m = n) :
-  mvis m.[y <- true] = insubd i0 (nat_of_int y) |: mvis m.
+    (hlm : balen m = n) :
+  mvis (BigArray.set m y true) = insubd i0 (nat_of_int y) |: mvis m.
 Proof.
+have hb : (y <? BigArray.length m)%uint63 = true.
+  by rewrite ltb_natE balenE hlm; exact: hy.
 apply/setP => i; rewrite !inE.
-case hiy : (i == insubd i0 (nat_of_int y)) => /=.
-  move/eqP: hiy => ->; rewrite int_insubdK // PArray.get_set_same //.
-  by rewrite ltb_natE -[nat_of_int (PArray.length m)]/(alen m) hlm.
+case hiy : (i == insubd i0 (nat_of_int y)).
+  rewrite orTb; move/eqP: hiy => ->; rewrite int_insubdK //.
+  by rewrite (@BigArray.get_set_same _ m y true hb).
+rewrite orFb.
 have hne : y <> int_of_nat i.
   move=> he.
   have hie : i = insubd i0 (nat_of_int y).
     by apply: ord_inj; rewrite insubd_ordK // he ordK.
   by rewrite hie eqxx in hiy.
-by rewrite PArray.get_set_other.
+by rewrite (@BigArray.get_set_other _ m y (int_of_nat i) true hne).
 Qed.
 
 #[local] Lemma mvis_card (m : L.marks) (y : int) (hy : (nat_of_int y < n)%N)
-    (hlm : alen m = n) (hnot : PArray.get m y = false) :
-  #|mvis m.[y <- true]| = #|mvis m|.+1.
+    (hlm : balen m = n) (hnot : BigArray.get m y = false) :
+  #|mvis (BigArray.set m y true)| = #|mvis m|.+1.
 Proof.
 have hnin : insubd i0 (nat_of_int y) \notin mvis m by rewrite in_mvis // hnot.
 by rewrite (mvis_setE hy hlm) cardsU1 hnin.
@@ -2095,40 +2232,57 @@ Qed.
 
 #[local] Lemma nb_incr (x : int) (hx : (nat_of_int x < n)%N) :
   nat_of_int (x + 1)%uint63 = (nat_of_int x).+1.
-Proof. by apply: (add1_alenE (a := g)); rewrite hlen. Qed.
+Proof. by apply: (add1_balenE (t := g)); rewrite hlen. Qed.
 
+(* The four invariant fields are discharged in their reduced form: the record
+   projections of the state literal are handled by conversion, so no [simpl]
+   ever has to look inside a [BigArray] operation. *)
 #[local] Lemma mark_vertex_inv (st : L.state) (y : int) (k : N) :
   binv st -> (nat_of_int y < n)%N -> connect brel i0 (insubd i0 (nat_of_int y)) ->
   binv (L.mark_vertex st y k).
 Proof.
 move=> [hl hc hs hq] hy hcon; rewrite /L.mark_vertex.
-case hvy : (PArray.get (L.visited st) y); first by split.
+case hvy : (BigArray.get (L.visited st) y); first by split.
 have hnin : insubd i0 (nat_of_int y) \notin mvis (L.visited st).
   by rewrite in_mvis // hvy.
-split => /=.
-- have h : alen ((L.visited st).[y <- true]) = n by rewrite alen_set.
+split.
+- have h : balen (BigArray.set (L.visited st) y true) = n by rewrite balen_set.
   exact: h.
-- rewrite (mvis_card hy hl hvy) nb_incr; first by rewrite hc.
-  by rewrite hc (card_ltn_notin hnin).
-- move=> i; rewrite (mvis_setE hy hl) in_setU1 => /orP[/eqP ->|]; first exact: hcon.
-  exact: hs.
-- by rewrite qelems_enqueue all_cat hq /= /qok /= hy hcon.
+- have h : nat_of_int (L.nb_visited st + 1)%uint63
+           = #|mvis (BigArray.set (L.visited st) y true)|.
+    rewrite (mvis_card hy hl hvy) nb_incr; first by rewrite hc.
+    by rewrite hc (card_ltn_notin hnin).
+  exact: h.
+- have h : forall i : 'I_n,
+      i \in mvis (BigArray.set (L.visited st) y true) -> connect brel i0 i.
+    move=> i; rewrite (mvis_setE hy hl) in_setU1 => /orP[/eqP ->|]; first exact: hcon.
+    exact: hs.
+  exact: h.
+- have h : all qok (qelems (L.enqueue (L.to_visit st) (y, k))).
+    by rewrite qelems_enqueue all_cat hq /= /qok /= hy hcon.
+  exact: h.
 Qed.
 
+(* The adjacency row [BigArray.get g y] is a [PArray] array, still traversed by
+   the flat [L.fold]: [fold_invariantP] applies verbatim. *)
 #[local] Lemma fold_row_inv (st : L.state) (y : int) (k : N)
     (hy : (nat_of_int y < n)%N) :
   binv st -> connect brel i0 (insubd i0 (nat_of_int y)) ->
-  binv (L.fold (fun z acc => L.mark_vertex acc z k) (PArray.get g y) st).
+  binv (L.fold (fun z acc => L.mark_vertex acc z k) (BigArray.get g y) st).
 Proof.
 move=> hst hcon.
-have hrow : aget g (insubd i0 (nat_of_int y)) = PArray.get g y.
-  by rewrite /aget int_insubdK.
+have hrow : baget g (nat_of_ord (insubd i0 (nat_of_int y))) = BigArray.get g y.
+  by rewrite insubd_ordK // baget_natE.
 rewrite -hrow; apply: fold_invariantP; first exact: hst.
 move=> j st' hst'.
 apply: mark_vertex_inv; [exact: hst' | exact: hval |].
 apply: connect_trans hcon _; apply: connect1.
 apply/in_set_of_array; exists j.
-by rewrite insubd_ordK //; exact: hval.
+(* The row index of [baget] is a natural, so [insubd i0 (nat_of_int y)] occurs
+   under [nat_of_ord] as well: [insubd_ordK] must be applied to the intended
+   instance, or the rewrite picks the one [j] depends on. *)
+have h := @insubd_ordK _ (hval j).
+by rewrite h.
 Qed.
 
 #[local] Lemma bfs_dequeue_inv (st : L.state) :
@@ -2141,45 +2295,54 @@ Proof.
 move=> [hl hc hs hq]; rewrite /L.bfs_dequeue.
 have := qelems_dequeue (L.to_visit st).
 case: (L.dequeue (L.to_visit st)) => [[[y k] q']|] hqe; last by split.
-rewrite hqe /= in hq; case/andP: hq => /andP[hy hcon] hq'.
-by split => //=.
+rewrite hqe in hq; case/andP: hq => /andP[hy hcon] hq'.
+by split.
 Qed.
 
 #[local] Lemma bfs_step_inv (p : L.state * int * N) :
   oinv (inl p) -> oinv (L.bfs_step g p).
 Proof.
-case: p => [[st x] k] [hst hx hcon]; rewrite /L.bfs_step /=.
+case: p => [[st x] k] [hst hx hcon]; rewrite /L.bfs_step; cbv beta iota zeta.
 set st1 := L.fold _ _ _.
 have hst1 : binv st1 by apply: fold_row_inv.
 have := bfs_dequeue_inv hst1.
 by case: (L.bfs_dequeue st1).
 Qed.
 
-#[local] Lemma init_inv : binv (L.init_state (PArray.length g) 0%uint63).
+#[local] Lemma init_inv : binv (L.init_state (blength g) 0%uint63).
 Proof.
-have hlmk : alen (PArray.make (PArray.length g) false) = n.
-  by rewrite alen_make ?leb_length ?hgn.
+have hmk : balen (BigArray.make (blength g) false) = nat_of_int (blength g)
+  := @balen_make _ (blength g) false (BigArray.leb_length g).
+have hlmk : balen (BigArray.make (blength g) false) = n by rewrite hmk hgn.
 have h0n : (nat_of_int 0%uint63 < n)%N by rewrite nat_of_int0.
-have hms : mvis ((PArray.make (PArray.length g) false).[0%uint63 <- true]) = [set i0].
+have hms : mvis (BigArray.set (BigArray.make (blength g) false) 0%uint63 true)
+           = [set i0].
   rewrite (mvis_setE h0n hlmk) insubd0.
-  have -> : mvis (PArray.make (PArray.length g) false) = set0.
-    by apply/setP => i; rewrite !inE PArray.get_make.
+  have -> : mvis (BigArray.make (blength g) false) = set0.
+    by apply/setP => i; rewrite !inE BigArray.get_make.
   by rewrite setU0.
-split => /=.
-- have h : alen ((PArray.make (PArray.length g) false).[0%uint63 <- true]) = n.
-    by rewrite alen_set hlmk.
+split.
+- have h : balen (BigArray.set (BigArray.make (blength g) false) 0%uint63 true) = n.
+    by rewrite balen_set hlmk.
   exact: h.
-- by rewrite hms cards1 nat_of_int1.
-- by move=> i; rewrite hms in_set1 => /eqP ->; exact: connect0.
+- have h : nat_of_int 1%uint63
+           = #|mvis (BigArray.set (BigArray.make (blength g) false) 0%uint63 true)|.
+    by rewrite hms cards1 nat_of_int1.
+  exact: h.
+- have h : forall i : 'I_n,
+      i \in mvis (BigArray.set (BigArray.make (blength g) false) 0%uint63 true) ->
+      connect brel i0 i.
+    by move=> i; rewrite hms in_set1 => /eqP ->; exact: connect0.
+  exact: h.
 - by [].
 Qed.
 
 Lemma bfs_reach : L.isConnected g -> forall j : 'I_n, connect brel i0 j.
 Proof.
-rewrite /L.isConnected.
-have h0f : (PArray.length g =? 0)%uint63 = false.
+rewrite /L.isConnected !blengthE.
+have h0f : (blength g =? 0)%uint63 = false.
   by rewrite eqb_natE nat_of_int0 hgn (gtn_eqF hn).
-rewrite h0f /L.bfs /L.bfs_; cbv zeta.
+rewrite h0f /L.bfs /L.bfs_; cbv zeta; rewrite !blengthE.
 rewrite ifold_from_until_absorbE.
 - rewrite nat_of_int0 subn0.
   rewrite (foldl_const
@@ -2190,13 +2353,13 @@ rewrite ifold_from_until_absorbE.
       oinv ((fun o => if o is inl s then L.bfs_step g s else o) out).
     by case=> [s|s] hs //=; exact: bfs_step_inv hs.
   have h1 : oinv (L.bfs_step g
-      (L.init_state (PArray.length g) 0%uint63, 0%uint63, BinNums.N0)).
+      (L.init_state (blength g) 0%uint63, 0%uint63, BinNums.N0)).
     apply: bfs_step_inv; split.
     + exact: init_inv.
     + by rewrite /= nat_of_int0.
     + by rewrite /= insubd0; exact: connect0.
   case E : (iter n (fun o => if o is inl s then L.bfs_step g s else o)
-      (L.bfs_step g (L.init_state (PArray.length g) 0%uint63, 0%uint63, BinNums.N0)))
+      (L.bfs_step g (L.init_state (blength g) 0%uint63, 0%uint63, BinNums.N0)))
     => [s|s].
     rewrite /= eqb_natE nat_of_int0 hgn.
     by rewrite eq_sym (gtn_eqF hn).
@@ -2215,6 +2378,27 @@ End BFSBridge.
 (* The [IntList] tests, on strictly decreasing sequences (the shape of        *)
 (* [L.diff] outputs)                                                          *)
 (* -------------------------------------------------------------------------- *)
+
+(* Membership in a strictly decreasing list, as an equation; the early exit
+   on [y < x] is only sound on such lists. *)
+Lemma mem_intlistE (x : int) (l : seq int) :
+  sorted gtns (map nat_of_int l) ->
+  L.mem_intlist x l = (nat_of_int x \in map nat_of_int l).
+Proof.
+elim: l => [|y l ih] //= hs.
+case hyx : (y <? x)%uint63.
+  move: hyx; rewrite ltb_natE => hyx.
+  rewrite in_cons; symmetry; apply/negbTE; rewrite negb_or.
+  apply/andP; split; first by rewrite (gtn_eqF hyx).
+  apply/negP => hin.
+  by have := gtns_head hs hin; rewrite ltnNge (ltnW hyx).
+case hxy : (x =? y)%uint63.
+  move: hxy; rewrite eqb_natE => /eqP hxy.
+  by rewrite in_cons hxy eqxx.
+rewrite eqb_natE in hxy.
+rewrite ih; last by move: hs => /=; exact: path_sorted.
+by rewrite in_cons hxy.
+Qed.
 
 Lemma not_subset_sound (s t : seq int) :
   sorted gtns (map nat_of_int s) -> sorted gtns (map nat_of_int t) ->

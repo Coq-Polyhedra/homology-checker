@@ -31,13 +31,13 @@ Extract Constant PArray.length => "Native_array.length".
 
 (**
   [BigArray.array] (see BigArray.v) is the chunked two-level array holding the
-  two per-facet tables: [BigArray.get] is a [PArray] get on the chunk row
-  followed by a [PArray] get inside that row, and the shape invariant [wf] --
-  a [Prop] field of the record, erased by extraction -- guarantees
-  ceil(n / 2^21) rows, every row full but the last, and the empty row as the
-  outer default.  OCaml native arrays reach 2^54 entries, far beyond
+  certificate's large index-keyed tables: [BigArray.get] is a [PArray] get on
+  the chunk row followed by a [PArray] get inside that row, and the shape
+  invariant [wf] -- a [Prop] field of the record, erased by extraction --
+  guarantees ceil(n / 2^21) rows, every row full but the last, and the empty
+  row as the outer default.  OCaml native arrays reach 2^54 entries, far beyond
   [BigArray.max_length] = 2^43 - 2^21, so the chunking is only needed on the
-  Coq side: the two big tables are realized FLAT, by the very arrays that
+  Coq side: the big tables are realized FLAT, by the very arrays that
   already realize [PArray].
 
   Observable behavior is preserved by the flattening [Mk cs n _ |-> a], where
@@ -51,16 +51,18 @@ Extract Constant PArray.length => "Native_array.length".
     [Native_array.get] out of bounds.  Both notions of "out of bounds" agree:
     [Native_array.get] also rejects the Uint63 values in [2^62, 2^63), which are
     negative as OCaml ints, and those are past [n] for any representable [n].
-  The loader already builds flat native arrays for [graph] and [facets], so the
-  extracted [bGraph] and [bFacets] are literally the flat
-  [Uint63.t Native_array.t Native_array.t] and [facet Native_array.t] it
-  produces; the nested tuple consumed by [build_cert] is unchanged.
+  The loader already builds flat native arrays for those tables, so the
+  extracted [BGraph], [BFacets] and [BVertices] are literally the flat
+  [Uint63.t Native_array.t Native_array.t], [facet Native_array.t] and
+  [vertex Native_array.t] it produces; the nested tuple consumed by
+  [build_cert] is unchanged.
 
   Only [get] and [length] are reachable from the three entry points: [make] and
-  [set] are used by the Coq-side decoder alone, and the BFS -- realized whole by
-  [Native_graph.bfs] -- runs on the [PArray]-backed [geom_graph].  The
-  constructor therefore needs no realization, and is mapped to a deliberately
-  undefined OCaml identifier: should a future revision make [BigArray.Mk]
+  [set] occur in the Coq-side decoder, which is not extracted, and in the BFS
+  marks, and the BFS is realized whole by [Native_graph.bfs], which keeps its
+  own visited set.  The constructor therefore needs no realization, and is
+  mapped to a deliberately undefined OCaml identifier: should a future
+  revision make [BigArray.Mk]
   reachable, the extracted code fails to compile instead of silently building a
   mis-shaped value.
 *)

@@ -120,7 +120,7 @@ let array element = {
    2^21 * (2^22 - 1) = 2^43 - 2^21. *)
 let big_max_length = Uint63.of_int 8796090925056
 
-(* The element combinator for the two tables the Coq certificate stores in a
+(* The element combinator for the tables the Coq certificate stores in a
    [BigArray.array].  The wire format is exactly the one read by [array] above,
    and by [read_big_array] / [big_array] in src/CertificateSchema.v: the same
    length word, the same leading element supplying the array default, then the
@@ -166,7 +166,7 @@ and expect_tag reader expected =
          expected actual)
 
 let int_array = named "uint63 array" (array int63)
-let int_matrix = named "uint63 matrix" (array int_array)
+let big_int_matrix = named "uint63 matrix" (big_array int_array)
 let z_array = named "BigZ array" (array big_z)
 let z_matrix = named "BigZ matrix" (array z_array)
 
@@ -175,13 +175,16 @@ let point = named "point" (pair z_array big_n)
 let flag = named "flag" (pair int_array int_array)
 let item = named "vertex" (pair int_array (pair point flag))
 let facet = named "facet" (pair int_array int63)
-(* [graph] and [facets] -- LowLevelChecker's [BGraph] and [BFacets] -- are the
-   only two tables held in a [BigArray.array]; their inner rows and every other
-   table stay on the [PArray]-capped [array], mirroring the split made on the
-   Coq side in src/CertificateSchema.v. *)
+(* The tables whose length is the number of facets or the number of vertices --
+   [graph] and [facets] here, the vertex table and the three geometric
+   components below -- are the ones held in a [BigArray.array]; their inner
+   rows and every other table stay on the [PArray]-capped [array], mirroring
+   the split made on the Coq side in src/CertificateSchema.v. *)
 let simplex_graph =
-  named "simplex graph" (pair (big_array int_array) (big_array facet))
-let geom = named "geometric graph" (pair int_matrix (pair int_matrix int_matrix))
+  named "simplex graph" (pair big_int_matrix (big_array facet))
+let geom =
+  named "geometric graph"
+    (pair big_int_matrix (pair big_int_matrix big_int_matrix))
 let full_dim = named "full-dimensional witness" (pair point (pair z_matrix z_matrix))
 let sparse_entry = named "sparse entry" (pair int63 big_z)
 let sparse_vector = named "sparse vector" (array sparse_entry)
@@ -196,7 +199,7 @@ let root =
 let payload =
   named "certificate payload"
     (pair (array inequality)
-      (pair (array item)
+      (pair (big_array item)
         (pair simplex_graph
           (pair geom
             (pair full_dim root)))))
