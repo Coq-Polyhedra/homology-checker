@@ -3,16 +3,16 @@ let usage program =
   2
 
 let timed_check name check certificate =
-  let started = Sys.time () in
+  let started = Unix.gettimeofday () in
   let result = check certificate in
-  let elapsed = Sys.time () -. started in
+  let elapsed = Unix.gettimeofday () -. started in
   Printf.eprintf "%-24s %.6f s  %b\n%!" name elapsed result;
   result
 
 let run filename =
-  let started = Sys.time () in
+  let started = Unix.gettimeofday () in
   let certificate = Loader.load filename in
-  let loaded = Sys.time () in
+  let loaded = Unix.gettimeofday () in
   Printf.eprintf "%-24s %.6f s\n%!" "certificate loading" (loaded -. started);
   let containment =
     timed_check "vertex containment"
