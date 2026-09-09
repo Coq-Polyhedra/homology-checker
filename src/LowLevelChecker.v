@@ -364,6 +364,31 @@ Fixpoint pairwise_incomparable
 
 End IntList.
 
+Section Queue.
+
+Context {T : Type}.
+
+Record queue := Queue { front : seq T; back : seq T; }.
+
+Implicit Types (q : queue) (x : T) (xs : seq T).
+
+Definition empty := Queue [::] [::].
+
+Definition enqueue q x :=
+  Queue q.(front) (x :: q.(back)).
+
+Definition pull q :=
+  if q is Queue [::] back
+  then Queue (rev back) [::] 
+  else q.
+
+Definition dequeue q :=
+  if pull q is Queue (x :: front) back
+  then Some (x, Queue front back)
+  else None.
+
+End Queue.
+
 Section Graph.
 
 (* [Graph] is kept for the upstream API: since the combinatorial and the
@@ -427,6 +452,70 @@ Definition bisSimpleGraph (g : BGraph) :=
   (bhasSimpleEdges g) && (bhasNoLoops g).
 
 End Graph.
+
+Section BFS.
+
+Arguments queue T : clear implicits.
+Arguments empty T : clear implicits.
+
+Definition bfsqueue := queue (int * N)%type.
+
+(* the marks are indexed by the vertices of the geometric graph, hence too
+ * large for [PArray]; the queue stays seq-based *)
+Definition marks := BigArray.array bool.
+
+Record state := State {
+  nb_visited : int;
+  visited : marks;
+  to_visit : bfsqueue;
+}.
+
+Definition init_state (n : int) (y : int) :=
+  {| nb_visited  := 1%uint63;
+      visited  := BigArray.set (BigArray.make n false) y true;
+      to_visit    := empty _; |}.
+
+Definition mark_vertex (st : state) (y : int) (k : N) :=
+  if BigArray.get st.(visited) y then st else
+    {| nb_visited := (st.(nb_visited)+1)%uint63;
+        visited := BigArray.set st.(visited) y true;
+        to_visit := enqueue st.(to_visit) (y, k); |}.
+
+Definition bfs_dequeue (st : state) :=
+  if dequeue st.(to_visit) is Some ((y, k), q) then
+    let st := {|
+      nb_visited := st.(nb_visited);
+      visited := st.(visited);
+      to_visit   := q;
+    |} in Some (st, y, k)
+  else None.
+
+Definition bfs_step (g : BGraph) (st : state * int * N) :=
+  let: (st, x, k) := st in
+  let: st :=
+    fold (fun y acc => mark_vertex acc y (N.succ k)) (BigArray.get g x) st
+  in
+  match bfs_dequeue st with
+  | Some st => inl st
+  | None    => inr st
+  end.
+
+Definition bfs_ (g : BGraph) (x : int) :=
+  let out := bfs_step g (init_state (BigArray.length g) x, x, 0%N) in
+  let out := ifold_from_until (fun _ out => if out is inl s then bfs_step g s else out)
+  0%uint63 (BigArray.length g)%uint63 (fun _ out => if out is inr _ then true else false) out
+  in if out is inr v then Some v else None.
+
+(* This function returns the number of vertices visited by a BFS starting
+from vertex 0 in an undirected graph. *)
+Definition bfs (g : BGraph) (x : int) :=
+  odflt 0%uint63 (omap (fun x => x.(nb_visited)) (bfs_ g x)).
+
+Definition isConnected (g : BGraph) :=
+  if (BigArray.length g =? 0)%uint63 then true else
+    (bfs g (0%uint63) =? BigArray.length g)%uint63.
+
+End BFS.
 
 Section BigZ.
 

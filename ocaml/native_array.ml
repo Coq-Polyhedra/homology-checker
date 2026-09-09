@@ -1,6 +1,6 @@
 (** Native realization of primitive arrays.  The default value implements
     out-of-bounds [PArray.get]; [set] copies its backing array to preserve the
-    persistent semantics of [PArray.set]. *)
+    persistent semantics expected by the Gallina connectivity algorithm. *)
 
 type 'a t = {
   data : 'a array;
