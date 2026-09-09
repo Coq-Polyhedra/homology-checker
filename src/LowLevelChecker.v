@@ -646,7 +646,8 @@ Definition areFlagsWellFormed (cert : Certificate) :=
          let '(ineq, witness) := flag v in
          hasLength d%uint63 ineq 
       && hasLength d%uint63 witness
-      && allInRange Uint63.leb (0%uint63) (nb_active-1)%uint63 ineq) 
+      && allInRange Uint63.leb (0%uint63) (nb_active-1)%uint63 ineq
+      && allInRange Uint63.leb (0%uint63) (BigArray.length vertices - 1)%uint63 witness)
     vertices).
 
 Definition areVerticesWellFormed (cert : Certificate) :=
@@ -784,7 +785,7 @@ Definition isRootWellFormed (cert : Certificate) :=
   
 Definition areActiveSetsUnique (cert : Certificate) :=
   let vertices := vertices cert in
-  isStrictlySorted (fun vertex1 vertex2 => (ltbArray Uint63.eqb Uint63.ltb) (activeSet vertex1) (activeSet vertex2)) vertices.
+  bisStrictlySorted (fun vertex1 vertex2 => (ltbArray Uint63.eqb Uint63.ltb) (activeSet vertex1) (activeSet vertex2)) vertices.
 
 Definition areFacetsUnique (cert : Certificate) :=
   let facets := facets cert in
@@ -814,7 +815,7 @@ Definition check_ineqs (ineqs : Inequalities) (active_set : ActiveSet) (x : Poin
 Definition feasibility_check (cert : Certificate) := 
   let inequalities := inequalities cert in
   let vertices := vertices cert in
-  for_all (fun v => check_ineqs inequalities (activeSet v) (point v)) vertices.
+  bfor_all (fun v => check_ineqs inequalities (activeSet v) (point v)) vertices.
 
 (* Check if s1 \ s2 = v *)
 Definition isRidgeInFacet (s1 s2 : array int) (v : int) :=
@@ -912,20 +913,20 @@ Definition graph_image_check (cert : Certificate) :=
   bfor_alli_matrix (fun i _ j =>
     let src := mapping (BigArray.get facets i) in
     let tgt := mapping (BigArray.get facets j) in
-    (src =? tgt)%uint63 || mem_sorted Uint63.ltb (geom_graph.[src]) tgt) graph
+    (src =? tgt)%uint63 || mem_sorted Uint63.ltb (BigArray.get geom_graph src) tgt) graph
   &&
   (* check geom_graph edges are images of graph edges *)
-  for_alli_matrix (fun i j v =>
-    let src := geom_edge_sources.[i].[j] in
-    let tgt := (BigArray.get graph src).[geom_edge_local_targets.[i].[j]] in
+  bfor_alli_matrix (fun i j v =>
+    let src := (BigArray.get geom_edge_sources i).[j] in
+    let tgt := (BigArray.get graph src).[(BigArray.get geom_edge_local_targets i).[j]] in
     (i =? mapping (BigArray.get facets src))%uint63
     && (v =? mapping (BigArray.get facets tgt))%uint63) geom_graph.
 
 Definition geom_edge_pairwise_check (cert : Certificate) :=
   let geom_graph := geom_graph cert in
   let vertices := vertices cert in
-  for_alli (fun i v =>
-    let neighbors := geom_graph.[i] in
+  bfor_alli (fun i v =>
+    let neighbors := BigArray.get geom_graph i in
     let diffs :=
       fold
         (fun w acc =>
@@ -944,7 +945,7 @@ Definition connectivity_check (cert : Certificate) :=
 Definition flag_check (cert : Certificate) :=
   let vertices := vertices cert in
   let inequalities := inequalities cert in
-  for_all (fun v =>
+  bfor_all (fun v =>
     let active_set := activeSet v in
     let '(ineqs, witness) := flag v in
     for_alli 
