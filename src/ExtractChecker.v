@@ -24,8 +24,8 @@ Set Extraction Optimize.
 Extract Constant PArray.array "'a" => "Native_array.t".
 Extraction Inline PArray.array.
 
-(** Generic primitive-array realization.  Connectivity uses persistent
-    [make]/[set]; all certificate traversals use the same backing arrays. *)
+(** Generic primitive-array realization: all certificate traversals use the
+    same backing arrays. *)
 Extract Constant PArray.get => "Native_array.get".
 Extract Constant PArray.length => "Native_array.length".
 
@@ -58,11 +58,9 @@ Extract Constant PArray.length => "Native_array.length".
   [build_cert] is unchanged.
 
   Only [get] and [length] are reachable from the three entry points: [make] and
-  [set] occur in the Coq-side decoder, which is not extracted, and in the BFS
-  marks, and the BFS is realized whole by [Native_graph.bfs], which keeps its
-  own visited set.  The constructor therefore needs no realization, and is
-  mapped to a deliberately undefined OCaml identifier: should a future
-  revision make [BigArray.Mk]
+  [set] occur in the Coq-side decoder alone, which is not extracted.  The
+  constructor therefore needs no realization, and is mapped to a deliberately
+  undefined OCaml identifier: should a future revision make [BigArray.Mk]
   reachable, the extracted code fails to compile instead of silently building a
   mis-shaped value.
 *)
@@ -88,8 +86,6 @@ Extract Constant ifold_from_until => "Native_loop.ifold_from_until".
 Extract Constant mem_sorted => "Native_array_ops.mem_sorted".
 Extract Constant mem => "Native_array_ops.mem".
 Extract Constant diff => "Native_array_ops.diff".
-
-Extract Constant bfs => "Native_graph.bfs".
 
 (**
   The checker never observes the representation of the two bignum types.

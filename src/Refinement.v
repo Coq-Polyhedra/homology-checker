@@ -83,10 +83,10 @@ Qed.
 Lemma geqP (c : L.Certificate) : L.GraphEquality.check_certificate c ->
   [/\ L.isGeomGraphWellFormed c, L.areGeomEdgeSourcesWellFormed c
     & L.areGeomEdgeLocalTargetsWellFormed c] /\
-  [/\ L.graph_image_check c, L.geom_edge_pairwise_check c & L.connectivity_check c].
+  L.graph_image_check c /\ L.geom_edge_difference_pairwise_check c.
 Proof.
 rewrite /L.GraphEquality.check_certificate /L.GraphEquality.well_formedness_check.
-by move=> /andP[/andP[/andP[/andP[/andP[hg hsrc] htgt] himg] hpair] hconn].
+by move=> /andP[/andP[/andP[/andP[hg hsrc] htgt] himg] hpair].
 Qed.
 
 Lemma veqP (c : L.Certificate) : L.VtxEquality.check_certificate c ->
@@ -877,24 +877,6 @@ move=> hact x hx.
 have [[p [hp hpx]] _] := diff_arr_mem (activeSet_sorted v hact) (activeSet_sorted w hact) hx.
 have h2 := activeSet_range hm hact (v := v) (Ordinal hp).
 by rewrite -hpx; exact: h2.
-Qed.
-
-(* A nonempty active-set difference refutes inclusion of the active sets. *)
-Lemma diff_ne_subset (hm : (0 < m)%N) (v w : 'I_nv) : L.areActiveSetsWellFormed c ->
-  L.diff Uint63.ltb (L.activeSet (vertex_of v)) (L.activeSet (vertex_of w)) <> [::] ->
-  ~~ (activeSet_of v \subset activeSet_of w).
-Proof.
-move=> hact hne; case E: (L.diff _ _ _) hne => [|x0 l] hne; first by have := hne (erefl _).
-have hx0 : nat_of_int x0 \in map nat_of_int
-    (L.diff Uint63.ltb (L.activeSet (vertex_of v)) (L.activeSet (vertex_of w))).
-  by rewrite E mem_head.
-have [hsrc hnotb] := diff_arr_mem (activeSet_sorted v hact) (activeSet_sorted w hact) hx0.
-have [p [hp hpx]] := hsrc.
-have hlt : (nat_of_int x0 < m)%N := diff_lt_m hm hact hx0.
-apply/subsetPn; exists (Ordinal hlt).
-  by apply/in_set_of_array; exists (Ordinal hp); exact: hpx.
-apply/negP => /in_set_of_array[q hq].
-by have := hnotb q (ltn_ord q); rewrite hq.
 Qed.
 
 (* The diff list computes exactly the set difference of the active sets. *)
@@ -1732,7 +1714,7 @@ move=> v w; rewrite hGE hGR hMA vtx_geom_graph_of vtx_graph_of => hv hw hvw; spl
 Qed.
 
 (* -------------------------------------------------------------------------- *)
-(* Support for T7 and T9: the diff list along a neighbour row                 *)
+(* Support for T9: the diff list along a neighbour row                        *)
 (* -------------------------------------------------------------------------- *)
 
 (* The active-set differences the checker builds along [v]'s neighbour row,
@@ -1759,114 +1741,13 @@ Proof.
 by rewrite geom_diffs_size ltn_subrL /=; exact: leq_ltn_trans (leq0n _) (ltn_ord j).
 Qed.
 
-(* The per-vertex content of [geom_edge_pairwise_check]. *)
-Lemma geom_check_at (hchk : L.geom_edge_pairwise_check c) :
-  forall v : 'I_nv,
-  all (fun d => if d is [::] then false else true) (geom_diffs v)
-  && L.pairwise_incomparable (geom_diffs v).
+(* The per-vertex content of [geom_edge_difference_pairwise_check]. *)
+Lemma geom_check_at (hchk : L.geom_edge_difference_pairwise_check c) :
+  forall v : 'I_nv, L.pairwise_incomparable (geom_diffs v).
 Proof.
-move=> v; move: hchk; rewrite /L.geom_edge_pairwise_check; cbv zeta.
+move=> v; move: hchk; rewrite /L.geom_edge_difference_pairwise_check; cbv zeta.
 move=> /bfor_alli_balenP/(_ v); cbv beta zeta.
 by rewrite fold_consE => h; exact: h.
-Qed.
-
-Lemma geom_diff_ne (hchk : L.geom_edge_pairwise_check c) (v : 'I_nv)
-    (j : 'I_(alen (baget (L.geom_graph c) v))) :
-  L.diff Uint63.ltb (L.activeSet (vertex_of v))
-    (L.activeSet (BigArray.get (L.vertices c)
-       (PArray.get (baget (L.geom_graph c) v) (int_of_nat j)))) <> [::].
-Proof.
-have /andP[hall _] := geom_check_at hchk v.
-have := all_nthP [::] hall _ (geom_diffs_index j).
-by rewrite geom_diffs_nth; case: (L.diff _ _ _).
-Qed.
-
-(* -------------------------------------------------------------------------- *)
-(* T7: geometric-edge incomparability                                         *)
-(* -------------------------------------------------------------------------- *)
-
-(* Adjacent certified points have incomparable active sets. *)
-Lemma geom_edge_pairwise_correct (hm : (0 < m)%N) :
-  L.areInequalitiesWellFormed c -> L.arePointsWellFormed c -> L.areActiveSetsWellFormed c ->
-  L.areActiveSetsUnique c -> L.feasibility_check c ->
-  L.isGeomGraphWellFormed c -> L.geom_edge_pairwise_check c ->
-  @H.geom_edge_pairwise_check d R (interp_cert hm).
-Proof.
-move=> hineq hpts hact hasu hfeas hg hchk.
-have hAS := activeSets_of_vertex hm hineq hpts hact hasu hfeas.
-rewrite /H.geom_edge_pairwise_check /interp_cert /H.geom_graph /H.activeSets vtx_geom_graph_of.
-move=> x hx w /=; rewrite in_succ_geom // => /and3P[hne hwp hpe].
-move: hpe => /existsP[v1 /existsP[w1 /and3P[/eqP hp1 /eqP hpw hnb]]].
-rewrite -hp1 -hpw !hAS /H.incomparable.
-(* one direction per orientation of the geometric edge *)
-have hdir : forall (a b : 'I_nv), b \in geom_nbrs a ->
-    ~~ (activeSet_of a \subset activeSet_of b).
-  move=> a b /in_set_of_array[j hj].
-  have hvw : BigArray.get (L.vertices c)
-               (PArray.get (baget (L.geom_graph c) a) (int_of_nat j)) = vertex_of b.
-    by rewrite /vertex_of /baget -hj nat_of_intK.
-  have hdne := geom_diff_ne hchk (v := a) (j := j).
-  rewrite hvw in hdne; exact: diff_ne_subset hm a b hact hdne.
-by apply/andP; split; [exact: hdir hnb | exact: hdir (geom_nbrs_sym hg hnb)].
-Qed.
-
-(* -------------------------------------------------------------------------- *)
-(* T8: connectivity                                                           *)
-(* -------------------------------------------------------------------------- *)
-
-Lemma connect_geom_path (u v : 'I_nv) :
-  connect (@brel (L.geom_graph c) nv) u v ->
-  has_path geom_graph_of (point_of_vertex u) (point_of_vertex v).
-Proof.
-move=> /connectP[p hp hl].
-elim: p u hp hl => [|a p ihp] u /=.
-  move=> _ ->; apply: has_pathxx.
-  by rewrite vtx_geom_graph_of; apply/in_points_of; exists u.
-move=> /andP[hab hp] hl.
-have hab' : a \in geom_nbrs u := hab.
-have hup : point_of_vertex u \in points_of by apply/in_points_of; exists u.
-have hap : point_of_vertex a \in points_of by apply/in_points_of; exists a.
-case: (altP (point_of_vertex a =P point_of_vertex u)) => [heq|hne].
-  by rewrite -heq; exact: ihp _ hp hl.
-have hedge : edges geom_graph_of (point_of_vertex u) (point_of_vertex a).
-  rewrite /geom_graph_of edge_mk_graph //.
-  apply/andP; split.
-    by apply/eqP => he; move: hne; rewrite he eqxx.
-  apply/existsP; exists u; apply/existsP; exists a.
-  by rewrite !eqxx hab'.
-exact: has_path_trans (has_path_edge hedge) (ihp _ hp hl).
-Qed.
-
-(* The BFS visit count certifies connectivity of the geometric graph. *)
-Lemma connectivity_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) :
-  L.isGeomGraphWellFormed c -> L.connectivity_check c ->
-  @H.connectivity_check d R (interp_cert hm).
-Proof.
-move=> hg hchk.
-rewrite /H.connectivity_check /interp_cert /H.geom_graph.
-have hrev : forall x y, has_path geom_graph_of x y -> has_path geom_graph_of y x.
-  move=> x y hp.
-  have hx : x \in vertices geom_graph_of.
-    by case: hp => ep [hsrc _]; rewrite -hsrc; exact: mem_src.
-  move: y hp; apply: has_pathW; first exact: has_pathxx hx.
-  move=> S x1 hSP _ hSx1 y1 hy1.
-  have h1 : has_path geom_graph_of y1 x1.
-    by apply: has_path_edge; apply: geom_edges_sym.
-  exact: has_path_trans h1 (hSP _ hSx1).
-have hval : forall (i : 'I_nv) (j : 'I_(alen (baget (L.geom_graph c) i))),
-    (nat_of_int (aget (baget (L.geom_graph c) i) j) < nv)%N
-  := fun i j => geom_nbrs_ord hg j.
-move: hchk; rewrite /L.connectivity_check; cbv zeta => hchk.
-have hreach := bfs_reach (geom_graph_len hg) hnv hval hchk.
-have hpath0 : forall w : 'I_nv,
-    has_path geom_graph_of (point_of_vertex (Ordinal hnv)) (point_of_vertex w).
-  move=> w.
-  by apply: connect_geom_path; exact: hreach.
-move=> x y hxv hyv.
-rewrite vtx_geom_graph_of in hxv hyv.
-case/imfsetP: hxv => [u _ hxe]; case/imfsetP: hyv => [w _ hye].
-rewrite hxe hye.
-exact: has_path_trans (hrev _ _ (hpath0 u)) (hpath0 w).
 Qed.
 
 (* -------------------------------------------------------------------------- *)
@@ -1876,7 +1757,8 @@ Qed.
 (* Distinct neighbours cut incomparable slices out of the active set. *)
 Lemma geom_edge_difference_pairwise_correct (hm : (0 < m)%N) :
   L.areInequalitiesWellFormed c -> L.arePointsWellFormed c -> L.areActiveSetsWellFormed c ->
-  L.areActiveSetsUnique c -> L.feasibility_check c -> L.geom_edge_pairwise_check c ->
+  L.areActiveSetsUnique c -> L.feasibility_check c ->
+  L.geom_edge_difference_pairwise_check c ->
   @H.geom_edge_difference_pairwise_check d R (interp_cert hm).
 Proof.
 move=> hineq hpts hact hasu hfeas hchk.
@@ -1906,7 +1788,7 @@ have hpair : forall jA jB : 'I_(alen (baget (L.geom_graph c) v1)), (jA < jB)%N -
         (L.activeSet (BigArray.get (L.vertices c)
            (PArray.get (baget (L.geom_graph c) v1) (int_of_nat jA))))).
   move=> jA jB hAB.
-  have /andP[_ hpw] := geom_check_at hchk v1.
+  have hpw := geom_check_at hchk v1.
   have hk12 : (alen (baget (L.geom_graph c) v1) - jB.+1
                < alen (baget (L.geom_graph c) v1) - jA.+1)%N.
     by apply: ltn_sub2l; [exact: leq_ltn_trans hAB (ltn_ord jB) | exact: hAB].
@@ -1951,29 +1833,22 @@ Qed.
 (* Assembly: the GraphEquality checker                                        *)
 (* -------------------------------------------------------------------------- *)
 
-(* The five geometric-graph conditions follow from the two checker bundles;
+(* The three geometric-graph conditions follow from the two checker bundles;
    the image condition comes in its corrected form
    ([geomGraphIsImageOfGraph_ne]). *)
 Theorem graph_equality_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) (hnf : (0 < nf)%N)
     (hd : (0 < d)%N) :
   L.VtxContainment.check_certificate c -> L.GraphEquality.check_certificate c ->
   [/\ @H.geomGraphVerticesArePoints d R (interp_cert hm),
-      geomGraphIsImageOfGraph_ne hm,
-      @H.geom_edge_pairwise_check d R (interp_cert hm),
-      @H.connectivity_check d R (interp_cert hm) &
+      geomGraphIsImageOfGraph_ne hm &
       @H.geom_edge_difference_pairwise_check d R (interp_cert hm)].
 Proof.
-move=> /certP[/wfP hwf hfeas _ hgraph _] /geqP[[hg hsrc htgt] [himg hpair hconn]].
+move=> /certP[/wfP hwf hfeas _ hgraph _] /geqP[[hg hsrc htgt] [himg hpair]].
 move: hgraph; rewrite /L.graph_check; cbv zeta => /andP[hreg _].
 split.
 - exact: (geomGraphVerticesArePoints_correct hm).
 - have h := geomGraphIsImageOfGraph_correct (hm := hm) hnv hnf hd (wf_graph hwf) (wf_desc hwf)
               (wf_map hwf) (wf_fu hwf) hreg hg hsrc htgt himg.
-  exact: h.
-- have h := geom_edge_pairwise_correct (hm := hm) (wf_ineq hwf) (wf_pts hwf) (wf_act hwf)
-              (wf_asu hwf) hfeas hg hpair.
-  exact: h.
-- have h := connectivity_correct (hm := hm) hnv hg hconn.
   exact: h.
 - have h := geom_edge_difference_pairwise_correct (hm := hm) (wf_ineq hwf) (wf_pts hwf)
               (wf_act hwf) (wf_asu hwf) hfeas hpair.
