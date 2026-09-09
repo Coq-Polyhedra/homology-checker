@@ -9,3 +9,4 @@ src/CheckCert.v
 ocaml/extracted_checker.ml*
 _build
 .lia.cache
+.nia.cache
