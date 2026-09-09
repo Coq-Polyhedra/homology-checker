@@ -934,7 +934,7 @@ Definition geom_edge_difference_pairwise_check (cert : Certificate) :=
         neighbors
         [::]
     in
-    pairwise_incomparable diffs (* T9 *))
+    pairwise_incomparable diffs (* T7 *))
   vertices.
 
 Definition flag_check (cert : Certificate) :=
@@ -1024,6 +1024,6 @@ Definition well_formedness_check (cert : Certificate) :=
 Definition check_certificate (cert : Certificate) :=
      (well_formedness_check cert)
   && (graph_image_check cert)
-  && (geom_edge_difference_pairwise_check cert). (* T9 *)
+  && (geom_edge_difference_pairwise_check cert). (* T7 *)
 
 End GraphEquality.

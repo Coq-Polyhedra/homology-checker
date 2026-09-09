@@ -1714,7 +1714,7 @@ move=> v w; rewrite hGE hGR hMA vtx_geom_graph_of vtx_graph_of => hv hw hvw; spl
 Qed.
 
 (* -------------------------------------------------------------------------- *)
-(* Support for T9: the diff list along a neighbour row                        *)
+(* Support for T7: the diff list along a neighbour row                        *)
 (* -------------------------------------------------------------------------- *)
 
 (* The active-set differences the checker builds along [v]'s neighbour row,
@@ -1751,7 +1751,7 @@ by rewrite fold_consE => h; exact: h.
 Qed.
 
 (* -------------------------------------------------------------------------- *)
-(* T9: active-set difference incomparability                                  *)
+(* T7: active-set difference incomparability                                  *)
 (* -------------------------------------------------------------------------- *)
 
 (* Distinct neighbours cut incomparable slices out of the active set. *)

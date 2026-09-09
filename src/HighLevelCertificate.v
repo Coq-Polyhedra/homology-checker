@@ -152,7 +152,7 @@ Definition flag_check :=
   forall v, v \in points -> forall k : 'I_d, flag_indices v k \notin activeSets (flag_vertices v k)
   /\ forall j : 'I_d, j < k -> flag_indices v j \in activeSets (flag_vertices v k).
 
-(* Condition T9 *)
+(* Condition T7 *)
 Definition geom_edge_difference_pairwise_check :=
   forall v : 'cV[R]_d, v \in vertices geom_graph -> forall w w' : 'cV[R]_d,
   w \in successors geom_graph v /\ w' \in successors geom_graph v -> w <> w' 
