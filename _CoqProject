@@ -10,3 +10,4 @@ src/RefinementBridges.v
 src/Refinement.v
 src/CertificateSchema.v
 src/ExtractChecker.v
+src/VertexCriterion.v

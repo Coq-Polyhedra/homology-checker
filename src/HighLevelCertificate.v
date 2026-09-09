@@ -182,10 +182,13 @@ Local Notation facetsAreDSimplices := (facetsAreDSimplices d R cert).
 Local Notation graphVerticesAreFacets := (graphVerticesAreFacets d R cert).
 Local Notation graphIsUndirected := (graphIsUndirected d R cert).
 Local Notation mappingHasImageInPoints := (mappingHasImageInPoints d R cert).
+Local Notation flagIndicesAreInActiveSets := (flagIndicesAreInActiveSets d R cert).
+Local Notation flagVerticesArePoints := (flagVerticesArePoints d R cert).
 Local Notation feasibility_check := (feasibility_check d R cert).
 Local Notation inversibility_check := (inversibility_check d R cert).
 Local Notation graph_check := (graph_check d R cert).
 Local Notation full_dim_check := (full_dim_check d R cert).
+Local Notation flag_check := (flag_check d R cert).
 Local Notation mapping_check := (mapping_check d R cert).
 Local Notation facets := (facets R d cert).
 Local Notation graph := (graph R d cert).
@@ -196,6 +199,9 @@ Local Notation full_dim_point := (full_dim_point R d cert).
 Local Notation full_dim_dir := (full_dim_dir R d cert).
 Local Notation full_dim_inv := (full_dim_inv R d cert).
 Local Notation mapping := (mapping R d cert).
+Local Notation flag_indices := (flag_indices R d cert).
+Local Notation flag_vertices := (flag_vertices R d cert).
+Local Notation notin_active_constraintsP := (notin_active_constraintsP d R).
 
 Lemma vertices_card (f : simplex_of m) :
   facetsAreDSimplices -> graphVerticesAreFacets -> 
@@ -409,6 +415,41 @@ Proof.
   rewrite -(activeSets_cert Hfeas (mapping f) (Hmappoint f Hf)).
   exact: Hmapcheck f Hf.
 Qed.
+
+Lemma flag_indices_are_active :
+  feasibility_check -> flagIndicesAreInActiveSets -> forall v : 'cV[R]_d, v \in points -> forall i : 'I_d, ('[normalVector 
+  (flag_indices v i), v])%R = (polytope.`b (flag_indices v i) 0)%R.
+Proof.
+  move=> Hfeas Hflag v Hv i.
+  have Hact := (Hflag v Hv i).
+  rewrite (activeSets_cert Hfeas v Hv) in Hact.
+  by move/in_active_constraintsP in Hact.
+Qed. 
+
+Lemma flag_vertices_lt_are_active :
+  flagVerticesArePoints -> feasibility_check -> flag_check ->
+  forall v, v \in points -> forall k : 'I_d, forall j : 'I_d, j < k ->
+  ('[normalVector (flag_indices v j), flag_vertices v k])%R = (polytope.`b (flag_indices v j) 0)%R.
+Proof.
+  move=> Hflagvert Hfeas Hflagcheck v Hv k j Hjk.
+  have Hact := (snd (Hflagcheck v Hv k) j Hjk).
+  rewrite (activeSets_cert Hfeas (flag_vertices v k) (Hflagvert v Hv k)) in Hact.
+  by move/in_active_constraintsP in Hact.
+Qed.
+
+Lemma flag_vertices_diag_are_not_active :
+  flagVerticesArePoints -> feasibility_check -> flag_check ->
+  forall v, v \in points -> forall k : 'I_d, (('[normalVector (flag_indices v k), 
+  flag_vertices v k])%R > polytope.`b (flag_indices v k) 0)%R.
+Proof.
+  move=> Hflagvert Hfeas Hflagcheck v Hv k.
+  have Hact := (fst (Hflagcheck v Hv k)).
+  rewrite (activeSets_cert Hfeas (flag_vertices v k) (Hflagvert v Hv k)) in Hact.
+  by move/(notin_active_constraintsP polytope (flag_vertices v k) (flag_indices v k) ((fst Hfeas) (flag_vertices v k) (Hflagvert v Hv k))) in Hact.
+Qed.
+
+
+
 
 End CertificateLemmas.
 

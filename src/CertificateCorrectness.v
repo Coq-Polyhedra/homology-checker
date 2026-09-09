@@ -6,7 +6,7 @@ Import HPolyhedron.
 
 Open Scope polyh_scope.
 
-From Cert Require Import OddCoveringTheorem CoveringCriterion HighLevelCertificate.
+From Cert Require Import OddCoveringTheorem CoveringCriterion HighLevelCertificate VertexCriterion.
 
 Section FinsetLemmas.
 
@@ -762,7 +762,7 @@ Proof.
     by change ((\sum_i '[\col_k polytope.`A (specialSimplex cert i) k, x - specialVertex cert])%R = 0%R).
     by [].
   have Horth : (x - specialVertex cert)%R \in (<<[seq (\col_k (polytope.`A (specialSimplex cert i) k))%R | i <- enum 'I_d]>>^OC)%VS.
-    apply/orthv_spanP. move=>y /mapP [i [HiId Hyi]].
+    apply/orthv_spanP. move=>y /mapP [i HiId Hyi].
     rewrite Hyi. by apply: HeqT i.
   have Hdimfree : \dim <<[seq (\col_k polytope.`A (specialSimplex cert i) k)%R | i <- enum 'I_d]>> = d.
     have Hfree := inversibility_cert Hinvert.
@@ -970,7 +970,7 @@ Proof.
         apply: dim_sub_affine.
         + apply: zero_coneOf.
         + move=> x Hx.
-          move/mapP: Hx => [i [Hi [Hij]]].
+          move/mapP: Hx => [i Hi Hij].
           have Hx : x \in normalsOf [set specialSimplex cert x0 | x0 : 'I_d].
             apply/in_normalsOfP. exists (specialSimplex cert i). split=>//.
             apply/imsetP. exists i. by rewrite inE. by [].
@@ -1046,7 +1046,7 @@ Qed.
 
 End SpecialPoint.
 
-Section CertificateCorrectness.
+Section CertificateCompleteness.
 
 Context (d : nat) (R : realFieldType).
 
@@ -1080,6 +1080,290 @@ Local Notation exists_special_point := (exists_special_point d R cert).
 Local Notation dim_cert := (dim_cert d R).
 Local Notation facets_cert := (facets_cert d R).
 Local Notation cone_subset_cert := (cone_subset_cert d R).
+Local Notation full_dim_point := (full_dim_point R d cert).
+
+Hypothesis Hdim : d > 0.
+Hypothesis Hnormals : forall i : 'I_m, (normalVector polytope i <> 0)%R.
+
+Definition well_formedness_check_completeness :=
+  facetsAreDSimplices cert /\ 
+  mappingHasImageInPoints cert /\ 
+  graphVerticesAreFacets cert /\ 
+  graphIsUndirected cert /\ 
+  specialSimplexInSpecialCone cert /\
+  weightsAreStrictlyPositiveVectors cert.
+
+Definition check_certificate_completeness :=
+  well_formedness_check_completeness /\ 
+  full_dim_check cert /\ 
+  feasibility_check cert /\ 
+  mapping_check cert /\ 
+  graph_check cert /\ 
+  inversibility_check cert /\ 
+  separability_check cert.
+
+Theorem certificate_completeness :
+  check_certificate_completeness -> ((vertex_set '[polytope]) `<=` points)%fset /\ compact '[polytope].
+Proof.
+  move=> H. 
+  move: H => [Hwell [Hfulldim [Hfeas [Hmapcheck [Hgraph [Hinvert Hsep]]]]]].
+  move: Hwell => [Hfacets [Hmappoint [Hvert [Hundir [HspecSimp Hweights]]]]].
+  have Hnonemp : facets cert != set0.
+    apply/set0Pn. exists (specialSimplex cert @: 'I_d). exact: fst HspecSimp.
+  have Hodd := odd_covering_theorem (set_to_asc (facets cert)) (set_to_asc_is_asc (facets cert)) 
+  (dim_cert cert Hfacets Hnonemp) (Hnormals)
+  (ridges_have_even_incidence Hdim Hfacets Hvert Hgraph Hundir) 
+  (cones_are_pointed Hfeas Hfulldim Hfacets Hmappoint Hmapcheck) 
+  (exists_special_point Hfacets Hfeas Hmappoint HspecSimp Hweights Hmapcheck Hinvert Hsep).
+  split=>//.
+  - apply: covering_criterion.
+    + exact: (fst Hfeas).
+    + move=> z. have Hoddz := Hodd z. move: Hoddz => [F [HF HzF]]. rewrite (facets_cert cert Hfacets) in HF. 
+      exists (mapping cert F). split.
+      * exact: Hmappoint F HF.
+      * have/poly_subsetP Hsub := cone_subset_cert cert Hfeas Hmappoint Hmapcheck F HF.
+        exact: Hsub z HzF.
+  - apply/compactP. 
+    + apply/proper0P. exists full_dim_point. rewrite mem_mk_poly. exact: (fst Hfulldim).
+    + move=>c. have [F [HF HcF]] := Hodd c.
+      rewrite facets_cert in HF.
+      have/poly_subsetP Hsub := cone_subset_cert cert Hfeas Hmappoint Hmapcheck F HF.
+      have HcN := Hsub c HcF. rewrite -mem_polyE in HcN. move/in_normalConeP in HcN.
+      have Hopt := HcN ((fst Hfeas) (mapping cert F) (Hmappoint F HF)).
+      rewrite bounded_argminN0. apply/proper0P. by exists (mapping cert F). by [].
+Qed.
+
+End CertificateCompleteness.
+
+Section FlagCriterion.
+
+Context (d : nat) (R : realFieldType).
+
+Local Notation Certificate := (Certificate R d).
+
+Variable (cert : Certificate).
+
+Local Notation polytope := (polytope R d cert).
+Local Notation m := polytope.`c.
+Local Notation points := (points R d cert).
+Local Notation flag_indices := (flag_indices R d cert).
+Local Notation flag_vertices := (flag_vertices R d cert).
+Local Notation normalVector := (normalVector d R).
+Local Notation normalsOf := ((normalsOf m d R (normalVector polytope))).
+Local Notation feasibility_check := (feasibility_check d R).
+Local Notation flagIndicesAreInActiveSets := (flagIndicesAreInActiveSets d R).
+Local Notation flagVerticesArePoints := (flagVerticesArePoints d R).
+Local Notation flag_check := (flag_check d R).
+Local Notation flag_indices_are_active := (flag_indices_are_active d R cert).
+Local Notation flag_vertices_lt_are_active := (flag_vertices_lt_are_active d R cert).
+Local Notation flag_vertices_diag_are_not_active := (flag_vertices_diag_are_not_active d R cert).
+
+Hypothesis Hdim : d >= 1.
+Hypothesis Hfeas : feasibility_check cert.
+Hypothesis Hflagact : flagIndicesAreInActiveSets cert.
+Hypothesis Hflagvert : flagVerticesArePoints cert.
+Hypothesis Hflagcheck : flag_check cert.
+
+Lemma flag_is_free :
+  forall v, v \in points -> free ([tuple normalVector polytope (flag_indices v i) | i < d]).
+Proof.
+  move=> v Hv.
+  apply/freeP => w Hw.
+  have Hdot := congr1 (fun x => '[x, v]%R) Hw. rewrite (vdot0l v) in Hdot.
+  rewrite vdot_sumDl in Hdot.
+  have Hkd (k : 'I_d) : k < size (enum 'I_d).
+    rewrite size_enum_ord. exact: ltn_ord k.
+  have Hnth : forall i : 'I_d, ([seq normalVector polytope (flag_indices v i0)
+  | i0 <- enum 'I_d]`_i)%R = normalVector polytope (flag_indices v i).
+    move=> j. rewrite (@nth_map 'I_d j 'cV[R]_d 0%R (fun k => normalVector polytope (flag_indices v k)) j (enum 'I_d) (Hkd j)).
+    by rewrite nth_ord_enum.
+  have Hrew x : (\sum_i '[ w i *: [seq normalVector polytope (flag_indices v i0) |
+  i0 <- enum 'I_d]`_i%R, x])%R = (\sum_i '[ w i *:  normalVector polytope (flag_indices v i), x])%R.
+    apply:eq_bigr=> k _. by rewrite (Hnth k).
+  rewrite (Hrew v) in Hdot.
+  have HvdotZl x : (\sum_i '[ w i *: normalVector polytope (flag_indices v i), x])%R = (\sum_i
+      w i * '[normalVector polytope (flag_indices v i), x])%R.
+    apply:eq_bigr=> j _. by rewrite vdotZl.
+  rewrite (HvdotZl v) in Hdot. 
+  have Hactive : (\sum_i w i * '[ normalVector polytope (flag_indices v i), v])%R =
+  (\sum_i w i * (polytope.`b (flag_indices v i) 0))%R.
+    apply:eq_bigr => j _. by rewrite (flag_indices_are_active Hfeas Hflagact v Hv j).
+  rewrite Hactive in Hdot.
+  have HR : forall k : nat, forall i : 'I_d, i >= d-1-k -> w i = 0%R.
+    induction k. 
+    move=> i Hi. rewrite subn0 in Hi.
+    have Hkdi := Hkd i. rewrite size_enum_ord in Hkdi.
+    have Hid : val i = d.-1.
+      rewrite subn1 in Hi.
+      have Hile : val i <= d.-1.
+      rewrite -ltnS. by rewrite (ltn_predK Hkdi).
+      apply/eqP. rewrite eqn_leq. apply/andP. by split.
+    have Hdotwd := congr1 (fun x => '[x, (flag_vertices v i)]%R) Hw. 
+    rewrite vdot0l in Hdotwd. rewrite vdot_sumDl in Hdotwd. 
+    rewrite (Hrew (flag_vertices v i)) in Hdotwd.
+    rewrite (HvdotZl (flag_vertices v i)) in Hdotwd.
+    have Hdiff : ((\sum_i0 w i0 * '[ normalVector polytope (flag_indices v i0),
+    flag_vertices v i])%R - \sum_i w i * polytope.`b 
+    (flag_indices v i) 0)%R = 0%R. by rewrite Hdotwd Hdot subrr.
+    rewrite -sumrN -big_split /= in Hdiff. 
+    rewrite (bigD1 i) in Hdiff.
+    simpl in Hdiff.
+    have Hsumnull : (\sum_(i0 < d | i0 != i)
+    (w i0 * '[ normalVector polytope (flag_indices v i0), flag_vertices v i] -
+    w i0 * polytope.`b (flag_indices v i0) 0))%R = 0%R.
+      apply: big1 => j Hj. rewrite -mulrBr.
+      have Hji : j < i.
+    have Hjle : j <= i. rewrite /= Hid.
+    have Hjd := (ltn_ord j). have Hd : d = d.-1.+1. by rewrite (prednK Hdim).
+    have Hvjd : (j : nat) < d := ltn_ord j. apply: ltnSE. by rewrite -Hd.
+    rewrite ltn_neqAle. apply/andP. split=>//.
+    rewrite (flag_vertices_lt_are_active Hflagvert Hfeas Hflagcheck v Hv i j
+    Hji). rewrite subrr. by rewrite mulr0.
+    rewrite Hsumnull in Hdiff. rewrite addr0 in Hdiff.
+    rewrite -mulrBr in Hdiff.
+    have Hnotnull : ('[ normalVector polytope (flag_indices v i), 
+    flag_vertices v i] - polytope.`b (flag_indices v i) 0)%R != 0%R.
+    have Hgt := flag_vertices_diag_are_not_active Hflagvert Hfeas Hflagcheck v Hv i.
+    rewrite -subr_gt0 in Hgt. have Hgte := gt_eqF Hgt.
+    rewrite/negb. by rewrite Hgte. move/eqP in Hdiff.
+    rewrite mulf_eq0 in Hdiff. move/orP: Hdiff => [Hw0 | HA0].
+    by move/eqP in Hw0.
+    move/eqP in HA0. rewrite HA0 in Hnotnull. by rewrite eqxx in Hnotnull.
+    by [].
+    move=> i Hi.
+    case Hk : (k < d-1).
+    have Hpos : d-1-k>0. by rewrite subn_gt0.
+    case Hie : (val i != d-1-k.+1).
+    have Hlt : d - 1 - k.+1 < val i.
+    rewrite ltn_neqAle. apply/andP. split=>//. by rewrite eq_sym.
+    rewrite subnS in Hlt. 
+    have Hle : d-1-k <= val i.
+    by rewrite (prednK Hpos) in Hlt.
+    apply: IHk i Hle.
+    move/eqP in Hie. 
+    rewrite (bigID (fun i => d - 1 - k <= val i)) in Hdot. simpl in Hdot.
+    have Hnullb : (\sum_(i < d | (d - 1 - k <= i)%N) w i * polytope.`b (flag_indices v i) 0)%R = 0%R.
+      apply:big1=>j Hj. rewrite (IHk j Hj). by rewrite mul0r.
+    rewrite Hnullb in Hdot. rewrite add0r in Hdot.
+    rewrite (bigID (fun i => d - 1 - k <= val i)) in Hw. simpl in Hw.
+    have Hnulla :   (\sum_(i < d | (d - 1 - k <= i)%N) w i *:
+    [seq normalVector polytope (flag_indices v i0) | i0 <- enum 'I_d]`_i)%R = 0%R.
+      apply:big1=>j Hj. rewrite (IHk j Hj). by rewrite scale0r.
+    rewrite Hnulla in Hw. rewrite add0r in Hw.
+    have Hdotwk := congr1 (fun x => '[x, (flag_vertices v i)]%R) Hw. 
+    rewrite vdot0l in Hdotwk. rewrite vdot_sumDl in Hdotwk. 
+    have Hrewind x : (\sum_(i | ~~ (d - 1 - k <= val i)%N) '[ w i *: [seq normalVector polytope (flag_indices v i0) |
+    i0 <- enum 'I_d]`_i%R, x])%R = (\sum_(i | ~~ (d - 1 - k <= val i)%N) '[ w i *:  normalVector polytope (flag_indices v i), x])%R.
+    apply:eq_bigr=> l _. by rewrite (Hnth l).
+    have HvdotZlind x : (\sum_(i | ~~ (d - 1 - k <= val i)%N) '[ w i *: normalVector polytope (flag_indices v i), x])%R = (\sum_(i | ~~ (d - 1 - k <= val i)%N)
+      w i * '[normalVector polytope (flag_indices v i), x])%R.
+    apply:eq_bigr=> j _. by rewrite vdotZl.
+    rewrite (Hrewind (flag_vertices v i)) in Hdotwk.
+    rewrite (HvdotZlind (flag_vertices v i)) in Hdotwk.
+    have Hdiff : ((\sum_(i0 | ~~ (d - 1 - k <= val i0)%N) w i0 * '[ normalVector polytope (flag_indices v i0),
+    flag_vertices v i])%R - \sum_(i | ~~ (d - 1 - k <= val i)%N) w i * polytope.`b 
+    (flag_indices v i) 0)%R = 0%R. by rewrite Hdotwk Hdot subrr.
+    rewrite -sumrN -big_split /= in Hdiff. 
+    rewrite (bigD1 i) in Hdiff.
+    simpl in Hdiff.
+    have Hsumnull : (\sum_(i0 < d | ~~ (d - 1 - k <= i0)%N && (i0 != i))
+    (w i0 * '[ normalVector polytope (flag_indices v i0), flag_vertices v i] -
+    w i0 * polytope.`b (flag_indices v i0) 0))%R = 0%R.
+      apply: big1 => j Hj. move/andP: Hj => [Hdk Hji]. rewrite -mulrBr.
+      have Hjli : j < i.
+    have Hjle : j <= i. rewrite /= Hie.
+    rewrite -ltnNge in Hdk. rewrite subnS.
+    by rewrite -ltnS (prednK Hpos).
+    rewrite ltn_neqAle. apply/andP. by split.
+    rewrite (flag_vertices_lt_are_active Hflagvert Hfeas Hflagcheck v Hv i j
+    Hjli). rewrite subrr. by rewrite mulr0.
+    rewrite Hsumnull in Hdiff. rewrite addr0 in Hdiff.
+    rewrite -mulrBr in Hdiff.
+    have Hnotnull : ('[ normalVector polytope (flag_indices v i), 
+    flag_vertices v i] - polytope.`b (flag_indices v i) 0)%R != 0%R.
+    have Hgt := flag_vertices_diag_are_not_active Hflagvert Hfeas Hflagcheck v Hv i.
+    rewrite -subr_gt0 in Hgt. have Hgte := gt_eqF Hgt.
+    rewrite/negb. by rewrite Hgte. move/eqP in Hdiff.
+    rewrite mulf_eq0 in Hdiff. move/orP: Hdiff => [Hw0 | HA0].
+    by move/eqP in Hw0.
+    move/eqP in HA0. rewrite HA0 in Hnotnull. by rewrite eqxx in Hnotnull.
+    rewrite Hie. rewrite -ltnNge. rewrite subnS. by rewrite (prednK Hpos).
+    have Heq : d - 1 - k.+1 = d - 1 - k.
+      have Hk' : k >= d-1. by rewrite leqNgt Hk.
+      rewrite -subn_eq0 in Hk'. move/eqP in Hk'. rewrite Hk'.
+      apply/eqP. rewrite subn_eq0. move/eqP in Hk'. rewrite subn_eq0 in Hk'.
+      by apply:leqW.
+    rewrite Heq in Hi. exact: IHk i Hi.
+  move=> i. have Hend := HR (d-1) i. rewrite subnn in Hend.
+  exact: Hend (leq0n i).
+Qed.
+
+Lemma flag_is_full_dim :
+  forall v, v \in points -> (\dim << normalsOf [set flag_indices v i | i : 'I_d] >> = d)%VS.
+Proof.
+  move=> v Hv.
+  have Hfree := flag_is_free v Hv.
+  have Hd : (\dim <<[tuple normalVector polytope (flag_indices v i) | i < d]>> = d)%VS.
+    rewrite/free in Hfree. move/eqP in Hfree. rewrite Hfree. exact: size_tuple.
+  have Heqspan : (<<[tuple normalVector polytope (flag_indices v i) | i < d]>> =
+  <<normalsOf [set flag_indices v i | i : 'I_d]>>)%VS.
+    apply: eq_span=> x.
+    apply/idP/idP.
+    - move=> Hx. apply/in_normalsOfP. move/mapP:Hx => [i Hi Hxi].
+      exists (flag_indices v i). split=>//.
+      apply/imsetP. exists i. by []. by [].
+    - move=> Hx. move/in_normalsOfP: Hx => [i [Hi Hxi]]. 
+      apply/mapP. move/imsetP: Hi => [j Hj Hij]. exists j.
+      apply/mapP. exists j. by []. by [].
+      by rewrite Hij in Hxi.
+  by rewrite Heqspan in Hd.
+Qed.
+
+End FlagCriterion.
+
+Section CertificateCorrectness.
+
+Context (d : nat) (R : realFieldType).
+
+Local Notation Certificate := (Certificate R d).
+
+Variable (cert : Certificate). 
+
+Local Notation polytope := (polytope R d cert).
+Local Notation m := polytope.`c.
+Local Notation points := (points R d cert).
+Local Notation facetsAreDSimplices := (facetsAreDSimplices d R).
+Local Notation mappingHasImageInPoints := (mappingHasImageInPoints d R).
+Local Notation graphVerticesAreFacets := (graphVerticesAreFacets d R ).
+Local Notation graphIsUndirected := (graphIsUndirected d R).
+Local Notation specialSimplexInSpecialCone := (specialSimplexInSpecialCone d R).
+Local Notation weightsAreStrictlyPositiveVectors := (weightsAreStrictlyPositiveVectors d R).
+Local Notation full_dim_check := (full_dim_check d R).
+Local Notation feasibility_check := (feasibility_check d R).
+Local Notation mapping_check := (mapping_check d R).
+Local Notation graph_check := (graph_check d R).
+Local Notation inversibility_check := (inversibility_check d R).
+Local Notation separability_check := (separability_check d R).
+Local Notation normalVector := (normalVector d R).
+Local Notation facets := (facets R d).
+Local Notation mapping := (mapping R d).
+Local Notation specialSimplex := (specialSimplex R d).
+Local Notation flag_indices := (flag_indices R d cert).
+Local Notation odd_covering_theorem := (odd_covering_theorem m d R (normalVector polytope)).
+Local Notation ridges_have_even_incidence := (ridges_have_even_incidence d R cert).
+Local Notation cones_are_pointed := (cones_are_pointed d R cert).
+Local Notation exists_special_point := (exists_special_point d R cert).
+Local Notation dim_cert := (dim_cert d R).
+Local Notation facets_cert := (facets_cert d R).
+Local Notation cone_subset_cert := (cone_subset_cert d R).
+Local Notation full_dim_point := (full_dim_point R d cert).
+Local Notation flagIndicesAreInActiveSets := (flagIndicesAreInActiveSets d R).
+Local Notation flagVerticesArePoints := (flagVerticesArePoints d R).
+Local Notation flag_check := (flag_check d R).
+Local Notation certificate_completeness := (certificate_completeness d R).
+Local Notation check_certificate_completeness := (check_certificate_completeness d R).
+Local Notation flag_indices_are_active := (flag_indices_are_active d R).
+Local Notation flag_is_full_dim := (flag_is_full_dim d R cert).
 
 Hypothesis Hdim : d > 0.
 Hypothesis Hnormals : forall i : 'I_m, (normalVector polytope i <> 0)%R.
@@ -1090,7 +1374,9 @@ Definition well_formedness_check :=
   graphVerticesAreFacets cert /\ 
   graphIsUndirected cert /\ 
   specialSimplexInSpecialCone cert /\
-  weightsAreStrictlyPositiveVectors cert.
+  weightsAreStrictlyPositiveVectors cert /\
+  flagIndicesAreInActiveSets cert /\
+  flagVerticesArePoints cert.
 
 Definition check_certificate :=
   well_formedness_check /\ 
@@ -1099,28 +1385,27 @@ Definition check_certificate :=
   mapping_check cert /\ 
   graph_check cert /\ 
   inversibility_check cert /\ 
-  separability_check cert.
+  separability_check cert /\
+  flag_check cert.
 
 Theorem certificate_correctness :
-  check_certificate -> ((vertex_set '[polytope]) `<=` points)%fset.
+  check_certificate -> ((vertex_set '[polytope]) = points)%fset.
 Proof.
-  move=> H.
-  move: H => [Hwell [Hfulldim [Hfeas [Hmapcheck [Hgraph [Hinvert Hsep]]]]]].
-  move: Hwell => [Hfacets [Hmappoint [Hvert [Hundir [HspecSimp Hweights]]]]].
-  have Hnonemp : facets cert != set0.
-    apply/set0Pn. exists (specialSimplex cert @: 'I_d). exact: fst HspecSimp.
-  have Hodd := odd_covering_theorem (set_to_asc (facets cert)) (set_to_asc_is_asc (facets cert)) 
-  (dim_cert cert Hfacets Hnonemp) (Hnormals)
-  (ridges_have_even_incidence Hdim Hfacets Hvert Hgraph Hundir) 
-  (cones_are_pointed Hfeas Hfulldim Hfacets Hmappoint Hmapcheck) 
-  (exists_special_point Hfacets Hfeas Hmappoint HspecSimp Hweights Hmapcheck Hinvert Hsep).
-  apply: covering_criterion.
-  - exact: (fst Hfeas).
-  - move=> z. have Hoddz := Hodd z. move: Hoddz => [F [HF HzF]]. rewrite (facets_cert cert Hfacets) in HF. 
-    exists (mapping cert F). split.
-    + exact: Hmappoint F HF.
-    + have/poly_subsetP Hsub := cone_subset_cert cert Hfeas Hmappoint Hmapcheck F HF.
-      exact: Hsub z HzF.
+  move=> H. 
+  move: H => [Hwell [Hfulldim [Hfeas [Hmapcheck [Hgraph [Hinvert [Hsep Hflagcheck]]]]]]].
+  move: Hwell => [Hfacets [Hmappoint [Hvert [Hundir [HspecSimp [Hweights [Hflagact Hflagvert]]]]]]].
+  have Hcheck : check_certificate_completeness cert. split=>//.
+  apply/eqP. rewrite eqEfsubset. apply/andP. split.
+  - by exact: (fst (certificate_completeness cert Hdim Hnormals Hcheck)).
+  - apply/fsubsetP. move=> v Hv.
+    apply: vertex_criterion.
+    by exact: (snd (certificate_completeness cert Hdim Hnormals Hcheck)).
+    by exact: (fst Hfeas) v Hv.
+    exists [set flag_indices v i | i : 'I_d]. split.
+    apply/subsetP => x Hx. apply/in_active_constraintsP.
+    move/imsetP: Hx => [i Hi Hxi]. rewrite Hxi.
+    by exact: (flag_indices_are_active cert Hfeas Hflagact v Hv i).
+    by exact: flag_is_full_dim.
 Qed.
 
 End CertificateCorrectness.

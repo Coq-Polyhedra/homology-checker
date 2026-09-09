@@ -58,6 +58,25 @@ Proof.
   by apply:(iffP eqP).
 Qed.
 
+Lemma notin_active_constraintsE (P : 'hpoly[R]_d) (x : 'cV[R]_d) (i : 'I_(P.`c)) : 
+  i \notin active_constraints P x = ~~ ('[normalVector P i, x] == P.`b i 0%R).
+Proof. by rewrite inE. Qed.
+
+Lemma notin_active_constraintsP (P : 'hpoly[R]_d) (x : 'cV[R]_d) (i : 'I_(P.`c)) :
+  x \in P -> reflect (('[normalVector P i, x] > P.`b i 0%R)%R) (i \notin active_constraints P x).
+Proof.
+  move=>Hx.
+  apply:(iffP idP).
+  have HinP : ('[ normalVector P i, x] >= P.`b i 0)%R.
+    rewrite in_hpolyE in Hx. move/forallP in Hx. have Hxi := Hx i.
+    by rewrite -row_vdot in Hxi. 
+  - move=> Hnotin. rewrite notin_active_constraintsE in Hnotin. 
+    rewrite lt_neqAle. apply/andP. split=>//. by rewrite eq_sym in Hnotin.
+  - move=> Hlt. rewrite notin_active_constraintsE. apply/negP.
+    have Hnlt := (lt_eqF Hlt). apply/negP. rewrite eq_sym.
+    rewrite/negb. by rewrite Hnlt.
+Qed.
+
 End ActiveConstraints.
 
 Section NormalCones.

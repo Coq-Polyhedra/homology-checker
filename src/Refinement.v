@@ -1886,7 +1886,7 @@ Qed.
 Theorem well_formedness_check_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) (hnf : (0 < nf)%N)
     (hd : (0 < d)%N) :
   L.VtxContainment.well_formedness_check c -> L.feasibility_check c -> L.separability_check c ->
-  @CC.well_formedness_check d R (interp_cert hm).
+  @CC.well_formedness_check_completeness d R (interp_cert hm).
 Proof.
 move=> /wfP hwf hfeas hsep.
 split; first exact: facetsAreDSimplices_correct hm (wf_desc hwf).
@@ -1900,7 +1900,7 @@ Qed.
 
 Theorem check_certificate_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) (hnf : (0 < nf)%N)
     (hd : (0 < d)%N) :
-  L.VtxContainment.check_certificate c -> @CC.check_certificate d R (interp_cert hm).
+  L.VtxContainment.check_certificate c -> @CC.check_certificate_completeness d R (interp_cert hm).
 Proof.
 move=> hchk; have [h1 h2 h3 h4 h5] := vtx_containment_correct hm hnv hnf hchk.
 have [hwf hfeas _ _ [/rootP[_ _ hsep] hfd]] := certP hchk.
@@ -1931,11 +1931,11 @@ Local Notation nf := (balen (L.facets c)).
 Corollary vertex_containment (hm : (0 < m)%N) (hnv : (0 < nv)%N) (hnf : (0 < nf)%N)
     (hd : (0 < d)%N) :
   L.VtxContainment.check_certificate c ->
-  (vertex_set '[hpoly_of R c] `<=` points_of R c)%fset.
+  (vertex_set '[hpoly_of R c] `<=` points_of R c /\ compact '[hpoly_of R c])%fset.
 Proof.
 move=> hchk.
 have [/wfP hdata _ _ _ _] := certP hchk.
-apply: (@CC.certificate_correctness d R (interp_cert R hm) hd
+apply: (@CC.certificate_completeness d R (interp_cert R hm) hd
           (normal_of_neq0 (wf_ineq hdata))).
 by exact: check_certificate_correct hm hnv hnf hd hchk.
 Qed.
