@@ -573,26 +573,32 @@ Lemma flagsP (v : 'I_nv) : L.areFlagsWellFormed c ->
       alen (snd (L.flag (vertex_of v))) = d,
       L.allInRange Uint63.leb 0%uint63
         (PArray.length (L.activeSet (vertex_of v)) - 1)%uint63
-        (fst (L.flag (vertex_of v)))
-    & L.allInRange Uint63.leb 0%uint63
+        (fst (L.flag (vertex_of v))),
+      L.allInRange Uint63.leb 0%uint63
         (BigArray.length (L.vertices c) - 1)%uint63
-        (snd (L.flag (vertex_of v)))].
+        (snd (L.flag (vertex_of v)))
+    & (0 < alen (L.activeSet (vertex_of v)))%N].
 Proof.
 rewrite /L.areFlagsWellFormed; cbv zeta => /bfor_all_balenP/(_ v); cbv beta.
 case E : (L.flag (baget (L.vertices c) v)) => [ineq wit].
-move=> /andP[/andP[/andP[/hasLengthP hl1 /hasLengthP hl2] hr1] hr2].
-split; [exact: hl1 | exact: hl2 | exact: hr1 | exact: hr2].
+move=> /andP[/andP[/andP[/andP[/hasLengthP hl1 /hasLengthP hl2] hr1] hr2] hne].
+rewrite ltb_natE nat_of_int0 in hne.
+split; [exact: hl1 | exact: hl2 | exact: hr1 | exact: hr2 | exact: hne].
 Qed.
 
+Lemma active_nonempty (v : 'I_nv) :
+  L.areFlagsWellFormed c -> (0 < alen (L.activeSet (vertex_of v)))%N.
+Proof. by move=> hfw; have [_ _ _ _ h] := flagsP v hfw. Qed.
+
 (* [allInRange] wraps on an empty active set, so the local positions are only
-   meaningful when the active set is nonempty; the positivity is taken as a
-   hypothesis where needed. *)
+   meaningful when the active set is nonempty, which the well-formedness check
+   guarantees ([active_nonempty]). *)
 Lemma flag_ineq_range (v : 'I_nv) (i : 'I_d) :
   L.areFlagsWellFormed c -> (0 < alen (L.activeSet (vertex_of v)))%N ->
   (nat_of_int (PArray.get (fst (L.flag (vertex_of v))) (int_of_nat i))
    < alen (L.activeSet (vertex_of v)))%N.
 Proof.
-move=> hfw h0; have [hl1 _ hr1 _] := flagsP v hfw.
+move=> hfw h0; have [hl1 _ hr1 _ _] := flagsP v hfw.
 move: hr1; rewrite /L.allInRange => /for_all_alenP h.
 have hi : (i < alen (fst (L.flag (vertex_of v))))%N by rewrite hl1; exact: ltn_ord.
 have := h (Ordinal hi); cbv beta => hin.
@@ -603,7 +609,7 @@ Lemma flag_wit_range (hnv : (0 < nv)%N) (v : 'I_nv) (i : 'I_d) :
   L.areFlagsWellFormed c ->
   (nat_of_int (PArray.get (snd (L.flag (vertex_of v))) (int_of_nat i)) < nv)%N.
 Proof.
-move=> hfw; have [_ hl2 _ hr2] := flagsP v hfw.
+move=> hfw; have [_ hl2 _ hr2 _] := flagsP v hfw.
 move: hr2; rewrite /L.allInRange => /for_all_alenP h.
 have hi : (i < alen (snd (L.flag (vertex_of v))))%N by rewrite hl2; exact: ltn_ord.
 have := h (Ordinal hi); cbv beta => hin.
@@ -1461,9 +1467,9 @@ move: hchk; rewrite /L.flag_check; cbv zeta => /bfor_all_balenP/(_ v0); cbv beta
 case E : (L.flag (baget (L.vertices c) v0)) => [ineq wit] hrow.
 have hE : L.flag (vertex_of v0) = (ineq, wit) := E.
 have hl1 : alen ineq = d.
-  by have [h _ _ _] := flagsP v0 hfw; move: h; rewrite hE => h; exact: h.
+  by have [h _ _ _ _] := flagsP v0 hfw; move: h; rewrite hE => h; exact: h.
 have hl2 : alen wit = d.
-  by have [_ h _ _] := flagsP v0 hfw; move: h; rewrite hE => h; exact: h.
+  by have [_ h _ _ _] := flagsP v0 hfw; move: h; rewrite hE => h; exact: h.
 (* the flag row cell at position [k] *)
 move: hrow => /(for_alliP _ hl2)/(_ k); cbv beta => /andP[hc1 hc2].
 (* the witness read, on both spellings *)
@@ -1535,12 +1541,13 @@ Qed.
    hypothesis. *)
 Theorem vtx_equality_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) :
   L.VtxContainment.check_certificate c -> L.VtxEquality.check_certificate c ->
-  (forall v : 'I_nv, (0 < alen (L.activeSet (vertex_of v)))%N) ->
   [/\ @H.flagIndicesAreInActiveSets d R (interp_cert hm),
       @H.flagVerticesArePoints d R (interp_cert hm) &
       @H.flag_check d R (interp_cert hm)].
 Proof.
-move=> /certP[/wfP hwf hfeas _ _ _] /veqP[hfw hchk] hact0.
+move=> /certP[/wfP hwf hfeas _ _ _] /veqP[hfw hchk].
+have hact0 : forall v : 'I_nv, (0 < alen (L.activeSet (vertex_of v)))%N :=
+  fun v => active_nonempty v hfw.
 split.
 - have h := flagIndicesAreInActiveSets_correct (hm := hm) (wf_ineq hwf) (wf_pts hwf)
               (wf_act hwf) (wf_asu hwf) hfeas hfw hact0.
@@ -2119,7 +2126,7 @@ Qed.
 End Interp.
 
 (* -------------------------------------------------------------------------- *)
-(* End to end: the certified points contain every vertex of the polytope      *)
+(* End to end                                                                 *)
 (* -------------------------------------------------------------------------- *)
 
 (* Imported last: [polyhedron]/[poly_base] introduce notations (['[P]], ...)
@@ -2135,6 +2142,51 @@ Local Notation d := (nat_of_int (L.dimension c)).
 Local Notation nv := (balen (L.vertices c)).
 Local Notation nf := (balen (L.facets c)).
 
+(* -------------------------------------------------------------------------- *)
+(* Each checker implies the high-level check of its certificate               *)
+(* -------------------------------------------------------------------------- *)
+
+Corollary vtx_containment_check_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N)
+    (hnf : (0 < nf)%N) (hd : (0 < d)%N) :
+  L.VtxContainment.check_certificate c ->
+  @CC.check_certificate_completeness d R (interp_cert R hm).
+Proof. exact: check_certificate_correct hm hnv hnf hd. Qed.
+
+Corollary vtx_equality_check_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N)
+    (hnf : (0 < nf)%N) (hd : (0 < d)%N) :
+  L.VtxContainment.check_certificate c -> L.VtxEquality.check_certificate c ->
+  @CC.check_certificate d R (interp_cert R hm).
+Proof.
+move=> hvc hve.
+have [[h1 [h2 [h3 [h4 [h5 h6]]]]] [hfd [hfeas [hmap [hgraph [hinv hsep]]]]]] :=
+  check_certificate_correct R hm hnv hnf hd hvc.
+have [hfia hfvp hflag] := vtx_equality_correct R hm hnv hvc hve.
+by split; repeat (split; first assumption); assumption.
+Qed.
+
+Corollary graph_equality_check_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N)
+    (hnf : (0 < nf)%N) (hd : (0 < d)%N) :
+  L.VtxContainment.check_certificate c -> L.GraphEquality.check_certificate c ->
+  [/\ @H.geomGraphVerticesArePoints d R (interp_cert R hm),
+      geomGraphIsImageOfGraph_ne R hm &
+      @H.geom_edge_difference_pairwise_check d R (interp_cert R hm)].
+Proof. exact: graph_equality_correct hm hnv hnf hd. Qed.
+
+Corollary distance_check_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N)
+    (dc : L.DistanceCertificate) (D : int) :
+  L.VtxContainment.check_certificate c -> L.GraphEquality.check_certificate c ->
+  L.Diameter.eccentricity c dc = Some D ->
+  @H.distance_check d R (interp_cert R hm) (interp_dist R c dc) (nat_of_int D).
+Proof.
+move=> hvc /geqP[[hg _ _] _] hecc.
+have [h1 h2 h3 h4] := diameter_correct R hm hnv hvc hg hecc.
+by repeat (split; first assumption); assumption.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* End to end: the certified points contain every vertex of the polytope      *)
+(* -------------------------------------------------------------------------- *)
+
 Corollary vertex_containment (hm : (0 < m)%N) (hnv : (0 < nv)%N) (hnf : (0 < nf)%N)
     (hd : (0 < d)%N) :
   L.VtxContainment.check_certificate c ->
@@ -2144,7 +2196,23 @@ move=> hchk.
 have [/wfP hdata _ _ _ _] := certP hchk.
 apply: (@CC.certificate_completeness d R (interp_cert R hm) hd
           (normal_of_neq0 (wf_ineq hdata))).
-by exact: check_certificate_correct hm hnv hnf hd hchk.
+exact: vtx_containment_check_correct hm hnv hnf hd hchk.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* End to end: the certified points are exactly the vertices of the polytope  *)
+(* -------------------------------------------------------------------------- *)
+
+Corollary vertex_equality (hm : (0 < m)%N) (hnv : (0 < nv)%N) (hnf : (0 < nf)%N)
+    (hd : (0 < d)%N) :
+  L.VtxContainment.check_certificate c -> L.VtxEquality.check_certificate c ->
+  (vertex_set '[hpoly_of R c] = points_of R c)%fset.
+Proof.
+move=> hvc hve.
+have [/wfP hdata _ _ _ _] := certP hvc.
+apply: (@CC.certificate_correctness d R (interp_cert R hm) hd
+          (normal_of_neq0 (wf_ineq hdata))).
+exact: vtx_equality_check_correct hm hnv hnf hd hvc hve.
 Qed.
 
 End EndToEnd.

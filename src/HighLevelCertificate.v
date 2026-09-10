@@ -188,6 +188,11 @@ Definition eccentricity_check (D : nat) :=
   (forall v : 'cV[R]_d, v \in vertices geom_graph -> distance v <= D)
   /\ (exists v : 'cV[R]_d, v \in vertices geom_graph /\ distance v = D).
 
+(* The distance certificate as a whole *)
+Definition distance_check (D : nat) :=
+  distance_source_check /\ distance_edge_check /\ distance_parent_check
+  /\ eccentricity_check D.
+
 End HighLevelChecks.
 
 Section CertificateLemmas.

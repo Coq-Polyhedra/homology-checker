@@ -522,7 +522,8 @@ Definition areFlagsWellFormed (cert : Certificate) :=
          hasLength d%uint63 ineq 
       && hasLength d%uint63 witness
       && allInRange Uint63.leb (0%uint63) (nb_active-1)%uint63 ineq
-      && allInRange Uint63.leb (0%uint63) (BigArray.length vertices - 1)%uint63 witness)
+      && allInRange Uint63.leb (0%uint63) (BigArray.length vertices - 1)%uint63 witness
+      && (0 <? nb_active)%uint63)
     vertices).
 
 Definition areVerticesWellFormed (cert : Certificate) :=
