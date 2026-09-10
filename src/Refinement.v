@@ -16,7 +16,7 @@ From mathcomp Require Import finmap all_ssreflect all_algebra.
 From Polyhedra Require Import inner_product vector_order hpolyhedron.
 From PolyhedraHirsch Require Import high_graph.
 From Cert Require LowLevelChecker HighLevelCertificate CertificateCorrectness.
-From Cert Require Import RefinementBridges.
+From Cert Require Import RefinementBridges GraphDistance.
 
 Module L := LowLevelChecker.
 Module H := HighLevelCertificate.
@@ -1854,6 +1854,229 @@ split.
               (wf_act hwf) (wf_asu hwf) hfeas hpair.
   exact: h.
 Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* The distance certificate: interpretation and index well-formedness         *)
+(* -------------------------------------------------------------------------- *)
+
+Section Distance.
+
+Variable (dc : L.DistanceCertificate).
+
+(* Its source as a point, and the label of a point, read through the vertex
+   index carrying it. *)
+Definition source_of : 'cV[R]_d :=
+  point_of R d (L.point (BigArray.get (L.vertices c) (L.dist_source dc))).
+Definition label_of (v : 'I_nv) : nat := nat_of_int (baget (L.distances dc) v).
+Definition distance_of (x : 'cV[R]_d) : nat :=
+  \max_(v : 'I_nv | point_of_vertex v == x) label_of v.
+
+Definition interp_dist : H.DistanceCertificate R d :=
+  @H.Build_DistanceCertificate R d source_of distance_of.
+
+Lemma distP : L.Diameter.check_certificate c dc ->
+  [/\ L.areDistancesWellFormed c dc, L.distance_source_check dc, L.distance_edge_check c dc
+    & L.distance_parent_check c dc].
+Proof. by rewrite /L.Diameter.check_certificate => /andP[/andP[/andP[h1 h2] h3] h4]. Qed.
+
+Lemma dist_len : L.areDistancesWellFormed c dc -> balen (L.distances dc) = nv.
+Proof.
+rewrite /L.areDistancesWellFormed; cbv zeta => /andP[/andP[hl _] _].
+by rewrite eqb_balenE in hl; move/eqP: hl.
+Qed.
+
+Lemma dist_source_ord (hnv : (0 < nv)%N) : L.areDistancesWellFormed c dc ->
+  (nat_of_int (L.dist_source dc) < nv)%N.
+Proof.
+move=> hwf; have hl := dist_len hwf; move: hwf.
+rewrite /L.areDistancesWellFormed; cbv zeta => /andP[/andP[_ hs] _].
+have h0 : (0 < nat_of_int (BigArray.length (L.distances dc)))%N by rewrite balenE hl.
+by have := inRangeP h0 hs; rewrite balenE hl.
+Qed.
+
+Lemma label_lt_nv : L.areDistancesWellFormed c dc -> forall v : 'I_nv, (label_of v < nv)%N.
+Proof.
+move=> hwf v; have hl := dist_len hwf; move: hwf.
+rewrite /L.areDistancesWellFormed; cbv zeta => /andP[_ hb].
+have hv : (v < balen (L.distances dc))%N by rewrite hl.
+move: hb => /bfor_all_balenP/(_ (Ordinal hv)); cbv beta; rewrite ltb_natE balenE => h.
+have h' : (nat_of_int (baget (L.distances dc) v) < balen (L.distances dc))%N := h.
+by rewrite hl in h'.
+Qed.
+
+Lemma source_of_vertex (hnv : (0 < nv)%N) (hwf : L.areDistancesWellFormed c dc) :
+  source_of = point_of_vertex (Ordinal (dist_source_ord hnv hwf)).
+Proof. by rewrite /source_of /point_of_vertex /vertex_of /= baget_natE. Qed.
+
+(* The label of a certified point is the label of its (unique) vertex index. *)
+Lemma distance_of_vertex (hm : (0 < m)%N) :
+  L.areInequalitiesWellFormed c -> L.arePointsWellFormed c -> L.areActiveSetsWellFormed c ->
+  L.areActiveSetsUnique c -> L.feasibility_check c ->
+  forall v : 'I_nv, distance_of (point_of_vertex v) = label_of v.
+Proof.
+move=> hineq hpts hact hasu hfeas v; rewrite /distance_of.
+rewrite (eq_bigl (pred1 v)) ?big_pred1_eq // => v' /=.
+apply/idP/idP => [/eqP he|/eqP ->]; last exact: eqxx.
+by apply/eqP; apply: (point_of_vertex_inj hm hineq hpts hact hasu hfeas); exact: he.
+Qed.
+
+(* The largest label, as computed by the checker's running maximum. *)
+Lemma max_distance_ge (hwf : L.areDistancesWellFormed c dc) (v : 'I_nv) :
+  (label_of v <= nat_of_int (L.max_distance dc))%N.
+Proof.
+have hv : (v < balen (L.distances dc))%N by rewrite dist_len.
+by have := bfold_int_max_ge (Ordinal hv).
+Qed.
+
+Lemma max_distance_in (hnv : (0 < nv)%N) (hwf : L.areDistancesWellFormed c dc) :
+  L.distance_source_check dc ->
+  exists v : 'I_nv, label_of v = nat_of_int (L.max_distance dc).
+Proof.
+move=> hsrc; rewrite /L.max_distance.
+have [h0|[v hv]] := bfold_int_max_in (L.distances dc).
+  exists (Ordinal (dist_source_ord hnv hwf)); rewrite /label_of /= baget_natE h0.
+  by move: hsrc; rewrite /L.distance_source_check eqb_natE nat_of_int0 => /eqP.
+have hv' : (v < nv)%N by rewrite -(dist_len hwf).
+by exists (Ordinal hv').
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* D1: the source                                                             *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma distance_source_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) :
+  L.areInequalitiesWellFormed c -> L.arePointsWellFormed c -> L.areActiveSetsWellFormed c ->
+  L.areActiveSetsUnique c -> L.feasibility_check c ->
+  L.areDistancesWellFormed c dc -> L.distance_source_check dc ->
+  @H.distance_source_check d R (interp_cert hm) interp_dist.
+Proof.
+move=> hineq hpts hact hasu hfeas hwf hsrc.
+rewrite /H.distance_source_check /source_labelled /interp_cert /interp_dist /H.geom_graph /H.source
+  /H.distance vtx_geom_graph_of (source_of_vertex hnv hwf); split.
+  by apply/in_points_of; eexists; reflexivity.
+rewrite (distance_of_vertex hm hineq hpts hact hasu hfeas) /label_of /= baget_natE.
+by move: hsrc; rewrite /L.distance_source_check eqb_natE nat_of_int0 => /eqP.
+Qed.
+
+(* -------------------------------------------------------------------------- *)
+(* D2: labels grow by at most one along the edges                             *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma distance_edge_correct (hm : (0 < m)%N) :
+  L.areInequalitiesWellFormed c -> L.arePointsWellFormed c -> L.areActiveSetsWellFormed c ->
+  L.areActiveSetsUnique c -> L.feasibility_check c ->
+  L.isGeomGraphWellFormed c -> L.areDistancesWellFormed c dc -> L.distance_edge_check c dc ->
+  @H.distance_edge_check d R (interp_cert hm) interp_dist.
+Proof.
+move=> hineq hpts hact hasu hfeas hg hwf hchk.
+rewrite /H.distance_edge_check /edges_labelled /interp_cert /interp_dist /H.geom_graph /H.distance.
+move=> x y hxy.
+have hx : x \in points_of by have := edge_vtxl hxy; rewrite vtx_geom_graph_of.
+have hy : y \in points_of by have := edge_vtxr hxy; rewrite vtx_geom_graph_of.
+move: hxy; rewrite /geom_graph_of edge_mk_graph //.
+move=> /andP[_ /existsP[v1 /existsP[w1 /and3P[/eqP hp1 /eqP hpw hnb]]]].
+rewrite -hp1 -hpw !(distance_of_vertex hm hineq hpts hact hasu hfeas).
+move: hnb => /in_set_of_array[j hj].
+have hb : (v1 < balen (L.geom_graph c))%N by rewrite geom_graph_len.
+move: hchk; rewrite /L.distance_edge_check; cbv zeta.
+move=> /bfor_alli_balenP/(_ (Ordinal hb)); cbv beta => /for_all_alenP/(_ j); cbv beta.
+rewrite leb_natE bagetE -baget_natE hj.
+rewrite (add1_balenE (t := L.distances dc)); first by [].
+by rewrite dist_len //; exact: label_lt_nv.
+Qed.
+Arguments distance_edge_correct : clear implicits.
+
+(* -------------------------------------------------------------------------- *)
+(* D3: every other vertex has a neighbour labelled one less                   *)
+(* -------------------------------------------------------------------------- *)
+
+Lemma distance_parent_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) :
+  L.areInequalitiesWellFormed c -> L.arePointsWellFormed c -> L.areActiveSetsWellFormed c ->
+  L.areActiveSetsUnique c -> L.feasibility_check c ->
+  L.isGeomGraphWellFormed c -> L.areDistancesWellFormed c dc -> L.distance_parent_check c dc ->
+  @H.distance_parent_check d R (interp_cert hm) interp_dist.
+Proof.
+move=> hineq hpts hact hasu hfeas hg hwf hchk.
+have hinj := point_of_vertex_inj hm hineq hpts hact hasu hfeas.
+rewrite /H.distance_parent_check /parents_labelled /interp_cert /interp_dist /H.geom_graph /H.source
+  /H.distance vtx_geom_graph_of (source_of_vertex hnv hwf).
+move=> y /in_points_of[v1 <-] hne.
+have hv1s : v1 <> Ordinal (dist_source_ord hnv hwf) by move=> he; apply: hne; rewrite he.
+have hb : (v1 < balen (L.geom_graph c))%N by rewrite geom_graph_len.
+move: hchk; rewrite /L.distance_parent_check; cbv zeta.
+move=> /bfor_alli_balenP/(_ (Ordinal hb)); cbv beta.
+have -> : (int_of_nat (Ordinal hb) =? L.dist_source dc)%uint63 = false.
+  apply/negbTE; rewrite eqb_natE; apply/eqP => he; apply: hv1s; apply/val_inj => /=.
+  by rewrite -he (int_of_natK_le (i := blength (L.vertices c)) (ltnW (ltn_ord v1))).
+rewrite orFb => /exist_alenP[j]; cbv beta.
+have hw : (nat_of_int (aget (baget (L.geom_graph c) v1) j) < nv)%N := geom_nbrs_ord hg j.
+rewrite eqb_natE bagetE -baget_natE (add1_balenE (t := L.distances dc)); last first.
+  by rewrite dist_len //; have := label_lt_nv hwf (Ordinal hw).
+move=> /eqP hlab.
+exists (point_of_vertex (Ordinal hw)).
+have hw1 : Ordinal hw \in geom_nbrs v1 by apply/in_set_of_array; exists j.
+have hne1 : point_of_vertex (Ordinal hw) != point_of_vertex v1.
+  apply/eqP => /hinj he.
+  have hval : nat_of_int (aget (baget (L.geom_graph c) v1) j) = v1 := congr1 (@nat_of_ord nv) he.
+  have hlab' : (nat_of_int (baget (L.distances dc) (nat_of_int (aget (baget (L.geom_graph c) v1) j)))).+1
+               = nat_of_int (baget (L.distances dc) v1) := hlab.
+  rewrite hval in hlab'.
+  by have := n_Sn (nat_of_int (baget (L.distances dc) v1)); rewrite hlab'.
+have hv1p : point_of_vertex v1 \in points_of by apply/in_points_of; exists v1.
+have hwp : point_of_vertex (Ordinal hw) \in points_of by apply/in_points_of; eexists; reflexivity.
+split.
+  rewrite /geom_graph_of edge_mk_graph // hne1 /=.
+  apply/existsP; exists v1; apply/existsP; exists (Ordinal hw).
+  by rewrite !eqxx hw1.
+by rewrite !(distance_of_vertex hm hineq hpts hact hasu hfeas).
+Qed.
+Arguments distance_parent_correct : clear implicits.
+
+(* -------------------------------------------------------------------------- *)
+(* Assembly: the Diameter checker                                             *)
+(* -------------------------------------------------------------------------- *)
+
+(* The value returned by the checker is the eccentricity of the source in
+   the geometric graph. *)
+Theorem diameter_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) (D : int) :
+  L.VtxContainment.check_certificate c -> L.isGeomGraphWellFormed c ->
+  L.Diameter.eccentricity c dc = Some D ->
+  [/\ @H.distance_source_check d R (interp_cert hm) interp_dist,
+      @H.distance_edge_check d R (interp_cert hm) interp_dist,
+      @H.distance_parent_check d R (interp_cert hm) interp_dist
+    & @H.eccentricity_check d R (interp_cert hm) interp_dist (nat_of_int D)].
+Proof.
+move=> /certP[/wfP hwf hfeas _ _ _] hg.
+rewrite /L.Diameter.eccentricity; case E: (L.Diameter.check_certificate c dc) => // [] [<-].
+have [hdw hsrc hedge hpar] := distP E.
+split.
+- exact: (distance_source_correct hm hnv (wf_ineq hwf) (wf_pts hwf) (wf_act hwf)
+            (wf_asu hwf) hfeas hdw hsrc).
+- exact: (distance_edge_correct hm (wf_ineq hwf) (wf_pts hwf) (wf_act hwf) (wf_asu hwf)
+            hfeas hg hdw hedge).
+- exact: (distance_parent_correct hm hnv (wf_ineq hwf) (wf_pts hwf) (wf_act hwf)
+            (wf_asu hwf) hfeas hg hdw hpar).
+- rewrite /H.eccentricity_check /interp_cert /interp_dist /H.geom_graph /H.distance vtx_geom_graph_of; split.
+    move=> v /in_points_of[v1 <-].
+    rewrite (distance_of_vertex hm (wf_ineq hwf) (wf_pts hwf) (wf_act hwf) (wf_asu hwf) hfeas).
+    exact: max_distance_ge.
+  have [v1 hv1] := max_distance_in hnv hdw hsrc.
+  exists (point_of_vertex v1); split; first by apply/in_points_of; exists v1.
+  by rewrite (distance_of_vertex hm (wf_ineq hwf) (wf_pts hwf) (wf_act hwf) (wf_asu hwf) hfeas).
+Qed.
+
+Corollary eccentricity_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) (D : int) :
+  L.VtxContainment.check_certificate c -> L.isGeomGraphWellFormed c ->
+  L.Diameter.eccentricity c dc = Some D ->
+  eccentricity_is geom_graph_of source_of (nat_of_int D).
+Proof.
+move=> hvc hg hecc; have [h1 h2 h3 h4] := diameter_correct hm hnv hvc hg hecc.
+have h := @H.eccentricity_cert d R (interp_cert hm) interp_dist (nat_of_int D)
+            (geom_edges_sym hg) h1 h2 h3 h4.
+exact: h.
+Qed.
+
+End Distance.
 
 (* -------------------------------------------------------------------------- *)
 (* Assembling the vertex-containment checker                                  *)

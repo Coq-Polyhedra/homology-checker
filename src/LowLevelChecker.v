@@ -578,6 +578,10 @@ Record Certificate := {
   root : Root
 }.
 
+(* The distance certificate, a file of its own: the source vertex index and
+ * the distance of every vertex from it, indexed by vertices hence big *)
+Definition DistanceCertificate := (int * BigArray.array int)%type.
+
 Definition build_cert c : Certificate :=
   let '(nb_ineq, (dim, (ineqs, (verts, ((gr,facs), ((geom_gr, (src, tgt)), (full_dim, rt))))))) := c in
   {|
@@ -615,6 +619,8 @@ Definition weights : Root -> Weights := compose (compose (compose snd snd) snd) 
 Definition fullDimPoint : FullDim -> Point := fst.
 Definition fullDimDir : FullDim -> array (array bigZ) := compose fst snd.
 Definition fullDimInverse : FullDim -> array (array bigZ) := compose snd snd.
+Definition dist_source : DistanceCertificate -> int := fst.
+Definition distances : DistanceCertificate -> BigArray.array int := snd.
 
 End Projectors.
 
@@ -977,6 +983,37 @@ Definition full_dim_check (cert : Certificate) :=
   (full_dim_feasibility_check cert) 
   && (full_dim_inverse_check cert).
 
+(* The distance certificate: one label per vertex, the source labelled 0 *)
+Definition areDistancesWellFormed (cert : Certificate) (dc : DistanceCertificate) :=
+  let distances := distances dc in
+  (BigArray.length distances =? BigArray.length (vertices cert))%uint63
+  && bisValidIndex distances (dist_source dc)
+  && bfor_all (fun d => (d <? BigArray.length distances)%uint63) distances.
+
+Definition distance_source_check (dc : DistanceCertificate) :=
+  (BigArray.get (distances dc) (dist_source dc) =? 0)%uint63.
+
+(* along every edge the label grows by at most one: labels bound distances from below *)
+Definition distance_edge_check (cert : Certificate) (dc : DistanceCertificate) :=
+  let distances := distances dc in
+  bfor_alli (fun v row =>
+    for_all (fun w => (BigArray.get distances w <=? BigArray.get distances v + 1)%uint63) row)
+  (geom_graph cert).
+
+(* every vertex but the source has a neighbour labelled one less: labels bound distances from above *)
+Definition distance_parent_check (cert : Certificate) (dc : DistanceCertificate) :=
+  let distances := distances dc in
+  let source := dist_source dc in
+  bfor_alli (fun v row =>
+    (v =? source)%uint63
+    || exist (fun w => (BigArray.get distances w + 1 =? BigArray.get distances v)%uint63) row)
+  (geom_graph cert).
+
+Definition int_max (d acc : int) : int := if (acc <? d)%uint63 then d else acc.
+
+Definition max_distance (dc : DistanceCertificate) :=
+  bfold int_max (distances dc) 0%uint63.
+
 End ConditionChecking.
 
 Module VtxContainment.
@@ -1027,3 +1064,17 @@ Definition check_certificate (cert : Certificate) :=
   && (geom_edge_difference_pairwise_check cert). (* T7 *)
 
 End GraphEquality.
+
+Module Diameter.
+
+Definition check_certificate (cert : Certificate) (dc : DistanceCertificate) :=
+     (areDistancesWellFormed cert dc)
+  && (distance_source_check dc)
+  && (distance_edge_check cert dc)
+  && (distance_parent_check cert dc).
+
+(* the eccentricity of the source vertex, certified by the distance labels *)
+Definition eccentricity (cert : Certificate) (dc : DistanceCertificate) : option int :=
+  if check_certificate cert dc then Some (max_distance dc) else None.
+
+End Diameter.

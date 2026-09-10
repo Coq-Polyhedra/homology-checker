@@ -177,3 +177,8 @@ Definition certificate_payload_schema :=
 Definition certificate_wire_schema :=
   Packed.pair Packed.int63
     (Packed.pair Packed.int63 certificate_payload_schema).
+
+(** The distance certificate, a file of its own: the source vertex and,
+    indexed by vertices hence big, the distance of every vertex from it. *)
+Definition distance_certificate_wire_schema :=
+  Packed.pair Packed.int63 (big_array Packed.int63).

@@ -14,6 +14,9 @@ Definition vertex_equality_check c : bool :=
 Definition graph_equality_check c : bool :=
   GraphEquality.check_certificate (build_cert c).
 
+Definition eccentricity_check c dc :=
+  Diameter.eccentricity (build_cert c) dc.
+
 Set Extraction Optimize.
 
 (**
@@ -112,4 +115,5 @@ Extract Constant NativeBig.z_ltb => "Native_z.lt".
 Extract Constant NativeBig.z_leb => "Native_z.leq".
 
 Extraction "ocaml/extracted_checker.ml"
-  vertex_containment_check vertex_equality_check graph_equality_check.
+  vertex_containment_check vertex_equality_check graph_equality_check
+  eccentricity_check.

@@ -204,6 +204,12 @@ let payload =
           (pair geom
             (pair full_dim root)))))
 
+(* The distance certificate, a file of its own: the source vertex and the
+   distance of every vertex from it; see [distance_certificate_wire_schema]
+   in src/CertificateSchema.v. *)
+let distance_certificate =
+  named "distance certificate" (pair int63 (big_array int63))
+
 let certificate = named "certificate" (pair int63 (pair int63 payload))
 
 let ensure_end reader =
@@ -212,7 +218,7 @@ let ensure_end reader =
   refill reader;
   if reader.available <> 0 then malformed reader "trailing data"
 
-let load filename =
+let load_with schema filename =
   let channel = open_in_bin filename in
   Fun.protect
     ~finally:(fun () -> close_in_noerr channel)
@@ -224,7 +230,10 @@ let load filename =
         available = 0;
         offset = 0L;
       } in
-      expect_descriptor reader certificate.descriptor;
-      let value = certificate.read reader in
+      expect_descriptor reader schema.descriptor;
+      let value = schema.read reader in
       ensure_end reader;
       value)
+
+let load filename = load_with certificate filename
+let load_distances filename = load_with distance_certificate filename

@@ -3,6 +3,7 @@
 src/BigArray.v
 src/LowLevelChecker.v
 src/OddCoveringTheorem.v
+src/GraphDistance.v
 src/HighLevelCertificate.v
 src/CoveringCriterion.v
 src/CertificateCorrectness.v

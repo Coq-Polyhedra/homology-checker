@@ -1,5 +1,5 @@
 let usage program =
-  Printf.eprintf "Usage: %s CERTIFICATE.bin\n" program;
+  Printf.eprintf "Usage: %s CERTIFICATE.bin [DISTANCES.bin]\n" program;
   2
 
 let timed_check name check certificate =
@@ -9,7 +9,7 @@ let timed_check name check certificate =
   Printf.eprintf "%-24s %.6f s  %b\n%!" name elapsed result;
   result
 
-let run filename =
+let run filename distances =
   let started = Unix.gettimeofday () in
   let certificate = Loader.load filename in
   let loaded = Unix.gettimeofday () in
@@ -26,14 +26,31 @@ let run filename =
     timed_check "graph equality"
       Extracted_checker.graph_equality_check certificate
   in
-  let accepted = containment && equality && graph in
+  let eccentricity =
+    match distances with
+    | None -> true
+    | Some distances ->
+        let distances = Loader.load_distances distances in
+        let started = Unix.gettimeofday () in
+        let result =
+          Extracted_checker.eccentricity_check certificate distances
+        in
+        let elapsed = Unix.gettimeofday () -. started in
+        Printf.eprintf "%-24s %.6f s  %s\n%!" "eccentricity" elapsed
+          (match result with
+           | Some d -> Uint63.to_string d
+           | None -> "none");
+        result <> None
+  in
+  let accepted = containment && equality && graph && eccentricity in
   if accepted then 0 else 1
 
 let () =
   let status =
     match Array.to_list Sys.argv with
-    | [_; filename] ->
-        (try run filename with
+    | [_; filename] | [_; filename; _] as args ->
+        let distances = match args with [_; _; d] -> Some d | _ -> None in
+        (try run filename distances with
          | Loader.Malformed (offset, message) ->
              Printf.eprintf "Malformed certificate at byte %Ld: %s\n"
                offset message;

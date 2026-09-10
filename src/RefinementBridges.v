@@ -1769,6 +1769,61 @@ Lemma bfoldiE T A (f : int -> T -> A -> A) (t : BigArray.array T) (x0 : A) :
   L.bfoldi f t x0 = foldl (fun acc j => f (int_of_nat j) (baget t j) acc) x0 (iota 0 (balen t)).
 Proof. by rewrite /L.bfoldi ifoldE. Qed.
 
+(* The running maximum [L.int_max]: the fold's result is one of the inputs and
+   bounds all of them. *)
+Lemma int_max_ge (d acc : int) :
+  (nat_of_int acc <= nat_of_int (L.int_max d acc))
+  /\ (nat_of_int d <= nat_of_int (L.int_max d acc)).
+Proof.
+rewrite /L.int_max; case: ifP; rewrite ltb_natE => h.
+- by split; [exact: ltnW | exact: leqnn].
+- by split; [exact: leqnn | rewrite leqNgt h].
+Qed.
+
+Lemma int_max_in (d acc : int) :
+  nat_of_int (L.int_max d acc) \in [:: nat_of_int d; nat_of_int acc].
+Proof. by rewrite /L.int_max; case: ifP => _; rewrite !inE eqxx ?orbT. Qed.
+
+(* Stated on the natural values: [int] carries no [eqType] here. *)
+Lemma foldl_int_max (s : seq int) (x0 : int) :
+  let r := foldl (fun acc d => L.int_max d acc) x0 s in
+  nat_of_int r \in map nat_of_int (x0 :: s)
+  /\ forall y, y \in map nat_of_int (x0 :: s) -> y <= nat_of_int r.
+Proof.
+elim: s x0 => [|d s ih] x0 /=.
+  by split=> [|y]; rewrite inE // => /eqP ->.
+have [hin hge] := ih (L.int_max d x0); split.
+  move: hin; rewrite inE => /orP[/eqP ->|hs].
+    by have := int_max_in d x0; rewrite !inE => /orP[] /eqP ->; rewrite eqxx ?orbT.
+  by rewrite !inE hs !orbT.
+move=> y; rewrite !inE => /or3P[/eqP ->|/eqP ->|hs].
+- by apply: (leq_trans (proj1 (int_max_ge d x0))); apply: hge; rewrite inE eqxx.
+- by apply: (leq_trans (proj2 (int_max_ge d x0))); apply: hge; rewrite inE eqxx.
+- by apply: hge; rewrite inE hs orbT.
+Qed.
+
+(* The running maximum over a big table of ints. *)
+Lemma bfold_int_max_ge (t : BigArray.array int) (v : 'I_(balen t)) :
+  nat_of_int (baget t v) <= nat_of_int (L.bfold L.int_max t 0%uint63).
+Proof.
+rewrite bfoldE -(foldl_map (baget t) (fun acc d => L.int_max d acc)).
+have [_ hge] := foldl_int_max (map (baget t) (iota 0 (balen t))) 0%uint63.
+apply: hge; rewrite map_cons -map_comp inE; apply/orP; right.
+by apply/mapP; exists (nat_of_ord v); last by []; rewrite mem_iota add0n ltn_ord.
+Qed.
+
+Lemma bfold_int_max_in (t : BigArray.array int) :
+  nat_of_int (L.bfold L.int_max t 0%uint63) = 0
+  \/ exists v : 'I_(balen t), nat_of_int (baget t v) = nat_of_int (L.bfold L.int_max t 0%uint63).
+Proof.
+rewrite bfoldE -(foldl_map (baget t) (fun acc d => L.int_max d acc)).
+have [hin _] := foldl_int_max (map (baget t) (iota 0 (balen t))) 0%uint63.
+move: hin; rewrite map_cons -map_comp inE => /orP[/eqP ->|/mapP[j hj ->]].
+  by left; rewrite nat_of_int0.
+move: hj; rewrite mem_iota add0n => /andP[_ hj].
+by right; exists (Ordinal hj).
+Qed.
+
 Lemma bcountiE T (P : int -> T -> bool) (t : BigArray.array T) :
   nat_of_int (L.bcounti P t)
   = count (fun j => P (int_of_nat j) (baget t j)) (iota 0 (balen t)).

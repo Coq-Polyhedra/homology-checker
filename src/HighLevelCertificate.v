@@ -2,6 +2,7 @@ From mathcomp Require Import finmap all_ssreflect all_algebra.
 Import GRing.Theory Num.Theory Order.Theory.
 From Polyhedra Require Import hpolyhedron row_submx inner_product polyhedron poly_base affine vector_order barycenter lrel.
 From PolyhedraHirsch Require Import high_graph.
+From Cert Require Import GraphDistance.
 Import HPolyhedron.
 Open Scope polyh_scope.
 From Cert Require Import OddCoveringTheorem CoveringCriterion.
@@ -31,6 +32,13 @@ Record Certificate := {
     flag_indices : 'cV[R]_d -> 'I_d -> 'I_(polytope.`c);
     flag_vertices : 'cV[R]_d -> 'I_d -> 'cV[R]_d;
     geom_graph : vertex_graph
+}.
+
+(* The distance certificate: a source point and the distance of every point
+   from it *)
+Record DistanceCertificate := {
+    source : 'cV[R]_d;
+    distance : 'cV[R]_d -> nat
 }.
 
 End Certificate.
@@ -70,6 +78,11 @@ Local Notation flag_indices := (flag_indices R d cert).
 Local Notation flag_vertices := (flag_vertices R d cert).
 Local Notation geom_graph := (geom_graph R d cert).
 Local Notation m := (polytope.`c).
+
+Variable (dc : DistanceCertificate R d).
+
+Local Notation source := (source R d dc).
+Local Notation distance := (distance R d dc).
 
 (* Well-formedness condition on facets *)
 Definition facetsAreDSimplices :=
@@ -158,6 +171,23 @@ Definition geom_edge_difference_pairwise_check :=
   w \in successors geom_graph v /\ w' \in successors geom_graph v -> w <> w' 
   -> incomparable (activeSets v :\: activeSets w) (activeSets v :\: activeSets w').
 
+(* Condition D1: the source is a vertex of the geometric graph, at distance 0 *)
+Definition distance_source_check :=
+  source_labelled geom_graph source distance.
+
+(* Condition D2: along every edge the distance grows by at most one *)
+Definition distance_edge_check :=
+  edges_labelled geom_graph distance.
+
+(* Condition D3: every other vertex has a neighbour one closer to the source *)
+Definition distance_parent_check :=
+  parents_labelled geom_graph source distance.
+
+(* The certified eccentricity of the source: the largest distance *)
+Definition eccentricity_check (D : nat) :=
+  (forall v : 'cV[R]_d, v \in vertices geom_graph -> distance v <= D)
+  /\ (exists v : 'cV[R]_d, v \in vertices geom_graph /\ distance v = D).
+
 End HighLevelChecks.
 
 Section CertificateLemmas.
@@ -192,6 +222,7 @@ Local Notation flag_check := (flag_check d R cert).
 Local Notation mapping_check := (mapping_check d R cert).
 Local Notation facets := (facets R d cert).
 Local Notation graph := (graph R d cert).
+Local Notation geom_graph := (geom_graph R d cert).
 Local Notation specialSimplex := (specialSimplex R d cert).
 Local Notation witnesses := (witnesses R d cert).
 Local Notation activeSets := (activeSets R d cert).
@@ -448,8 +479,17 @@ Proof.
   by move/(notin_active_constraintsP polytope (flag_vertices v k) (flag_indices v k) ((fst Hfeas) (flag_vertices v k) (Hflagvert v Hv k))) in Hact.
 Qed.
 
-
-
+(* Conditions D1-D3 make the distances exact: the eccentricity of the source
+   in the geometric graph is the certified value. *)
+Lemma eccentricity_cert (dc : DistanceCertificate R d) (D : nat) :
+  (forall x y : 'cV[R]_d, edges geom_graph x y -> edges geom_graph y x) ->
+  distance_source_check d R cert dc -> distance_edge_check d R cert dc ->
+  distance_parent_check d R cert dc -> eccentricity_check d R cert dc D ->
+  eccentricity_is geom_graph (source R d dc) D.
+Proof.
+move=> hsym h1 h2 h3 [hbound hattained].
+exact: (eccentricity_of_labelling hsym h1 h2 h3 hbound hattained).
+Qed.
 
 End CertificateLemmas.
 
