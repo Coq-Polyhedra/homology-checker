@@ -147,11 +147,6 @@ Proof. by move=> ha /(for_allP _ ha) h i; have := h i; cbv beta => /hasLength_al
 Definition hpoly_of : 'hpoly[R]_d :=
   HPoly (- \matrix_(i < m) (normal_of i)^T) (- \col_(i < m) bound_of i).
 
-(* Never rewritten with, but this definitional equality is what lets every
-   ['I_m] of this file typecheck against [H.m R d hpoly_of]. *)
-Lemma hpoly_of_c : hpoly_of.`c = m.
-Proof. by []. Qed.
-
 (* Projections by conversion: no [simpl] on the unfolded record (it would go on
    to unfold [normal_of], [vec_of_array], [nat_of_int], ... and hang). *)
 Lemma hpoly_of_A : hpoly_of.`A = - \matrix_(i < m) (normal_of i)^T.
@@ -630,17 +625,6 @@ have hlen := geom_graph_len hg.
 have hnv : (0 < nv)%N := leq_ltn_trans (leq0n _) (ltn_ord v).
 move: hg; rewrite /L.isGeomGraphWellFormed; cbv zeta => /andP[/andP[/andP[_ hv] _] _].
 have h2 := bvertex_matrixP hlen hnv hv; exact: (h2 v j).
-Qed.
-
-Lemma geom_nbrs_irrefl (hg : L.isGeomGraphWellFormed c) (v : 'I_nv) : v \notin geom_nbrs v.
-Proof.
-have hlen := geom_graph_len hg; move: hg.
-rewrite /L.isGeomGraphWellFormed; cbv zeta => /andP[/andP[_ hs] _].
-move: hs => /bisSimpleGraph_loops/(bhasNoLoopsP hlen)/(_ v).
-rewrite /L.bhasLocallyNoLoop bagetE /L.mem; apply: contra; rewrite /geom_nbrs
-  => /in_set_of_array[j hj].
-apply/exist_alenP; exists j; cbv beta; rewrite eqb_natE hj.
-by rewrite (int_of_natK_le (i := blength (L.vertices c)) (ltnW (ltn_ord v))) eqxx.
 Qed.
 
 Lemma geom_nbrs_sym (hg : L.isGeomGraphWellFormed c) (v w : 'I_nv) :
@@ -1583,13 +1567,13 @@ by rewrite /H.geomGraphVerticesArePoints /interp_cert /H.geom_graph vtx_geom_gra
 Qed.
 
 (* -------------------------------------------------------------------------- *)
-(* [geomGraphIsImageOfGraph], with the corrective premise [v <> w]            *)
+(* [geomGraphIsImageOfGraph], with the premise [v <> w]                       *)
 (* -------------------------------------------------------------------------- *)
 
-(* As stated upstream the iff is false whenever a facet edge collapses under
-   [mapping] -- with [v = w] the common image point, the RHS holds but a simple
-   graph has no loop.  Once the premise is added upstream, drop this and use
-   [H.geomGraphIsImageOfGraph] directly. *)
+(* [H.geomGraphIsImageOfGraph] restricted to distinct points. Without the
+   premise the equivalence fails whenever a facet edge collapses under
+   [mapping]: with [v = w] the common image point, the right-hand side holds
+   while a simple graph has no loop. *)
 Definition geomGraphIsImageOfGraph_ne (hm : (0 < m)%N) : Prop :=
     forall v w : 'cV[R]_d,
     v \in vertices (@H.geom_graph R d (interp_cert hm)) ->
@@ -1834,7 +1818,7 @@ Qed.
 (* -------------------------------------------------------------------------- *)
 
 (* The three geometric-graph conditions follow from the two checker bundles;
-   the image condition comes in its corrected form
+   the image condition is taken with the premise [v <> w]
    ([geomGraphIsImageOfGraph_ne]). *)
 Theorem graph_equality_correct (hm : (0 < m)%N) (hnv : (0 < nv)%N) (hnf : (0 < nf)%N)
     (hd : (0 < d)%N) :

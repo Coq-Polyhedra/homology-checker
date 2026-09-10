@@ -75,9 +75,6 @@ Definition foldi {T A : Type} (f : int -> T -> A -> A) (a : array T) (x0 : A) :=
 Definition fold_from_until {T A : Type} (f : T -> A -> A) (a : array T) (k : int) (stopCondition : int -> A -> bool) (x0 : A) :=
   ifold_from_until (fun i acc => f a.[i] acc) k (length a) stopCondition x0.
  
-Definition fold_compose {A B C : Type} (f : B -> C -> C) (g : A -> B) (a : array A) (x0 : C) :=
-  fold (compose f g) a x0.
-
 Definition fold2 {T1 T2 A : Type} (f : T1 -> T2 -> A -> A) (a1 : array T1) (a2 : array T2) (x0 : A) :=
   ifold (fun i acc => f a1.[i] a2.[i] acc) (if (length a1 <? length a2)%uint63 then length a1 else length a2) x0.
 
@@ -107,12 +104,6 @@ Definition for_all_range0 {T : Type} (f : T -> bool) (a : array T) (n : int) :=
 
 Definition for_alli {T : Type} (f : int -> T -> bool) (a : array T) :=
   foldi (fun i x acc => acc && f i x) a true.
-
-Definition for_all2 {T1 T2 : Type} (f : T1 -> T2 -> bool) (a : array T1) (b : array T2) :=
-  fold2 (fun x y acc => acc && f x y) a b true.
-
-Definition for_all_matrix {T : Type} (f : T -> bool) (a : array (array T)) : bool :=
-  for_all (for_all f) a.
 
 Definition for_alli_matrix {T : Type} (f : int -> int -> T -> bool) (a : array (array T)) : bool :=
   for_alli (fun i x => for_alli (f i) x) a.
@@ -259,9 +250,6 @@ Definition allInRange {T : Type} (leT : T -> T -> bool) (m M : T) (a : array T) 
 Definition hasLength {T : Type} (k : int) (a : array T) : bool :=
   (length a =? k)%uint63.
 
-Definition isValidIndex {T : Type} (a : array T) (x : int) : bool :=
-  inRange Uint63.leb 0%uint63 (length a - 1)%uint63 x.
-
 End ArrayFunctions.
 
 (* -------------------------------------------------------------------------- *)
@@ -366,42 +354,13 @@ End IntList.
 
 Section Graph.
 
-(* [Graph] is kept for the upstream API: since the combinatorial and the
- * geometric graphs are both big, it has no user left in this file. *)
-Definition Graph := array (array int).
-
 (* the combinatorial graph is indexed by facets and the geometric one by
  * vertices, hence both too large for [PArray]: only the outer array is big,
  * the adjacency rows remain [PArray] arrays *)
 Definition BGraph := BigArray.array (array int).
 
-Definition isVertex (g : Graph) (x : int) :=
-  isValidIndex g x. 
-
-(* The function is not defined for all x and must be used together with isVertex. *)
-Definition isLocallyUndirected (g : Graph) (x : int) :=
-  for_all (fun y => mem (Uint63.eqb) g.[y] x) g.[x].
-
-Definition isUndirected (g : Graph) :=
-  for_alli (fun i _ => isLocallyUndirected g i) g. 
-
-Definition hasSimpleEdges (g : Graph) := 
-  for_all (isStrictlySorted Uint63.ltb) g.
-
-Definition hasLocallyNoLoop (g : Graph) (x : int) :=
-  negb (mem (Uint63.eqb) g.[x] x).
-
-Definition hasNoLoops (g : Graph) :=
-  for_alli (fun i _ => hasLocallyNoLoop g i) g.
-
-Definition isSimpleGraph (g : Graph) :=
-  (hasSimpleEdges g) && (hasNoLoops g).
-
-Definition hasBoundedDegree (g : Graph) (k : int) :=
-  for_all (fun x => ((length x) <=? k)%uint63) g.
-
 (* -------------------------------------------------------------------------- *)
-(* The same predicates on big graphs                                          *)
+(* Predicates on big graphs                                                   *)
 (* -------------------------------------------------------------------------- *)
 
 Definition bisVertex (g : BGraph) (x : int) :=
@@ -454,7 +413,6 @@ Definition Point := (Numerators * CommonDenominator)%type.
 Definition ActiveSet := array int.
 Definition Flag := (array int * array int)%type.
 Definition Vertex := (ActiveSet * (Point * Flag))%type.
-Definition Vertices := array Vertex.
 (* the vertex table outgrows [PArray]: only the table itself is big, all the
  * fields of a [Vertex] (active set, point, flag rows) remain [PArray] arrays *)
 Definition BVertices := BigArray.array Vertex.
@@ -489,7 +447,7 @@ Record Certificate := {
   root : Root
 }.
 
-(* The distance certificate, a file of its own: the source vertex index and
+(* The distance certificate, a separate file: the source vertex index and
  * the distance of every vertex from it, indexed by vertices hence big *)
 Definition DistanceCertificate := (int * BigArray.array int)%type.
 
@@ -604,9 +562,9 @@ Definition isGeomGraphWellFormed (cert : Certificate) :=
   let geom_graph := geom_graph cert in
   let nbVertices := BigArray.length (vertices cert) in
   (BigArray.length geom_graph =? nbVertices)%uint63
-  && (bfor_all_matrix (bisVertex geom_graph) geom_graph) (* see remark above *)
+  && (bfor_all_matrix (bisVertex geom_graph) geom_graph) (* rows hold vertex indices *)
   && (bisSimpleGraph geom_graph)
-  && (bisUndirected geom_graph). (* the undirectness should be a consequence of graph_image_check below *)
+  && (bisUndirected geom_graph). (* also implied by [graph_image_check]; checked on its own *)
 
 Definition areGeomEdgeSourcesWellFormed (cert : Certificate) :=
   let geom_graph := geom_graph cert in

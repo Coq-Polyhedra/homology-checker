@@ -204,7 +204,7 @@ let payload =
           (pair geom
             (pair full_dim root)))))
 
-(* The distance certificate, a file of its own: the source vertex and the
+(* The distance certificate, a separate file: the source vertex and the
    distance of every vertex from it; see [distance_certificate_wire_schema]
    in src/CertificateSchema.v. *)
 let distance_certificate =

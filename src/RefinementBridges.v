@@ -103,9 +103,6 @@ Proof. by rewrite nat_of_intE to_Z_0. Qed.
 Lemma int_of_nat0 : int_of_nat 0 = 0%uint63.
 Proof. by rewrite -nat_of_int0 nat_of_intK. Qed.
 
-Lemma nat_of_int1 : nat_of_int 1%uint63 = 1%N.
-Proof. by rewrite nat_of_intE. Qed.
-
 Lemma ltb_natE i j : (i <? j)%uint63 = (nat_of_int i < nat_of_int j).
 Proof.
 apply/idP/idP => [/Uint63.ltbP|/ssrnat.ltP] h; [apply/ssrnat.ltP|apply/Uint63.ltbP];
@@ -454,14 +451,6 @@ case: (p j) => /=; last by rewrite ih ?add0n //; move: hz; rewrite addnS => /ltn
 have hS : nat_of_int (z + 1)%uint63 = (nat_of_int z).+1.
   by apply: (add1_natE (j := M)); rewrite ltb_natE (leq_trans _ hz) // addnS ltnS leq_addr.
 by rewrite ih ?hS ?addSn ?addnS //; move: hz; rewrite addnS.
-Qed.
-
-Lemma countiE T (P : int -> T -> bool) (a : array T) :
-  nat_of_int (L.counti P a) = count (fun j => P (int_of_nat j) a.[int_of_nat j]) (iota 0 (alen a)).
-Proof.
-rewrite /L.counti /L.foldi ifoldE; cbv beta; rewrite -[nat_of_int (length a)]/(alen a).
-rewrite (@foldl_count_int _ _ _ (alength a)) ?nat_of_int0 ?add0n //.
-by rewrite size_iota -[nat_of_int (alength a)]/(alen a) leqnn.
 Qed.
 
 End ArrayBridge.
@@ -1130,13 +1119,6 @@ Lemma add1_alenE T (a : array T) (i : int) : (nat_of_int i < alen a)%N ->
   nat_of_int (i + 1)%uint63 = (nat_of_int i).+1.
 Proof. by rewrite -ltb_alenE; exact: add1_natE. Qed.
 
-Lemma alen_set T (a : array T) (i : int) (x : T) : alen a.[i <- x] = alen a.
-Proof. by rewrite /alen /alength PArray.length_set. Qed.
-
-Lemma alen_make T (k : int) (x : T) :
-  (k <=? PArray.max_length)%uint63 -> alen (PArray.make k x) = nat_of_int k.
-Proof. by move=> h; rewrite /alen /alength PArray.length_make h. Qed.
-
 Lemma foldl_const (A B : Type) (g : A -> A) (x : A) (s : seq B) :
   foldl (fun acc _ => g acc) x s = iter (size s) g x.
 Proof. by elim: s x => [|y s ih] x //=; rewrite ih -iterSr. Qed.
@@ -1177,20 +1159,6 @@ Proof. by move=> h0 hs; elim=> [|k ih] //=; apply: hs. Qed.
 Lemma iter_ind (T : Type) (P : nat -> T -> Prop) (f : T -> T) (x : T) :
   P 0 x -> (forall k y, P k y -> P k.+1 (f y)) -> forall k, P k (iter k f x).
 Proof. by move=> h0 hs; elim=> [|k ih] //=; apply: hs. Qed.
-
-Lemma fold_invariantP (T A : Type) (P : A -> Prop) (f : T -> A -> A) (a : array T) (x : A) :
-  P x -> (forall (i : 'I_(alen a)) (y : A), P y -> P (f (aget a i) y)) ->
-  P (L.fold f a x).
-Proof.
-move=> h0 hs; rewrite /L.fold ifoldE; cbv beta.
-rewrite -[nat_of_int (PArray.length a)]/(alen a).
-have: forall j, j \in iota 0 (alen a) -> (j < alen a)%N.
-  by move=> j; rewrite mem_iota add0n.
-elim: (iota 0 (alen a)) x h0 => [|j js ih] x h0 hall //=.
-apply: ih; last by move=> j' hj'; apply: hall; rewrite inE hj' orbT.
-have hj : (j < alen a)%N by apply: hall; rewrite inE eqxx.
-exact: (hs (Ordinal hj)).
-Qed.
 
 Section SubsetBridge.
 
@@ -1655,9 +1623,6 @@ Arguments balen : simpl never.
    [nat_of_int] spelling of a checker index stays readable. *)
 Definition baget {T} (t : BigArray.array T) (i : nat) : T := BigArray.get t (int_of_nat i).
 
-Lemma blengthE T (t : BigArray.array T) : BigArray.length t = blength t.
-Proof. by []. Qed.
-
 Lemma balenE T (t : BigArray.array T) : nat_of_int (BigArray.length t) = balen t.
 Proof. by []. Qed.
 
@@ -1666,11 +1631,6 @@ Proof. by []. Qed.
 
 Lemma baget_natE T (t : BigArray.array T) (x : int) : baget t (nat_of_int x) = BigArray.get t x.
 Proof. by rewrite /baget nat_of_intK. Qed.
-
-(* Arithmetic on big lengths, as for [alen] (bound: [2^43 - 2^21]). *)
-Lemma balen_bound T (t : BigArray.array T) :
-  (Z.of_nat (balen t) <= to_Z BigArray.max_length)%Z.
-Proof. by rewrite /balen -to_Z_nat_of_int; apply/Uint63.lebP; exact: BigArray.leb_length. Qed.
 
 Lemma ltb_balenE T (t : BigArray.array T) i : (i <? blength t)%uint63 = (nat_of_int i < balen t).
 Proof. by rewrite ltb_natE. Qed.
@@ -1684,14 +1644,6 @@ Proof. by rewrite -ltb_balenE; exact: add1_natE. Qed.
 Lemma eqb_balenE T1 T2 (t1 : BigArray.array T1) (t2 : BigArray.array T2) :
   (BigArray.length t1 =? BigArray.length t2)%uint63 = (balen t1 == balen t2).
 Proof. by rewrite eqb_natE !balenE. Qed.
-
-Lemma balen_set T (t : BigArray.array T) (i : int) (x : T) :
-  balen (BigArray.set t i x) = balen t.
-Proof. by rewrite /balen /blength BigArray.length_set. Qed.
-
-Lemma balen_make T (k : int) (x : T) :
-  (k <=? BigArray.max_length)%uint63 -> balen (BigArray.make k x) = nat_of_int k.
-Proof. by move=> h; rewrite /balen /blength BigArray.length_make h. Qed.
 
 (* Iteration bridges: the exact counterparts of [for_allP]/[for_alliP]. *)
 Lemma bfor_allP T (f : T -> bool) (t : BigArray.array T) n : balen t = n ->
@@ -1747,11 +1699,6 @@ Proof. by apply: bfor_alliP. Qed.
 Lemma bfor_all_compose_balenP A B (f : B -> bool) (g : A -> B) (t : BigArray.array A) :
   reflect (forall i : 'I_(balen t), f (g (baget t i))) (L.bfor_all_compose f g t).
 Proof. by apply: bfor_all_composeP. Qed.
-
-Lemma bfor_all_matrix_balenP T (f : T -> bool) (t : BigArray.array (array T)) :
-  reflect (forall (i : 'I_(balen t)) (j : 'I_(alen (baget t i))), f (aget (baget t i) j))
-          (L.bfor_all_matrix f t).
-Proof. by apply: bfor_all_matrixP. Qed.
 
 Lemma bfor_alli_matrix_balenP T (f : int -> int -> T -> bool) (t : BigArray.array (array T)) :
   reflect (forall (i : 'I_(balen t)) (j : 'I_(alen (baget t i))),
@@ -1858,14 +1805,6 @@ have h := bisStrictlySorted_consecT (k := Ordinal (ltnW hk)) (k' := Ordinal hk) 
 exact: h.
 Qed.
 
-Lemma bisStrictlySorted_leq (t : BigArray.array int) : L.bisStrictlySorted Uint63.ltb t ->
-  forall j1 j2, j1 <= j2 -> j2 < balen t ->
-    nat_of_int (baget t j1) <= nat_of_int (baget t j2).
-Proof.
-move=> hs j1 j2; rewrite leq_eqVlt => /orP[/eqP->|hlt] hj2; first exact: leqnn.
-exact: ltnW (bisStrictlySorted_mono hs hlt hj2).
-Qed.
-
 (* The big counterpart of [sorted_sets_inj]: a big table of records whose
    [PArray] descriptions are strictly sorted and lexicographically increasing
    has pairwise distinct sets of entries. *)
@@ -1959,16 +1898,6 @@ move=> hn; rewrite /L.bhasSimpleEdges.
 have h := bfor_allP (L.isStrictlySorted Uint63.ltb) hn.
 exact: h.
 Qed.
-
-Lemma bhasSimpleEdges_balenP (g : L.BGraph) :
-  reflect (forall i : 'I_(balen g), L.isStrictlySorted Uint63.ltb (baget g i))
-          (L.bhasSimpleEdges g).
-Proof. by apply: bhasSimpleEdgesP. Qed.
-
-(* [L.bisSimpleGraph], as its two conjuncts. *)
-Lemma bisSimpleGraph_edges (g : L.BGraph) :
-  L.bisSimpleGraph g -> L.bhasSimpleEdges g.
-Proof. by case/andP. Qed.
 
 Lemma bisSimpleGraph_loops (g : L.BGraph) :
   L.bisSimpleGraph g -> L.bhasNoLoops g.
@@ -2237,10 +2166,6 @@ Proof. by elim: ds => //= e ds ->. Qed.
 Lemma pairwise_incomparableE ds :
   L.pairwise_incomparable ds = pairwise L.incomparable ds.
 Proof. by elim: ds => //= d ds ->; rewrite incomparable_with_allE. Qed.
-
-Lemma incomparable_with_all_nth d ds k :
-  L.incomparable_with_all d ds -> k < size ds -> L.incomparable d (nth [::] ds k).
-Proof. by rewrite incomparable_with_allE => /all_nthP; apply. Qed.
 
 Lemma pairwise_incomparable_nth ds k1 k2 :
   L.pairwise_incomparable ds -> k1 < k2 -> k2 < size ds ->

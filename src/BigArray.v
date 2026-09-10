@@ -113,9 +113,6 @@ pose proof (Z.mod_pos_bound (n + 2097151) 2097152 ltac:(lia)) as hmb.
 lia.
 Qed.
 
-Lemma zk_pos (n : Z) : 0 <= n -> 0 <= zk n.
-Proof. intros hn; unfold zk; apply Z.div_pos; lia. Qed.
-
 Lemma zk_le_max (n : Z) : 0 <= n <= to_Z max_length -> zk n <= 4194303.
 Proof.
 intros hn; unfold zk.

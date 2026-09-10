@@ -1,6 +1,5 @@
 (** Native realization of primitive arrays.  The default value implements
-    out-of-bounds [PArray.get]; [set] copies its backing array to preserve the
-    persistent semantics of [PArray.set]. *)
+    out-of-bounds [PArray.get]. *)
 
 type 'a t = {
   data : 'a array;
@@ -39,18 +38,3 @@ let init length f default =
     data = Array.init length (fun i -> f (uint63_of_int i));
     default;
   }
-
-let make length default =
-  let length = int_of_uint63 length in
-  if length < 0 || max_length_int < length then
-    invalid_arg "Native_array.make: length exceeds PArray.max_length";
-  { data = Array.make length default; default }
-
-let set a index value =
-  let index = int_of_uint63 index in
-  if index < 0 || Array.length a.data <= index then
-    a
-  else
-    let data = Array.copy a.data in
-    Array.unsafe_set data index value;
-    { a with data }
