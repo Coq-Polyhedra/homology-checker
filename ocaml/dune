@@ -1,7 +1,7 @@
 (library
  (name homology_checker_runtime)
  (wrapped false)
- (modules loader native_z native_array native_loop native_array_ops native_graph extracted_checker)
+ (modules loader native_z native_array native_loop native_array_ops extracted_checker)
  (flags (:standard -warn-error -A))
  (libraries coq-core.kernel zarith))
 
