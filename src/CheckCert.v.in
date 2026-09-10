@@ -18,6 +18,31 @@ Definition eccentricity_of cert dist :=
   | _, _ => None
   end.
 
+(* The three checks under a single decode: the per-check timings above each
+   pay their own decode, so their sum overcounts it; this is the one-shot
+   figure. *)
+Definition check_all cert :=
+  match decode cert with
+  | Some cert =>
+      let c := build_cert cert in
+      (VtxContainment.check_certificate c
+       && VtxEquality.check_certificate c
+       && GraphEquality.check_certificate c)%bool
+  | None => false
+  end.
+
+Definition check_all_with_eccentricity cert dist :=
+  match decode cert, Packed.decode distance_certificate_wire_schema dist with
+  | Some cert, Some dist =>
+      let c := build_cert cert in
+      if (VtxContainment.check_certificate c
+          && VtxEquality.check_certificate c
+          && GraphEquality.check_certificate c)%bool
+      then Diameter.eccentricity c dist
+      else None
+  | _, _ => None
+  end.
+
 Ltac2 Eval printf "certificate loading:".
 Time LoadDataPacked "@CERT@" As cert.
 
@@ -33,12 +58,18 @@ Time Eval vm_compute in decode_and_apply VtxEquality.check_certificate cert.
 Ltac2 Eval printf "graph equality:".
 Time Eval vm_compute in decode_and_apply GraphEquality.check_certificate cert.
 
+Ltac2 Eval printf "full check:".
+Time Eval vm_compute in check_all cert.
+
 (* BEGIN DISTANCES *)
 Ltac2 Eval printf "distance certificate loading:".
 Time LoadDataPacked "@DIST@" As dist.
 
 Ltac2 Eval printf "eccentricity:".
 Time Eval vm_compute in eccentricity_of cert dist.
+
+Ltac2 Eval printf "full refutation:".
+Time Eval vm_compute in check_all_with_eccentricity cert dist.
 (* END DISTANCES *)
 
 End Benchmark.
