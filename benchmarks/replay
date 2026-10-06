@@ -1,0 +1,115 @@
+#!/usr/bin/env python3
+"""Replay the benchmarks inside the reviewer image.
+
+  replay quick      instances whose enumeration takes seconds, plus the two
+                    Hirsch counterexamples with their distance certificates,
+                    through all three routes (generation, extracted checker,
+                    Rocq)
+  replay standard   quick plus the instances up to about 100 s of lrs, with
+                    Rocq on the quick set only
+  replay full       the 64-instance table of the paper (hours), without Rocq
+  replay rocq PATTERN...   the Rocq (vm_compute) check on chosen instances
+  replay proofs     the axioms the two main theorems depend on
+  replay report     the two tables from the records in /results
+  replay bench ARGS...     any bench.py invocation
+
+Everything is written under /results: the enumerations, certificates and
+per-stage records in /results/data, and the two tables bench-results.tsv
+(seconds) and bench-results-relative.tsv (multiples of the lrs time) at the
+top. A container's files are discarded when it exits, so /results must be
+a directory of the host attached with -v, as in
+
+  docker run --rm -v "$PWD/results:/results" replay quick
+
+Reusing the same directory across runs also lets later runs skip the
+enumerations and certificates already produced.
+"""
+
+import shutil
+import subprocess
+import sys
+from pathlib import Path
+
+WORK = Path("/work")
+RESULTS = Path("/results")
+DATA = RESULTS / "data"
+BENCH = [sys.executable, str(WORK / "homology-checker" / "benchmarks" / "bench.py"),
+         "--data-dir", str(DATA),
+         "--bin", str(WORK / "lrs-postprocess" / "target" / "release" / "lrs-postprocess"),
+         "--lrsgmp", str(WORK / "lrslib" / "lrsgmp"),
+         "--checker", str(WORK / "homology-checker" / "_build" / "default" / "ocaml" / "homology_checker.exe"),
+         "--rocq-dir", str(WORK / "homology-checker"),
+         "--sources", str(DATA / "sources.json")]
+
+QUICK = ["birkhoff[345]", "cross[3-8]", "cube1[5-8]", "dual_cyclic_d(0[3-9]|1[0-3])_n.*",
+         "hypersimplex([3-9]|1[0-7])", "permutahedron[3-7]", "poly20dim21", "poly23dim24"]
+STANDARD = QUICK + ["birkhoff6", "cross9", "cube(19|20|21)", "dual_cyclic_d1[4-6]_n.*",
+                    "hypersimplex(18|19|20)", "permutahedron8"]
+FULL = STANDARD + ["cross10", "cube22", "dual_cyclic_d1[78]_n.*", "hypersimplex21", "permutahedron9"]
+
+PROOFS = """From Cert Require Import CertificateCorrectness Refinement.
+Print Assumptions certificate_correctness.
+Print Assumptions eccentricity_correct.
+"""
+
+
+def bench(*args):
+    print("+", " ".join(args), flush=True)
+    return subprocess.call([*BENCH, *args])
+
+
+def prepare():
+    if not any(line.split()[1] == str(RESULTS) for line in open("/proc/mounts")):
+        print(f"warning: {RESULTS} is not a mounted host directory, so the results will be lost "
+              f"when the container exits (run with -v \"$PWD/results:{RESULTS}\")", flush=True)
+    DATA.mkdir(parents=True, exist_ok=True)
+    src = WORK / "homology-checker" / "benchmarks" / "data"
+    for f in list(src.glob("*.ine")) + [src / "sources.json"]:
+        if not (DATA / f.name).exists():
+            shutil.copy(f, DATA / f.name)
+
+
+def report():
+    bench("report", "-o", str(RESULTS / "bench-results.tsv"))
+    bench("report", "--relative", "-o", str(RESULTS / "bench-results-relative.tsv"))
+    print("\nTimes as multiples of the lrs time (bench-results-relative.tsv):\n")
+    print((RESULTS / "bench-results-relative.tsv").read_text())
+
+
+def proofs():
+    script = Path("/tmp/assumptions.v")
+    script.write_text(PROOFS)
+    return subprocess.call(["coqtop", "-batch", "-Q", str(WORK / "homology-checker" / "src"), "Cert",
+                            "-l", str(script)])
+
+
+def main():
+    cmd, args = (sys.argv[1] if len(sys.argv) > 1 else "quick"), sys.argv[2:]
+    prepare()
+    status = 0
+    if cmd == "quick":
+        status = bench("run", *QUICK) or bench("rocq", *QUICK)
+        report()
+    elif cmd == "standard":
+        status = bench("run", *STANDARD) or bench("rocq", *QUICK)
+        report()
+    elif cmd == "full":
+        status = bench("run", *FULL)
+        report()
+    elif cmd == "rocq":
+        status = bench("rocq", *args)
+        report()
+    elif cmd == "proofs":
+        status = proofs()
+    elif cmd == "report":
+        report()
+    elif cmd == "bench":
+        status = bench(*args)
+    else:
+        print(__doc__)
+        status = 2
+    sys.exit(status)
+
+
+if __name__ == "__main__":
+    main()
